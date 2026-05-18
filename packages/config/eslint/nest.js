@@ -1,0 +1,16 @@
+import { baseConfig } from './index.js';
+
+/** @type {import('eslint').Linter.FlatConfig[]} */
+export const nestConfig = [
+  ...baseConfig,
+  {
+    rules: {
+      '@typescript-eslint/interface-name-prefix': 'off',
+      '@typescript-eslint/explicit-function-return-type': 'off',
+      '@typescript-eslint/explicit-module-boundary-types': 'off',
+      '@typescript-eslint/no-explicit-any': 'off',
+    },
+  },
+];
+
+export default nestConfig;
