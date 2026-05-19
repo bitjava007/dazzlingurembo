@@ -16,6 +16,9 @@ import { FinanceModule } from './finance/finance.module';
 import { ProcurementModule } from './procurement/procurement.module';
 import { ProductionModule } from './production/production.module';
 import { LogisticsModule } from './logistics/logistics.module';
+import { HrModule } from './hr/hr.module';
+import { NotificationsModule } from './notifications/notifications.module';
+import { DocumentsModule } from './documents/documents.module';
 
 @Module({
   imports: [
@@ -37,6 +40,9 @@ import { LogisticsModule } from './logistics/logistics.module';
     ProcurementModule,
     ProductionModule,
     LogisticsModule,
+    HrModule,
+    NotificationsModule,
+    DocumentsModule,
   ],
   providers: [{ provide: APP_FILTER, useClass: AllExceptionsFilter }],
 })
