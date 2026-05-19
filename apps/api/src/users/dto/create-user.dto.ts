@@ -5,48 +5,49 @@ import {
   MinLength,
   MaxLength,
   IsOptional,
-  IsEnum,
   Matches,
+  IsPhoneNumber,
+  IsUUID,
 } from 'class-validator';
-import { Role } from '@prisma/client';
 
 export class CreateUserDto {
-  @ApiProperty({
-    example: 'user@example.com',
-    description: 'User email address',
-  })
-  @IsEmail({}, { message: 'Please provide a valid email address' })
-  email!: string;
+  @ApiProperty({ example: 'jane.doe@dazzlingurembo.com', description: 'User email address' })
+  @IsEmail()
+  email: string;
 
-  @ApiPropertyOptional({
-    example: 'John Doe',
-    description: 'User display name',
-  })
-  @IsOptional()
+  @ApiProperty({ example: 'SecureP@ssw0rd!', description: 'Initial password (min 8 chars, uppercase+lowercase+number)' })
   @IsString()
-  @MinLength(2, { message: 'Name must be at least 2 characters long' })
-  @MaxLength(100, { message: 'Name must not exceed 100 characters' })
-  name?: string;
-
-  @ApiProperty({
-    example: 'SecurePassword123!',
-    description: 'User password (min 8 chars, must contain uppercase, lowercase, number)',
-    minLength: 8,
-  })
-  @IsString()
-  @MinLength(8, { message: 'Password must be at least 8 characters long' })
-  @MaxLength(128, { message: 'Password must not exceed 128 characters' })
+  @MinLength(8)
+  @MaxLength(128)
   @Matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/, {
     message: 'Password must contain at least one uppercase letter, one lowercase letter, and one number',
   })
-  password!: string;
+  password: string;
 
-  @ApiPropertyOptional({
-    enum: Role,
-    default: Role.USER,
-    description: 'User role',
-  })
+  @ApiProperty({ example: 'Jane', description: 'First name' })
+  @IsString()
+  @MinLength(1)
+  @MaxLength(100)
+  firstName: string;
+
+  @ApiProperty({ example: 'Doe', description: 'Last name' })
+  @IsString()
+  @MinLength(1)
+  @MaxLength(100)
+  lastName: string;
+
+  @ApiPropertyOptional({ example: '+1234567890', description: 'Phone number' })
   @IsOptional()
-  @IsEnum(Role, { message: 'Role must be either USER or ADMIN' })
-  role?: Role;
+  @IsString()
+  phone?: string;
+
+  @ApiPropertyOptional({ description: 'Country ID' })
+  @IsOptional()
+  @IsString()
+  countryId?: string;
+
+  @ApiPropertyOptional({ description: 'Branch ID' })
+  @IsOptional()
+  @IsString()
+  branchId?: string;
 }
