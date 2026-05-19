@@ -1,0 +1,21 @@
+{
+  "name": "@dazzlingurembo/utils",
+  "version": "0.0.1",
+  "description": "Shared utilities for Dazzling UM",
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "type-check": "tsc --noEmit",
+    "lint": "eslint src --ext .ts"
+  },
+  "dependencies": {
+    "clsx": "^2.1.1",
+    "tailwind-merge": "^2.3.0"
+  },
+  "devDependencies": {
+    "typescript": "^5.4.5"
+  }
+}
