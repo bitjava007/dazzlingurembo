@@ -5,10 +5,10 @@ export class ResetPasswordDto {
   @ApiProperty({ description: 'The password reset token' })
   @IsString()
   @IsNotEmpty()
-  token: string;
+  token!: string;
 
   @ApiProperty({ description: 'New password (min 8 characters)' })
   @IsString()
   @MinLength(8)
-  newPassword: string;
+  newPassword!: string;
 }

@@ -2,6 +2,7 @@ import { NestFactory } from '@nestjs/core';
 import { ValidationPipe, Logger } from '@nestjs/common';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { AppModule } from './app.module';
+import { AllExceptionsFilter } from './common/filters/http-exception.filter';
 
 async function bootstrap() {
   const logger = new Logger('Bootstrap');
@@ -32,11 +33,14 @@ async function bootstrap() {
     }),
   );
 
+  // Global exception filter
+  app.useGlobalFilters(new AllExceptionsFilter());
+
   // Swagger documentation setup
   if (process.env.NODE_ENV !== 'production') {
     const config = new DocumentBuilder()
       .setTitle('Dazzling UM API')
-      .setDescription('The Dazzling UM REST API documentation')
+      .setDescription('The Dazzling UM Luxury Fashion ERP REST API documentation')
       .setVersion('1.0')
       .addBearerAuth(
         {
@@ -51,6 +55,8 @@ async function bootstrap() {
       )
       .addTag('auth', 'Authentication endpoints')
       .addTag('users', 'User management endpoints')
+      .addTag('rbac', 'Role-based access control endpoints')
+      .addTag('organization', 'Organization management (countries, branches, workshops, warehouses)')
       .addTag('health', 'Health check endpoints')
       .build();
 

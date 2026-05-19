@@ -1,52 +1,33 @@
 import { ApiPropertyOptional } from '@nestjs/swagger';
-import {
-  IsEmail,
-  IsString,
-  MinLength,
-  MaxLength,
-  IsOptional,
-  IsEnum,
-  Matches,
-} from 'class-validator';
-import { Role } from '@prisma/client';
+import { IsString, IsOptional, MinLength, MaxLength } from 'class-validator';
 
 export class UpdateUserDto {
-  @ApiPropertyOptional({
-    example: 'newemail@example.com',
-    description: 'Updated email address',
-  })
-  @IsOptional()
-  @IsEmail({}, { message: 'Please provide a valid email address' })
-  email?: string;
-
-  @ApiPropertyOptional({
-    example: 'Jane Doe',
-    description: 'Updated display name',
-  })
+  @ApiPropertyOptional({ example: 'Jane', description: 'First name' })
   @IsOptional()
   @IsString()
-  @MinLength(2)
+  @MinLength(1)
   @MaxLength(100)
-  name?: string;
+  firstName?: string;
 
-  @ApiPropertyOptional({
-    description: 'New password',
-    minLength: 8,
-  })
+  @ApiPropertyOptional({ example: 'Doe', description: 'Last name' })
   @IsOptional()
   @IsString()
-  @MinLength(8)
-  @MaxLength(128)
-  @Matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/, {
-    message: 'Password must contain at least one uppercase letter, one lowercase letter, and one number',
-  })
-  password?: string;
+  @MinLength(1)
+  @MaxLength(100)
+  lastName?: string;
 
-  @ApiPropertyOptional({
-    enum: Role,
-    description: 'Updated user role',
-  })
+  @ApiPropertyOptional({ example: '+1234567890', description: 'Phone number' })
   @IsOptional()
-  @IsEnum(Role)
-  role?: Role;
+  @IsString()
+  phone?: string;
+
+  @ApiPropertyOptional({ description: 'Avatar URL' })
+  @IsOptional()
+  @IsString()
+  avatarUrl?: string;
+
+  @ApiPropertyOptional({ description: 'Country ID' })
+  @IsOptional()
+  @IsString()
+  countryId?: string;
 }
