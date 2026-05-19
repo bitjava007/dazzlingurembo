@@ -12,6 +12,10 @@ import { CrmModule } from './crm/crm.module';
 import { CatalogModule } from './catalog/catalog.module';
 import { InventoryModule } from './inventory/inventory.module';
 import { SalesModule } from './sales/sales.module';
+import { FinanceModule } from './finance/finance.module';
+import { ProcurementModule } from './procurement/procurement.module';
+import { ProductionModule } from './production/production.module';
+import { LogisticsModule } from './logistics/logistics.module';
 
 @Module({
   imports: [
@@ -29,6 +33,10 @@ import { SalesModule } from './sales/sales.module';
     CatalogModule,
     InventoryModule,
     SalesModule,
+    FinanceModule,
+    ProcurementModule,
+    ProductionModule,
+    LogisticsModule,
   ],
   providers: [{ provide: APP_FILTER, useClass: AllExceptionsFilter }],
 })
