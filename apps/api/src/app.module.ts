@@ -8,6 +8,10 @@ import { UsersModule } from './users/users.module';
 import { OrganizationModule } from './organization/organization.module';
 import { HealthModule } from './health/health.module';
 import { AllExceptionsFilter } from './common/filters/http-exception.filter';
+import { CrmModule } from './crm/crm.module';
+import { CatalogModule } from './catalog/catalog.module';
+import { InventoryModule } from './inventory/inventory.module';
+import { SalesModule } from './sales/sales.module';
 
 @Module({
   imports: [
@@ -21,6 +25,10 @@ import { AllExceptionsFilter } from './common/filters/http-exception.filter';
     UsersModule,
     OrganizationModule,
     HealthModule,
+    CrmModule,
+    CatalogModule,
+    InventoryModule,
+    SalesModule,
   ],
   providers: [{ provide: APP_FILTER, useClass: AllExceptionsFilter }],
 })

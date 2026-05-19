@@ -11,7 +11,7 @@ export class CustomerNotesService {
     const notes = await this.prisma.customerNote.findMany({
       where: { customerId, deletedAt: null },
       orderBy: { createdAt: 'desc' },
-      include: { author: { select: { id: true, firstName: true, lastName: true } } },
+      // authorId is stored as a plain string field; no relation to include
     });
     return { data: notes };
   }

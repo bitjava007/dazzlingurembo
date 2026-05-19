@@ -6,34 +6,34 @@ import { Type } from 'class-transformer';
 export class CreateStockMovementDto {
   @ApiProperty({ enum: StockMovementType })
   @IsEnum(StockMovementType)
-  movementType: StockMovementType;
+  movementType!: StockMovementType;
 
   @ApiProperty()
   @IsString()
-  variantId: string;
+  variantId!: string;
 
   @ApiProperty()
   @IsString()
-  warehouseId: string;
+  warehouseId!: string;
 
   @ApiProperty()
   @IsString()
-  branchId: string;
+  branchId!: string;
 
   @ApiProperty()
   @IsInt()
   @Type(() => Number)
-  quantity: number;
+  quantity!: number;
 
   @ApiProperty()
   @IsInt()
   @Type(() => Number)
-  quantityBefore: number;
+  quantityBefore!: number;
 
   @ApiProperty()
   @IsInt()
   @Type(() => Number)
-  quantityAfter: number;
+  quantityAfter!: number;
 
   @ApiPropertyOptional()
   @IsOptional()

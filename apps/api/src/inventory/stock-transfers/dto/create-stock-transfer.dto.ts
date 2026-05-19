@@ -5,12 +5,12 @@ import { Type } from 'class-transformer';
 export class StockTransferItemDto {
   @ApiProperty()
   @IsString()
-  variantId: string;
+  variantId!: string;
 
   @ApiProperty()
   @IsInt()
   @Type(() => Number)
-  quantityRequested: number;
+  quantityRequested!: number;
 
   @ApiPropertyOptional()
   @IsOptional()
@@ -21,19 +21,19 @@ export class StockTransferItemDto {
 export class CreateStockTransferDto {
   @ApiProperty()
   @IsString()
-  fromWarehouseId: string;
+  fromWarehouseId!: string;
 
   @ApiProperty()
   @IsString()
-  toWarehouseId: string;
+  toWarehouseId!: string;
 
   @ApiProperty()
   @IsString()
-  fromBranchId: string;
+  fromBranchId!: string;
 
   @ApiProperty()
   @IsString()
-  toBranchId: string;
+  toBranchId!: string;
 
   @ApiPropertyOptional()
   @IsOptional()
@@ -49,5 +49,5 @@ export class CreateStockTransferDto {
   @IsArray()
   @ValidateNested({ each: true })
   @Type(() => StockTransferItemDto)
-  items: StockTransferItemDto[];
+  items!: StockTransferItemDto[];
 }
