@@ -1,0 +1,48 @@
+import api from '@/lib/api';
+import type { Customer, CustomerNote, CustomerCommunication, PaginatedResponse, ListParams } from '@/types';
+
+export const crmService = {
+  async getCustomers(params?: ListParams): Promise<PaginatedResponse<Customer>> {
+    const response = await api.get<PaginatedResponse<Customer>>('/crm/customers', { params });
+    return response.data;
+  },
+
+  async getCustomer(id: string): Promise<Customer> {
+    const response = await api.get<Customer>(`/crm/customers/${id}`);
+    return response.data;
+  },
+
+  async createCustomer(data: Partial<Customer>): Promise<Customer> {
+    const response = await api.post<Customer>('/crm/customers', data);
+    return response.data;
+  },
+
+  async updateCustomer(id: string, data: Partial<Customer>): Promise<Customer> {
+    const response = await api.patch<Customer>(`/crm/customers/${id}`, data);
+    return response.data;
+  },
+
+  async deleteCustomer(id: string): Promise<void> {
+    await api.delete(`/crm/customers/${id}`);
+  },
+
+  async getNotes(customerId: string): Promise<CustomerNote[]> {
+    const response = await api.get<CustomerNote[]>(`/crm/customers/${customerId}/notes`);
+    return response.data;
+  },
+
+  async addNote(customerId: string, content: string): Promise<CustomerNote> {
+    const response = await api.post<CustomerNote>(`/crm/customers/${customerId}/notes`, { content });
+    return response.data;
+  },
+
+  async getCommunications(customerId: string): Promise<CustomerCommunication[]> {
+    const response = await api.get<CustomerCommunication[]>(`/crm/customers/${customerId}/communications`);
+    return response.data;
+  },
+
+  async getLoyaltyPoints(customerId: string): Promise<number> {
+    const response = await api.get<{ points: number }>(`/crm/customers/${customerId}/loyalty`);
+    return response.data.points;
+  },
+};

@@ -18,6 +18,8 @@ const config: Config = {
     },
     extend: {
       colors: {
+        gold: { DEFAULT: '#C9A84C', light: '#D4AF37', dark: '#A0852D' },
+        luxury: { black: '#000000', dark: '#111111', card: '#1A1A1A', border: '#2A2A2A' },
         border: 'hsl(var(--border))',
         input: 'hsl(var(--input))',
         ring: 'hsl(var(--ring))',
