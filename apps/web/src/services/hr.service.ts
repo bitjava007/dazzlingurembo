@@ -21,12 +21,12 @@ export const hrService = {
     return response.data;
   },
 
-  async createEmployee(data: Partial<Employee>): Promise<Employee> {
+  async createEmployee(data: Record<string, unknown>): Promise<Employee> {
     const response = await api.post<Employee>('/hr/employees', data);
     return response.data;
   },
 
-  async updateEmployee(id: string, data: Partial<Employee>): Promise<Employee> {
+  async updateEmployee(id: string, data: Record<string, unknown>): Promise<Employee> {
     const response = await api.put<Employee>(`/hr/employees/${id}`, data);
     return response.data;
   },

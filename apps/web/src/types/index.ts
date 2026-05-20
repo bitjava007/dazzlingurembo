@@ -517,16 +517,22 @@ export interface WorkOrderStage {
 export interface Employee {
   id: string;
   employeeNumber: string;
+  userId?: string;
   firstName: string;
   lastName: string;
-  email: string;
+  email?: string;
   phone?: string;
   departmentId?: string;
   department?: Department;
-  position?: string;
-  status: 'ACTIVE' | 'INACTIVE' | 'ON_LEAVE' | 'TERMINATED';
-  joinDate: string;
-  basicSalary: number;
+  branchId?: string;
+  branch?: Branch;
+  jobTitle?: string;
+  employmentType?: string;
+  hireDate?: string;
+  baseSalary?: number;
+  currencyCode?: string;
+  isActive: boolean;
+  gender?: string;
   createdAt: string;
   updatedAt: string;
 }
