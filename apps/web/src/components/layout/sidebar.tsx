@@ -34,6 +34,9 @@ import {
   AlertTriangle,
   ListChecks,
   Key,
+  Scissors,
+  Ruler,
+  CalendarDays,
 } from 'lucide-react';
 
 interface NavItem {
@@ -122,6 +125,16 @@ const navGroups: NavGroup[] = [
       { href: '/hr/attendance', label: 'Attendance', icon: LayoutDashboard },
       { href: '/hr/payroll', label: 'Payroll', icon: DollarSign },
       { href: '/hr/salary-advances', label: 'Salary Advances', icon: CreditCard },
+    ],
+  },
+  {
+    title: 'Fashion Atelier',
+    items: [
+      { href: '/fashion/bom', label: 'Bill of Materials', icon: BookOpen },
+      { href: '/fashion/teams', label: 'Tailoring Teams', icon: Users },
+      { href: '/fashion/custom-orders', label: 'Custom Orders', icon: Ruler },
+      { href: '/fashion/alterations', label: 'Alterations', icon: Scissors },
+      { href: '/fashion/schedule', label: 'Production Schedule', icon: CalendarDays },
     ],
   },
   {

@@ -19,6 +19,7 @@ import { LogisticsModule } from './logistics/logistics.module';
 import { HrModule } from './hr/hr.module';
 import { NotificationsModule } from './notifications/notifications.module';
 import { DocumentsModule } from './documents/documents.module';
+import { FashionModule } from './fashion/fashion.module';
 
 @Module({
   imports: [
@@ -43,6 +44,7 @@ import { DocumentsModule } from './documents/documents.module';
     HrModule,
     NotificationsModule,
     DocumentsModule,
+    FashionModule,
   ],
   providers: [{ provide: APP_FILTER, useClass: AllExceptionsFilter }],
 })

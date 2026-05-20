@@ -898,3 +898,123 @@ export interface SalaryAdvance {
   createdAt: string;
   updatedAt: string;
 }
+
+// =============================================================================
+// MODULE: FASHION MANUFACTURING
+// =============================================================================
+
+export interface BOM {
+  id: string;
+  productId: string;
+  product?: Product;
+  name: string;
+  version: string;
+  isActive: boolean;
+  notes?: string;
+  items?: BOMItem[];
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface BOMItem {
+  id: string;
+  bomId: string;
+  materialVariantId: string;
+  materialVariant?: Variant;
+  quantity: number;
+  unit: string;
+  wastagePercent?: number;
+  materialType: string;
+  notes?: string;
+}
+
+export interface TailoringTeam {
+  id: string;
+  name: string;
+  code: string;
+  workshopId: string;
+  workshop?: Workshop;
+  leaderId?: string;
+  capacity?: number;
+  specialties: string[];
+  isActive: boolean;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface CustomOrder {
+  id: string;
+  orderNumber: string;
+  customerId: string;
+  customer?: Customer;
+  branchId: string;
+  status: string;
+  title: string;
+  description?: string;
+  bust?: number;
+  waist?: number;
+  hips?: number;
+  length?: number;
+  shoulders?: number;
+  sleeves?: number;
+  inseam?: number;
+  neck?: number;
+  measurementNotes?: string;
+  stylePreferences?: string;
+  colorPreferences?: string;
+  fabricPreferences?: string;
+  embellishments?: string;
+  specialInstructions?: string;
+  estimatedPrice?: number;
+  finalPrice?: number;
+  depositAmount?: number;
+  currencyCode: string;
+  requiredByDate?: string;
+  fittingDate?: string;
+  deliveryDate?: string;
+  workOrderId?: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface Alteration {
+  id: string;
+  alterationNumber: string;
+  customerId: string;
+  customer?: Customer;
+  branchId: string;
+  workshopId?: string;
+  status: string;
+  description: string;
+  alterationType: string;
+  estimatedTime?: number;
+  actualTime?: number;
+  estimatedCost?: number;
+  finalCost?: number;
+  currencyCode: string;
+  receivedAt: string;
+  completedAt?: string;
+  deliveredAt?: string;
+  tailorId?: string;
+  notes?: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface ProductionSchedule {
+  id: string;
+  workOrderId: string;
+  workOrder?: WorkOrder;
+  workshopId: string;
+  workshop?: Workshop;
+  teamId?: string;
+  team?: TailoringTeam;
+  scheduledDate: string;
+  startTime?: string;
+  endTime?: string;
+  title: string;
+  notes?: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
