@@ -20,13 +20,13 @@ export default function InvoicesPage() {
   });
 
   const columns = [
-    { header: 'Invoice #', accessor: 'number' as keyof Invoice },
+    { header: 'Invoice #', accessor: 'invoiceNumber' as keyof Invoice },
     { header: 'Customer', render: (r: Invoice) => r.customer ? `${r.customer.firstName} ${r.customer.lastName}` : '—' },
     { header: 'Status', render: (r: Invoice) => <StatusBadge status={r.status} /> },
     { header: 'Total', render: (r: Invoice) => `$${r.totalAmount.toFixed(2)}` },
     { header: 'Paid', render: (r: Invoice) => `$${r.paidAmount.toFixed(2)}` },
     { header: 'Balance', render: (r: Invoice) => <span className={r.balanceDue > 0 ? 'text-red-400' : 'text-green-400'}>${r.balanceDue.toFixed(2)}</span> },
-    { header: 'Due Date', render: (r: Invoice) => new Date(r.dueDate).toLocaleDateString() },
+    { header: 'Due Date', render: (r: Invoice) => r.dueAt ? new Date(r.dueAt).toLocaleDateString() : '—' },
   ];
 
   return (

@@ -63,11 +63,15 @@ export class SalaryAdvancesService {
         advanceNumber,
         employeeId: dto.employeeId,
         branchId: employee.branchId ?? '',
-        originalCurrencyCode: dto.currencyCode,
-        originalAmount: dto.amount,
+        originalCurrencyCode: dto.originalCurrencyCode,
+        originalAmount: dto.originalAmount,
+        convertedCurrencyCode: dto.convertedCurrencyCode ?? null,
+        convertedAmount: dto.convertedAmount ?? null,
         reason: dto.reason,
         status: 'PENDING',
-        requestedAt: new Date(dto.requestedDate),
+        deductFromPayroll: dto.deductFromPayroll ?? true,
+        installments: dto.installments ?? 1,
+        notes: dto.notes ?? null,
       },
     });
     await this.audit.log({ userId, action: 'CREATE', entityType: 'salary_advance', entityId: advance.id });

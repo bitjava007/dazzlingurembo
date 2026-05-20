@@ -28,12 +28,12 @@ export default function PurchaseOrdersPage() {
   });
 
   const columns = [
-    { header: 'PO #', accessor: 'number' as keyof PurchaseOrder },
+    { header: 'PO #', accessor: 'poNumber' as keyof PurchaseOrder },
     { header: 'Supplier', render: (r: PurchaseOrder) => r.supplier?.name ?? '—' },
     { header: 'Status', render: (r: PurchaseOrder) => <StatusBadge status={r.status} /> },
-    { header: 'Items', render: (r: PurchaseOrder) => r.items.length },
-    { header: 'Total', render: (r: PurchaseOrder) => `$${r.totalAmount.toFixed(2)}` },
-    { header: 'Expected', render: (r: PurchaseOrder) => r.expectedDeliveryDate ? new Date(r.expectedDeliveryDate).toLocaleDateString() : '—' },
+    { header: 'Items', render: (r: PurchaseOrder) => r.items?.length ?? 0 },
+    { header: 'Total', render: (r: PurchaseOrder) => `$${(r.totalAmount ?? 0).toFixed(2)}` },
+    { header: 'Expected', render: (r: PurchaseOrder) => r.expectedDeliveryAt ? new Date(r.expectedDeliveryAt).toLocaleDateString() : '—' },
     { header: 'Date', render: (r: PurchaseOrder) => new Date(r.createdAt).toLocaleDateString() },
     {
       header: 'Actions', render: (r: PurchaseOrder) => r.status === 'DRAFT' ? (

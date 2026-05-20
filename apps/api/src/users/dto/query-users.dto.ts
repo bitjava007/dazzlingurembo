@@ -33,4 +33,9 @@ export class QueryUsersDto {
   @IsOptional()
   @IsString()
   countryId?: string;
+
+  @ApiPropertyOptional({ description: 'Search by name or email' })
+  @IsOptional()
+  @IsString()
+  search?: string;
 }

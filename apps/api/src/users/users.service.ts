@@ -44,15 +44,24 @@ export class UsersService {
   ) {}
 
   async findAll(query: QueryUsersDto) {
-    const { page = 1, limit = 20, status, branchId, countryId } = query;
+    const { page = 1, limit = 20, status, branchId, countryId, search } = query;
     const skip = (page - 1) * limit;
 
-    const where = {
+    const where: Record<string, unknown> = {
       deletedAt: null,
       ...(status ? { status } : {}),
       ...(branchId ? { branchId } : {}),
       ...(countryId ? { countryId } : {}),
     };
+
+    if (search && search.trim()) {
+      const term = search.trim();
+      where['OR'] = [
+        { firstName: { contains: term, mode: 'insensitive' } },
+        { lastName: { contains: term, mode: 'insensitive' } },
+        { email: { contains: term, mode: 'insensitive' } },
+      ];
+    }
 
     const [users, total] = await Promise.all([
       this.prisma.user.findMany({
@@ -60,13 +69,27 @@ export class UsersService {
         skip,
         take: limit,
         orderBy: { createdAt: 'desc' },
-        select: USER_SELECT,
+        select: {
+          ...USER_SELECT,
+          userRoles: {
+            where: {
+              OR: [{ expiresAt: null }, { expiresAt: { gt: new Date() } }],
+            },
+            include: {
+              role: { select: { id: true, name: true, description: true, isSystem: true } },
+            },
+          },
+          branch: { select: { id: true, name: true, code: true } },
+        },
       }),
       this.prisma.user.count({ where }),
     ]);
 
     return {
-      data: users,
+      data: users.map((u) => ({
+        ...u,
+        roles: (u as typeof u & { userRoles?: Array<{ role: unknown }> }).userRoles?.map((ur) => ur.role) ?? [],
+      })),
       meta: {
         total,
         page,

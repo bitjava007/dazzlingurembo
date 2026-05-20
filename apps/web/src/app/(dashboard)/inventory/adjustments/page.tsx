@@ -30,7 +30,7 @@ export default function AdjustmentsPage() {
 
   const columns = [
     { header: 'Warehouse', render: (r: StockAdjustment) => r.warehouse?.name ?? '—' },
-    { header: 'Items', render: (r: StockAdjustment) => r.items.length },
+    { header: 'Items', render: (r: StockAdjustment) => r.items?.length ?? 0 },
     { header: 'Status', render: (r: StockAdjustment) => <StatusBadge status={r.status} /> },
     { header: 'Notes', render: (r: StockAdjustment) => r.notes ?? '—' },
     { header: 'Date', render: (r: StockAdjustment) => new Date(r.createdAt).toLocaleDateString() },

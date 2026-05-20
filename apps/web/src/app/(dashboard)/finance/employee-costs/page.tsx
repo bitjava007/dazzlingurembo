@@ -51,7 +51,7 @@ export default function EmployeeCostsPage() {
 
   const totalGross = payrolls.reduce((s, p) => s + Number(p.grossPay), 0);
   const totalNet = payrolls.reduce((s, p) => s + Number(p.netPay), 0);
-  const totalAdvances = advances.filter((a) => a.status === 'DISBURSED').reduce((s, a) => s + Number(a.amount), 0);
+  const totalAdvances = advances.filter((a) => a.status === 'DISBURSED').reduce((s, a) => s + Number(a.originalAmount), 0);
   const headcount = new Set(payrolls.map((p) => p.employeeId)).size;
 
   const fmt = (n: number) => new Intl.NumberFormat('fr-FR', { maximumFractionDigits: 0 }).format(n);
@@ -163,10 +163,10 @@ export default function EmployeeCostsPage() {
               ) : advances.map((adv) => (
                 <tr key={adv.id} className="border-b border-[#2A2A2A] hover:bg-[#1A1A1A]">
                   <td className="px-4 py-3 text-white font-mono text-xs">{adv.employeeId.slice(0, 8)}...</td>
-                  <td className="px-4 py-3 text-right text-[#C9A84C]">{fmt(Number(adv.amount))}</td>
-                  <td className="px-4 py-3 text-gray-400">{adv.currencyCode}</td>
+                  <td className="px-4 py-3 text-right text-[#C9A84C]">{fmt(Number(adv.originalAmount))}</td>
+                  <td className="px-4 py-3 text-gray-400">{adv.originalCurrencyCode}</td>
                   <td className="px-4 py-3 text-gray-400 text-xs">{adv.status}</td>
-                  <td className="px-4 py-3 text-gray-400 text-xs">{new Date(adv.requestedDate).toLocaleDateString()}</td>
+                  <td className="px-4 py-3 text-gray-400 text-xs">{new Date(adv.requestedAt).toLocaleDateString()}</td>
                 </tr>
               ))}
             </tbody>

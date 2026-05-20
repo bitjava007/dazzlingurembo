@@ -21,9 +21,8 @@ import { CheckCircle, XCircle, RefreshCw } from 'lucide-react';
 const schema = z.object({
   employeeId: z.string().min(1, 'Employee ID is required'),
   amount: z.string().min(1, 'Amount is required'),
-  currencyCode: z.enum(['XOF', 'USD']),
+  currencyCode: z.enum(['XOF', 'USD', 'EUR']),
   reason: z.string().min(1, 'Reason is required'),
-  requestedDate: z.string().min(1, 'Requested date is required'),
 });
 type FormData = z.infer<typeof schema>;
 
@@ -50,10 +49,9 @@ export default function SalaryAdvancesPage() {
   const createM = useMutation({
     mutationFn: (d: FormData) => hrService.createSalaryAdvance({
       employeeId: d.employeeId,
-      amount: parseFloat(d.amount),
-      currencyCode: d.currencyCode,
+      originalAmount: parseFloat(d.amount),
+      originalCurrencyCode: d.currencyCode,
       reason: d.reason,
-      requestedDate: d.requestedDate,
     }),
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ['salary-advances'] });
@@ -86,11 +84,11 @@ export default function SalaryAdvancesPage() {
 
   const columns = [
     { header: 'Employee ID', render: (r: SalaryAdvance) => r.employeeId ?? '—' },
-    { header: 'Amount', render: (r: SalaryAdvance) => r.amount?.toFixed(2) ?? '—' },
-    { header: 'Currency', accessor: 'currencyCode' as keyof SalaryAdvance },
+    { header: 'Amount', render: (r: SalaryAdvance) => r.originalAmount?.toFixed(2) ?? '—' },
+    { header: 'Currency', render: (r: SalaryAdvance) => r.originalCurrencyCode ?? '—' },
     { header: 'Reason', accessor: 'reason' as keyof SalaryAdvance },
     { header: 'Status', render: (r: SalaryAdvance) => <StatusBadge status={r.status} /> },
-    { header: 'Requested Date', render: (r: SalaryAdvance) => new Date(r.requestedDate).toLocaleDateString() },
+    { header: 'Requested', render: (r: SalaryAdvance) => new Date(r.requestedAt).toLocaleDateString() },
     {
       header: 'Actions',
       render: (r: SalaryAdvance) => (
@@ -146,11 +144,6 @@ export default function SalaryAdvancesPage() {
             <Label className="text-gray-300">Reason</Label>
             <Input {...register('reason')} className="bg-[#111111] border-[#2A2A2A] text-white" />
             {errors.reason && <p className="text-red-400 text-xs">{errors.reason.message}</p>}
-          </div>
-          <div className="space-y-1">
-            <Label className="text-gray-300">Requested Date</Label>
-            <Input type="date" {...register('requestedDate')} className="bg-[#111111] border-[#2A2A2A] text-white" />
-            {errors.requestedDate && <p className="text-red-400 text-xs">{errors.requestedDate.message}</p>}
           </div>
           <div className="flex justify-end gap-2 pt-2">
             <Button type="button" variant="ghost" onClick={() => setModalOpen(false)} className="text-gray-400">Cancel</Button>

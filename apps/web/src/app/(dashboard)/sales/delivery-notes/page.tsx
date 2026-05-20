@@ -54,7 +54,7 @@ export default function DeliveryNotesPage() {
 
   const columns = [
     { header: 'Delivery #', accessor: 'deliveryNumber' as keyof DeliveryNote },
-    { header: 'Order', render: (r: DeliveryNote) => r.order?.number ?? r.orderId },
+    { header: 'Order', render: (r: DeliveryNote) => r.order?.orderNumber ?? r.orderId },
     { header: 'Branch', render: (r: DeliveryNote) => r.branch?.name ?? '—' },
     { header: 'Status', render: (r: DeliveryNote) => <StatusBadge status={r.status} /> },
     { header: 'Notes', render: (r: DeliveryNote) => r.notes ?? '—' },

@@ -29,7 +29,7 @@ export default function QuotationsPage() {
   });
 
   const columns = [
-    { header: 'Number', accessor: 'number' as keyof Quotation },
+    { header: 'Number', accessor: 'quotationNumber' as keyof Quotation },
     { header: 'Customer', render: (r: Quotation) => r.customer ? `${r.customer.firstName} ${r.customer.lastName}` : '—' },
     { header: 'Status', render: (r: Quotation) => <StatusBadge status={r.status} /> },
     { header: 'Total', render: (r: Quotation) => `$${r.totalAmount.toFixed(2)}` },

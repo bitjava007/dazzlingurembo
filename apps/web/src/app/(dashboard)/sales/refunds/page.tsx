@@ -65,7 +65,7 @@ export default function RefundsPage() {
 
   const columns = [
     { header: 'Refund #', accessor: 'refundNumber' as keyof Refund },
-    { header: 'Order', render: (r: Refund) => r.order?.number ?? r.orderId ?? '—' },
+    { header: 'Order', render: (r: Refund) => r.order?.orderNumber ?? r.orderId ?? '—' },
     { header: 'Customer', render: (r: Refund) => r.customer ? `${r.customer.firstName} ${r.customer.lastName}` : '—' },
     { header: 'Amount', render: (r: Refund) => `${r.originalCurrencyCode} ${r.originalAmount.toLocaleString()}` },
     { header: 'Reason', render: (r: Refund) => r.reason },

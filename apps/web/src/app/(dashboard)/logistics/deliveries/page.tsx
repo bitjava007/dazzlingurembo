@@ -37,7 +37,7 @@ export default function DeliveriesPage() {
   });
 
   const columns = [
-    { header: 'Order #', render: (r: Delivery) => r.order?.number ?? '—' },
+    { header: 'Order #', render: (r: Delivery) => r.order?.orderNumber ?? '—' },
     { header: 'Status', render: (r: Delivery) => <StatusBadge status={r.status} /> },
     { header: 'Driver', render: (r: Delivery) => r.driverName ?? '—' },
     { header: 'Vehicle', render: (r: Delivery) => r.vehicleNumber ?? '—' },

@@ -1,14 +1,28 @@
+export interface UserRole {
+  id: string;
+  userId: string;
+  roleId: string;
+  branchId?: string;
+  assignedBy?: string;
+  expiresAt?: string;
+  role: Role;
+}
+
 export interface User {
   id: string;
   firstName: string;
   lastName: string;
   email: string;
   phone?: string;
-  status: 'ACTIVE' | 'INACTIVE' | 'SUSPENDED';
-  roles: Role[];
+  avatarUrl?: string;
+  status: 'ACTIVE' | 'INACTIVE' | 'SUSPENDED' | 'PENDING_VERIFICATION';
+  roles?: Role[];
+  userRoles?: UserRole[];
   branchId?: string;
   branch?: Branch;
   countryId?: string;
+  mustChangePassword?: boolean;
+  lastLoginAt?: string;
   createdAt: string;
   updatedAt: string;
 }
@@ -86,39 +100,52 @@ export interface Variant {
 
 export interface StockBalance {
   id: string;
-  variantId: string;
+  productId?: string;
+  product?: Product & { reorderPoint?: number; minStockLevel?: number; trackInventory?: boolean };
+  variantId?: string;
   variant?: Variant;
   warehouseId: string;
   warehouse?: Warehouse;
-  quantity: number;
-  reservedQuantity: number;
-  availableQuantity: number;
-  reorderPoint?: number;
+  branchId?: string;
+  branch?: Branch;
+  quantityOnHand: number;
+  quantityReserved: number;
+  quantityOnOrder?: number;
+  quantityAvailable: number;
   updatedAt: string;
 }
 
 export interface StockMovement {
   id: string;
-  type: 'IN' | 'OUT' | 'TRANSFER' | 'ADJUSTMENT';
+  movementType: string;
   variantId: string;
   variant?: Variant;
   warehouseId: string;
   warehouse?: Warehouse;
-  quantity: number;
-  reason?: string;
+  quantityChange: number;
+  quantityBefore?: number;
+  quantityAfter?: number;
+  unitCost?: number;
+  referenceType?: string;
   referenceId?: string;
+  notes?: string;
   createdAt: string;
 }
 
 export interface StockTransfer {
   id: string;
+  transferNumber: string;
   fromWarehouseId: string;
   fromWarehouse?: Warehouse;
   toWarehouseId: string;
   toWarehouse?: Warehouse;
-  status: 'PENDING' | 'IN_TRANSIT' | 'COMPLETED' | 'CANCELLED';
+  fromBranchId?: string;
+  toBranchId?: string;
+  status: 'DRAFT' | 'IN_TRANSIT' | 'PARTIALLY_RECEIVED' | 'RECEIVED' | 'CANCELLED';
   items: StockTransferItem[];
   notes?: string;
+  createdById?: string;
+  approvedById?: string;
   createdAt: string;
   updatedAt: string;
 }
@@ -133,12 +160,18 @@ export interface StockTransferItem {
 
 export interface StockAdjustment {
   id: string;
+  adjustmentNumber: string;
   warehouseId: string;
   warehouse?: Warehouse;
-  status: 'PENDING' | 'APPROVED' | 'REJECTED';
+  branchId?: string;
+  branch?: Branch;
+  status: 'DRAFT' | 'PENDING' | 'APPROVED' | 'REJECTED';
+  reason: string;
   notes?: string;
-  items: StockAdjustmentItem[];
+  items?: StockAdjustmentItem[];
   approvedById?: string;
+  approvedAt?: string;
+  createdById?: string;
   createdAt: string;
   updatedAt: string;
 }
@@ -183,16 +216,19 @@ export interface Workshop {
 
 export interface Quotation {
   id: string;
-  number: string;
-  customerId: string;
+  quotationNumber: string;
+  customerId?: string;
   customer?: Customer;
-  status: 'DRAFT' | 'SENT' | 'ACCEPTED' | 'REJECTED' | 'EXPIRED';
+  branchId?: string;
+  branch?: Branch;
+  status: 'DRAFT' | 'SENT' | 'VIEWED' | 'ACCEPTED' | 'REJECTED' | 'EXPIRED' | 'CONVERTED';
   validUntil?: string;
   items: QuotationItem[];
   subtotal: number;
   taxAmount: number;
   discountAmount: number;
   totalAmount: number;
+  currencyCode?: string;
   notes?: string;
   createdAt: string;
   updatedAt: string;
@@ -211,19 +247,20 @@ export interface QuotationItem {
 
 export interface Order {
   id: string;
-  number: string;
-  customerId: string;
+  orderNumber: string;
+  customerId?: string;
   customer?: Customer;
-  branchId?: string;
+  branchId: string;
   branch?: Branch;
-  status: 'PENDING' | 'CONFIRMED' | 'PROCESSING' | 'SHIPPED' | 'DELIVERED' | 'CANCELLED';
-  items: OrderItem[];
+  currencyCode?: string;
+  status: 'DRAFT' | 'CONFIRMED' | 'PROCESSING' | 'PARTIALLY_SHIPPED' | 'SHIPPED' | 'DELIVERED' | 'CANCELLED' | 'RETURNED' | 'REFUNDED';
+  items?: OrderItem[];
   subtotal: number;
   taxAmount: number;
   discountAmount: number;
+  shippingAmount?: number;
   totalAmount: number;
   notes?: string;
-  deliveryId?: string;
   createdAt: string;
   updatedAt: string;
 }
@@ -241,30 +278,42 @@ export interface OrderItem {
 
 export interface Invoice {
   id: string;
-  number: string;
-  orderId: string;
+  invoiceNumber: string;
+  orderId?: string;
   order?: Order;
-  customerId: string;
+  customerId?: string;
   customer?: Customer;
-  branchId?: string;
+  branchId: string;
   branch?: Branch;
-  status: 'DRAFT' | 'SENT' | 'PARTIAL' | 'PAID' | 'OVERDUE' | 'CANCELLED';
-  dueDate: string;
+  currencyCode?: string;
+  status: 'DRAFT' | 'ISSUED' | 'PARTIALLY_PAID' | 'PAID' | 'OVERDUE' | 'VOID' | 'WRITTEN_OFF';
+  subtotal?: number;
+  discountAmount?: number;
+  taxAmount?: number;
   totalAmount: number;
   paidAmount: number;
   balanceDue: number;
+  dueAt?: string;
+  issuedAt?: string;
+  paidAt?: string;
+  notes?: string;
+  payments?: Payment[];
   createdAt: string;
   updatedAt: string;
 }
 
 export interface Payment {
   id: string;
-  invoiceId: string;
+  paymentNumber?: string;
+  invoiceId?: string;
   invoice?: Invoice;
-  amount: number;
-  method: 'CASH' | 'BANK_TRANSFER' | 'CARD' | 'MOBILE_MONEY' | 'OTHER';
+  orderId?: string;
+  branchId?: string;
+  originalAmount: number;
+  originalCurrencyCode?: string;
+  method: string;
   reference?: string;
-  status: 'PENDING' | 'COMPLETED' | 'FAILED' | 'REFUNDED';
+  status: 'PENDING' | 'PROCESSING' | 'COMPLETED' | 'FAILED' | 'REFUNDED' | 'PARTIALLY_REFUNDED';
   paidAt?: string;
   createdAt: string;
   updatedAt: string;
@@ -381,15 +430,18 @@ export interface Supplier {
 
 export interface PurchaseOrder {
   id: string;
-  number: string;
+  poNumber: string;
   supplierId: string;
   supplier?: Supplier;
-  status: 'DRAFT' | 'SENT' | 'CONFIRMED' | 'RECEIVED' | 'CANCELLED';
-  items: PurchaseOrderItem[];
-  subtotal: number;
-  taxAmount: number;
-  totalAmount: number;
-  expectedDeliveryDate?: string;
+  branchId?: string;
+  branch?: Branch;
+  status: 'DRAFT' | 'SENT' | 'ACKNOWLEDGED' | 'PARTIALLY_RECEIVED' | 'RECEIVED' | 'CANCELLED';
+  items?: PurchaseOrderItem[];
+  subtotal?: number;
+  taxAmount?: number;
+  totalAmount?: number;
+  currencyCode?: string;
+  expectedDeliveryAt?: string;
   notes?: string;
   createdAt: string;
   updatedAt: string;
@@ -408,27 +460,35 @@ export interface PurchaseOrderItem {
 
 export interface SupplierInvoice {
   id: string;
-  number: string;
+  invoiceNumber: string;
   supplierId: string;
   supplier?: Supplier;
   purchaseOrderId?: string;
-  status: 'PENDING' | 'APPROVED' | 'PAID' | 'OVERDUE';
-  totalAmount: number;
-  paidAmount: number;
+  branchId?: string;
+  status: 'PENDING' | 'APPROVED' | 'PAID' | 'OVERDUE' | 'DISPUTED';
+  originalAmount: number;
+  originalCurrencyCode?: string;
+  paidAmount?: number;
   dueDate: string;
+  notes?: string;
   createdAt: string;
   updatedAt: string;
 }
 
 export interface WorkOrder {
   id: string;
-  number: string;
+  workOrderNumber: string;
   productId?: string;
   product?: Product;
-  status: 'DRAFT' | 'IN_PROGRESS' | 'COMPLETED' | 'CANCELLED';
+  variantId?: string;
+  workshopId?: string;
+  workshop?: Workshop;
+  status: 'DRAFT' | 'IN_PROGRESS' | 'PAUSED' | 'COMPLETED' | 'CANCELLED';
   quantity: number;
+  quantityCompleted?: number;
   startDate?: string;
-  endDate?: string;
+  dueDate?: string;
+  completedAt?: string;
   stages?: WorkOrderStage[];
   notes?: string;
   createdAt: string;
@@ -902,12 +962,12 @@ export interface SalaryAdvance {
   id: string;
   employeeId: string;
   employee?: Employee;
-  amount: number;
-  currencyCode: string;
+  originalAmount: number;
+  originalCurrencyCode: string;
   reason: string;
-  requestedDate: string;
+  requestedAt: string;
   repaymentDate?: string;
-  status: string;
+  status: 'PENDING' | 'APPROVED' | 'DISBURSED' | 'REPAID' | 'REJECTED' | 'CANCELLED';
   approvedById?: string;
   approvedAt?: string;
   rejectionReason?: string;

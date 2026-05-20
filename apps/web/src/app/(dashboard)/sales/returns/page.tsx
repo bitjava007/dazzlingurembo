@@ -63,7 +63,7 @@ export default function ReturnsPage() {
 
   const columns = [
     { header: 'Return #', accessor: 'returnNumber' as keyof Return },
-    { header: 'Order', render: (r: Return) => r.order?.number ?? r.orderId ?? '—' },
+    { header: 'Order', render: (r: Return) => r.order?.orderNumber ?? r.orderId ?? '—' },
     { header: 'Customer', render: (r: Return) => r.customer ? `${r.customer.firstName} ${r.customer.lastName}` : '—' },
     { header: 'Reason', render: (r: Return) => r.reason },
     { header: 'Items', render: (r: Return) => r.items.length },

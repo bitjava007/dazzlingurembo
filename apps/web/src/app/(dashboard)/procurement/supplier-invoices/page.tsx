@@ -55,11 +55,11 @@ export default function SupplierInvoicesPage() {
   });
 
   const columns = [
-    { header: 'Invoice #', accessor: 'number' as keyof SupplierInvoice },
+    { header: 'Invoice #', accessor: 'invoiceNumber' as keyof SupplierInvoice },
     { header: 'Supplier', render: (r: SupplierInvoice) => r.supplier?.name ?? '—' },
     { header: 'Status', render: (r: SupplierInvoice) => <StatusBadge status={r.status} /> },
-    { header: 'Total', render: (r: SupplierInvoice) => `$${r.totalAmount.toFixed(2)}` },
-    { header: 'Paid', render: (r: SupplierInvoice) => `$${r.paidAmount.toFixed(2)}` },
+    { header: 'Total', render: (r: SupplierInvoice) => `$${r.originalAmount.toFixed(2)}` },
+    { header: 'Paid', render: (r: SupplierInvoice) => `$${(r.paidAmount ?? 0).toFixed(2)}` },
     { header: 'Due Date', render: (r: SupplierInvoice) => new Date(r.dueDate).toLocaleDateString() },
     {
       header: 'Actions', render: (r: SupplierInvoice) => r.status === 'PENDING' || r.status === 'APPROVED' ? (

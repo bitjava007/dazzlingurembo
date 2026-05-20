@@ -41,7 +41,7 @@ export default function GoodsReceiptsPage() {
   });
 
   const columns = [
-    { header: 'Purchase Order', render: (r: GoodsReceipt) => r.purchaseOrder?.number ?? r.purchaseOrderId },
+    { header: 'Purchase Order', render: (r: GoodsReceipt) => r.purchaseOrder?.poNumber ?? r.purchaseOrderId },
     { header: 'Branch', render: (r: GoodsReceipt) => r.branchId },
     { header: 'Items', render: (r: GoodsReceipt) => r.items?.length ?? 0 },
     { header: 'Notes', render: (r: GoodsReceipt) => r.notes ?? '—' },

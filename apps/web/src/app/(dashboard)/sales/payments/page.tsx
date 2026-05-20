@@ -20,8 +20,8 @@ export default function PaymentsPage() {
   });
 
   const columns = [
-    { header: 'Invoice #', render: (r: Payment) => r.invoice?.number ?? '—' },
-    { header: 'Amount', render: (r: Payment) => `$${r.amount.toFixed(2)}` },
+    { header: 'Invoice #', render: (r: Payment) => r.invoice?.invoiceNumber ?? '—' },
+    { header: 'Amount', render: (r: Payment) => `$${r.originalAmount.toFixed(2)}` },
     { header: 'Method', render: (r: Payment) => r.method.replace(/_/g, ' ') },
     { header: 'Reference', render: (r: Payment) => r.reference ?? '—' },
     { header: 'Status', render: (r: Payment) => <StatusBadge status={r.status} /> },

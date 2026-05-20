@@ -23,17 +23,20 @@ export default function StockPage() {
     { header: 'SKU', render: (r: StockBalance) => r.variant?.sku ?? '—' },
     { header: 'Variant', render: (r: StockBalance) => r.variant?.name ?? '—' },
     { header: 'Warehouse', render: (r: StockBalance) => r.warehouse?.name ?? '—' },
-    { header: 'Quantity', render: (r: StockBalance) => r.quantity },
-    { header: 'Reserved', render: (r: StockBalance) => r.reservedQuantity },
+    { header: 'On Hand', render: (r: StockBalance) => r.quantityOnHand },
+    { header: 'Reserved', render: (r: StockBalance) => r.quantityReserved },
     {
       header: 'Available',
-      render: (r: StockBalance) => (
-        <span className={r.availableQuantity <= (r.reorderPoint ?? 10) ? 'text-red-400 font-medium' : 'text-green-400'}>
-          {r.availableQuantity}
-        </span>
-      ),
+      render: (r: StockBalance) => {
+        const reorderPt = r.product?.reorderPoint ?? 10;
+        return (
+          <span className={r.quantityAvailable <= reorderPt ? 'text-red-400 font-medium' : 'text-green-400'}>
+            {r.quantityAvailable}
+          </span>
+        );
+      },
     },
-    { header: 'Reorder Point', render: (r: StockBalance) => r.reorderPoint ?? '—' },
+    { header: 'Reorder Point', render: (r: StockBalance) => r.product?.reorderPoint ?? '—' },
   ];
 
   return (

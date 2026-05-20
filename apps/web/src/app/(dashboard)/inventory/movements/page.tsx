@@ -20,12 +20,12 @@ export default function MovementsPage() {
   });
 
   const columns = [
-    { header: 'Type', render: (r: StockMovement) => <StatusBadge status={r.type} /> },
+    { header: 'Type', render: (r: StockMovement) => <StatusBadge status={r.movementType} /> },
     { header: 'SKU', render: (r: StockMovement) => r.variant?.sku ?? '—' },
     { header: 'Variant', render: (r: StockMovement) => r.variant?.name ?? '—' },
     { header: 'Warehouse', render: (r: StockMovement) => r.warehouse?.name ?? '—' },
-    { header: 'Quantity', render: (r: StockMovement) => r.quantity },
-    { header: 'Reason', render: (r: StockMovement) => r.reason ?? '—' },
+    { header: 'Quantity', render: (r: StockMovement) => r.quantityChange },
+    { header: 'Notes', render: (r: StockMovement) => r.notes ?? '—' },
     { header: 'Date', render: (r: StockMovement) => new Date(r.createdAt).toLocaleDateString() },
   ];
 

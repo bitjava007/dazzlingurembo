@@ -49,12 +49,12 @@ export default function WorkOrdersPage() {
   });
 
   const columns = [
-    { header: 'WO #', accessor: 'number' as keyof WorkOrder },
+    { header: 'WO #', accessor: 'workOrderNumber' as keyof WorkOrder },
     { header: 'Product', render: (r: WorkOrder) => r.product?.name ?? '—' },
     { header: 'Quantity', accessor: 'quantity' as keyof WorkOrder },
     { header: 'Status', render: (r: WorkOrder) => <StatusBadge status={r.status} /> },
     { header: 'Start Date', render: (r: WorkOrder) => r.startDate ? new Date(r.startDate).toLocaleDateString() : '—' },
-    { header: 'End Date', render: (r: WorkOrder) => r.endDate ? new Date(r.endDate).toLocaleDateString() : '—' },
+    { header: 'End Date', render: (r: WorkOrder) => r.dueDate ? new Date(r.dueDate).toLocaleDateString() : '—' },
     {
       header: 'Actions', render: (r: WorkOrder) => r.status === 'DRAFT' ? (
         <Button variant="ghost" size="sm" className="h-7 text-[#C9A84C]" onClick={() => statusM.mutate({ id: r.id, status: 'IN_PROGRESS' })}>Start</Button>

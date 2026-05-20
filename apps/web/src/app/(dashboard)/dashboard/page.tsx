@@ -41,10 +41,10 @@ export default function DashboardPage() {
     queryFn: () => api.get('/crm/customers?limit=1').then((r) => r.data),
   });
 
-  // KPI: pending orders count
+  // KPI: pending orders count (DRAFT = not yet confirmed)
   const { data: pendingOrdersData } = useQuery({
     queryKey: ['dashboard', 'pending-orders'],
-    queryFn: () => api.get('/sales/orders?status=PENDING&limit=1').then((r) => r.data),
+    queryFn: () => api.get('/sales/orders?status=DRAFT&limit=1').then((r) => r.data),
   });
 
   // KPI: active work orders
@@ -135,7 +135,7 @@ export default function DashboardPage() {
   const branchStats = useMemo(() =>
     branches.map((b) => {
       const revenue = invoices.filter((i) => i.branchId === b.id).reduce((s, i) => s + (i.paidAmount ?? 0), 0);
-      const cost = expenses.filter((e) => e.branchId === b.id).reduce((s, e) => s + (e.amount ?? 0), 0);
+      const cost = expenses.filter((e) => e.branchId === b.id).reduce((s, e) => s + (e.originalAmount ?? 0), 0);
       return { branch: b.name, revenue, expenses: cost, profit: revenue - cost };
     }),
     [branches, invoices, expenses],
@@ -144,7 +144,7 @@ export default function DashboardPage() {
   // ── table columns ───────────────────────────────────────────────────────────
 
   const orderColumns = [
-    { header: 'Order #', accessor: 'number' as keyof Order },
+    { header: 'Order #', accessor: 'orderNumber' as keyof Order },
     {
       header: 'Customer',
       render: (row: Order) => row.customer ? `${row.customer.firstName} ${row.customer.lastName}` : '—',
@@ -159,10 +159,10 @@ export default function DashboardPage() {
     {
       header: 'Available',
       render: (row: StockBalance) => (
-        <span className="text-red-400 font-medium">{row.availableQuantity}</span>
+        <span className="text-red-400 font-medium">{row.quantityAvailable}</span>
       ),
     },
-    { header: 'Reorder Point', render: (row: StockBalance) => row.reorderPoint ?? '—' },
+    { header: 'Reorder Point', render: (row: StockBalance) => row.product?.reorderPoint ?? '—' },
   ];
 
   // ── render ──────────────────────────────────────────────────────────────────

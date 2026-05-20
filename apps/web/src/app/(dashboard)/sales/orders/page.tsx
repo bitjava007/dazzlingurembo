@@ -20,10 +20,10 @@ export default function OrdersPage() {
   });
 
   const columns = [
-    { header: 'Order #', accessor: 'number' as keyof Order },
+    { header: 'Order #', accessor: 'orderNumber' as keyof Order },
     { header: 'Customer', render: (r: Order) => r.customer ? `${r.customer.firstName} ${r.customer.lastName}` : '—' },
     { header: 'Status', render: (r: Order) => <StatusBadge status={r.status} /> },
-    { header: 'Items', render: (r: Order) => r.items.length },
+    { header: 'Items', render: (r: Order) => r.items?.length ?? 0 },
     { header: 'Total', render: (r: Order) => `$${r.totalAmount.toFixed(2)}` },
     { header: 'Date', render: (r: Order) => new Date(r.createdAt).toLocaleDateString() },
   ];
