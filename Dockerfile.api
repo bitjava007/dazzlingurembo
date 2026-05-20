@@ -3,14 +3,12 @@ FROM node:20-alpine AS deps
 RUN apk add --no-cache libc6-compat openssl
 WORKDIR /app
 
-# Copy workspace manifests
 COPY package.json package-lock.json* ./
 COPY apps/api/package.json ./apps/api/
 COPY packages/types/package.json ./packages/types/
 COPY packages/config/package.json ./packages/config/
 COPY packages/utils/package.json ./packages/utils/
 
-# npm workspaces hoists everything to root node_modules — no per-workspace dir is created
 RUN npm ci --workspace=apps/api --workspace=packages/types --workspace=packages/config --workspace=packages/utils --ignore-scripts
 
 # Stage 2: Builder
@@ -18,23 +16,22 @@ FROM node:20-alpine AS builder
 RUN apk add --no-cache libc6-compat openssl
 WORKDIR /app
 
-# Only root node_modules exists after workspace install
 COPY --from=deps /app/node_modules ./node_modules
 
-# Copy source files
+# Root package.json is required for npm --workspace commands
+COPY package.json package-lock.json* ./
+
 COPY tsconfig.json ./
 COPY packages/types ./packages/types
 COPY packages/config ./packages/config
 COPY packages/utils ./packages/utils
 COPY apps/api ./apps/api
 
-# Build shared packages then API
 RUN npm run build --workspace=packages/types
 RUN npm run build --workspace=packages/config
 RUN npm run build --workspace=packages/utils
 RUN npm run build --workspace=apps/api
 
-# Generate Prisma client into root node_modules/.prisma
 RUN cd apps/api && npx prisma generate
 
 # Stage 3: Production runner
@@ -47,13 +44,8 @@ ENV NODE_ENV=production
 RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 nestjs
 
-# dist/ from the compiled API
 COPY --from=builder --chown=nestjs:nodejs /app/apps/api/dist ./dist
-
-# Root node_modules contains all hoisted deps + generated Prisma client
 COPY --from=builder --chown=nestjs:nodejs /app/node_modules ./node_modules
-
-# Prisma schema needed for migrate deploy at runtime
 COPY --from=builder --chown=nestjs:nodejs /app/apps/api/prisma ./prisma
 
 USER nestjs
