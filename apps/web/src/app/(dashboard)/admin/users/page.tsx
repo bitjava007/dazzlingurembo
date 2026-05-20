@@ -27,15 +27,18 @@ const createSchema = z.object({
   email: z.string().email('Invalid email'),
   password: z.string().min(8, 'Min 8 characters').regex(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/, 'Must contain uppercase, lowercase, and number'),
   phone: z.string().optional(),
-  status: z.enum(['ACTIVE', 'INACTIVE', 'SUSPENDED']).optional(),
+  countryId: z.string().optional(),
+  branchId: z.string().optional(),
 });
 
+// Backend UpdateUserDto: firstName, lastName, phone, countryId only.
+// email cannot be changed via PATCH /users/:id.
+// status is changed via PATCH /users/:id/status (dedicated endpoint).
 const editSchema = z.object({
   firstName: z.string().min(1, 'Required'),
   lastName: z.string().min(1, 'Required'),
-  email: z.string().email('Invalid email'),
   phone: z.string().optional(),
-  status: z.enum(['ACTIVE', 'INACTIVE', 'SUSPENDED']).optional(),
+  countryId: z.string().optional(),
 });
 
 type CreateFormData = z.infer<typeof createSchema>;
@@ -56,12 +59,10 @@ export default function UsersPage() {
   const [selectedBranchId, setSelectedBranchId] = useState('');
 
   const createForm = useForm<CreateFormData>({
-    resolver: zodResolver(createSchema),
-    defaultValues: { status: 'ACTIVE' },
+    resolver: zodResolver(createSchema) as never,
   });
   const editForm = useForm<EditFormData>({
-    resolver: zodResolver(editSchema),
-    defaultValues: { status: 'ACTIVE' },
+    resolver: zodResolver(editSchema) as never,
   });
 
   const { data, isLoading } = useQuery({
@@ -167,7 +168,7 @@ export default function UsersPage() {
 
   const openCreate = () => {
     setEditItem(null);
-    createForm.reset({ status: 'ACTIVE' });
+    createForm.reset();
     setModalOpen(true);
   };
 
@@ -176,9 +177,7 @@ export default function UsersPage() {
     editForm.reset({
       firstName: item.firstName,
       lastName: item.lastName,
-      email: item.email,
       phone: (item as User & { phone?: string }).phone ?? '',
-      status: item.status,
     });
     setModalOpen(true);
   };
@@ -321,15 +320,6 @@ export default function UsersPage() {
             <Label className="text-gray-300">Phone (optional)</Label>
             <Input {...createForm.register('phone')} className="bg-[#111111] border-[#2A2A2A] text-white" />
           </div>
-          <div className="space-y-1">
-            <Label className="text-gray-300">Status</Label>
-            <Select value={createForm.watch('status')} onValueChange={(v) => createForm.setValue('status', v as CreateFormData['status'])}>
-              <SelectTrigger className="bg-[#111111] border-[#2A2A2A] text-white"><SelectValue /></SelectTrigger>
-              <SelectContent className="bg-[#1A1A1A] border-[#2A2A2A]">
-                {['ACTIVE', 'INACTIVE', 'SUSPENDED'].map((s) => <SelectItem key={s} value={s} className="text-white">{s}</SelectItem>)}
-              </SelectContent>
-            </Select>
-          </div>
           <div className="flex justify-end gap-2 pt-2">
             <Button type="button" variant="ghost" onClick={() => setModalOpen(false)} className="text-gray-400">Cancel</Button>
             <Button type="submit" disabled={createM.isPending} className="bg-[#C9A84C] hover:bg-[#D4AF37] text-black font-semibold">Create</Button>
@@ -352,22 +342,8 @@ export default function UsersPage() {
             </div>
           </div>
           <div className="space-y-1">
-            <Label className="text-gray-300">Email</Label>
-            <Input type="email" {...editForm.register('email')} className="bg-[#111111] border-[#2A2A2A] text-white" />
-            {editForm.formState.errors.email && <p className="text-red-400 text-xs">{editForm.formState.errors.email.message}</p>}
-          </div>
-          <div className="space-y-1">
             <Label className="text-gray-300">Phone (optional)</Label>
             <Input {...editForm.register('phone')} className="bg-[#111111] border-[#2A2A2A] text-white" />
-          </div>
-          <div className="space-y-1">
-            <Label className="text-gray-300">Status</Label>
-            <Select value={editForm.watch('status')} onValueChange={(v) => editForm.setValue('status', v as EditFormData['status'])}>
-              <SelectTrigger className="bg-[#111111] border-[#2A2A2A] text-white"><SelectValue /></SelectTrigger>
-              <SelectContent className="bg-[#1A1A1A] border-[#2A2A2A]">
-                {['ACTIVE', 'INACTIVE', 'SUSPENDED'].map((s) => <SelectItem key={s} value={s} className="text-white">{s}</SelectItem>)}
-              </SelectContent>
-            </Select>
           </div>
           <div className="flex justify-end gap-2 pt-2">
             <Button type="button" variant="ghost" onClick={() => setModalOpen(false)} className="text-gray-400">Cancel</Button>

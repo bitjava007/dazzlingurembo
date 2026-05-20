@@ -7,15 +7,15 @@ export interface CreateUserDto {
   firstName: string;
   lastName: string;
   phone?: string;
-  status?: 'ACTIVE' | 'INACTIVE' | 'SUSPENDED';
+  countryId?: string;
+  branchId?: string;
 }
 
 export interface UpdateUserDto {
-  email?: string;
   firstName?: string;
   lastName?: string;
   phone?: string;
-  status?: 'ACTIVE' | 'INACTIVE' | 'SUSPENDED';
+  countryId?: string;
 }
 
 export const usersService = {
