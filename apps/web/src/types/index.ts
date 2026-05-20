@@ -404,25 +404,23 @@ export interface ExchangeRate {
 
 export interface JournalEntry {
   id: string;
-  reference: string;
+  entryNumber: string;
   description: string;
-  date: string;
-  status: 'DRAFT' | 'POSTED' | 'REVERSED';
-  lines: JournalLine[];
-  totalDebit: number;
-  totalCredit: number;
+  entryType: string;
+  branchId: string;
+  branch?: Branch;
+  accountCode?: string;
+  originalCurrencyCode: string;
+  originalAmount: number;
+  convertedCurrencyCode?: string;
+  convertedAmount?: number;
+  referenceType?: string;
+  referenceId?: string;
+  postDate: string;
+  postedById?: string;
+  isVoid: boolean;
   createdAt: string;
   updatedAt: string;
-}
-
-export interface JournalLine {
-  id: string;
-  journalEntryId: string;
-  accountCode: string;
-  accountName: string;
-  debit: number;
-  credit: number;
-  description?: string;
 }
 
 export interface Supplier {

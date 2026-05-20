@@ -20,12 +20,13 @@ export default function JournalPage() {
   });
 
   const columns = [
-    { header: 'Reference', accessor: 'reference' as keyof JournalEntry },
+    { header: 'Entry #', render: (r: JournalEntry) => <span className="font-mono text-xs text-[#C9A84C]">{r.entryNumber}</span> },
     { header: 'Description', accessor: 'description' as keyof JournalEntry },
-    { header: 'Date', render: (r: JournalEntry) => new Date(r.date).toLocaleDateString() },
-    { header: 'Status', render: (r: JournalEntry) => <StatusBadge status={r.status} /> },
-    { header: 'Total Debit', render: (r: JournalEntry) => `$${r.totalDebit.toFixed(2)}` },
-    { header: 'Total Credit', render: (r: JournalEntry) => `$${r.totalCredit.toFixed(2)}` },
+    { header: 'Type', render: (r: JournalEntry) => r.entryType.replace(/_/g, ' ') },
+    { header: 'Amount', render: (r: JournalEntry) => `${Number(r.originalAmount).toFixed(2)} ${r.originalCurrencyCode}` },
+    { header: 'Account', render: (r: JournalEntry) => r.accountCode ?? '—' },
+    { header: 'Date', render: (r: JournalEntry) => new Date(r.postDate).toLocaleDateString() },
+    { header: 'Void', render: (r: JournalEntry) => r.isVoid ? <span className="text-red-400">Yes</span> : <span className="text-gray-500">No</span> },
   ];
 
   return (
