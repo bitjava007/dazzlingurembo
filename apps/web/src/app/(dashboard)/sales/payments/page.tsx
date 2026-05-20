@@ -23,9 +23,9 @@ export default function PaymentsPage() {
     { header: 'Invoice #', render: (r: Payment) => r.invoice?.invoiceNumber ?? '—' },
     { header: 'Amount', render: (r: Payment) => `$${r.originalAmount.toFixed(2)}` },
     { header: 'Method', render: (r: Payment) => r.method.replace(/_/g, ' ') },
-    { header: 'Reference', render: (r: Payment) => r.reference ?? '—' },
+    { header: 'Reference', render: (r: Payment) => r.transactionRef ?? '—' },
     { header: 'Status', render: (r: Payment) => <StatusBadge status={r.status} /> },
-    { header: 'Date', render: (r: Payment) => r.paidAt ? new Date(r.paidAt).toLocaleDateString() : '—' },
+    { header: 'Date', render: (r: Payment) => r.processedAt ? new Date(r.processedAt).toLocaleDateString() : new Date(r.createdAt).toLocaleDateString() },
   ];
 
   return (

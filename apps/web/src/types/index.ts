@@ -324,17 +324,24 @@ export interface Invoice {
 
 export interface Payment {
   id: string;
-  paymentNumber?: string;
+  paymentNumber: string;
   invoiceId?: string;
   invoice?: Invoice;
   orderId?: string;
-  branchId?: string;
-  originalAmount: number;
-  originalCurrencyCode?: string;
+  customerId?: string;
+  branchId: string;
+  branch?: Branch;
   method: string;
-  reference?: string;
   status: 'PENDING' | 'PROCESSING' | 'COMPLETED' | 'FAILED' | 'REFUNDED' | 'PARTIALLY_REFUNDED';
-  paidAt?: string;
+  originalAmount: number;
+  originalCurrencyCode: string;
+  convertedAmount?: number;
+  convertedCurrencyCode?: string;
+  transactionRef?: string;
+  gatewayRef?: string;
+  processedAt?: string;
+  notes?: string;
+  receivedById?: string;
   createdAt: string;
   updatedAt: string;
 }
@@ -521,7 +528,7 @@ export interface WorkOrder {
   workshopId?: string;
   workshop?: Workshop;
   branchId?: string;
-  status: 'DRAFT' | 'IN_PROGRESS' | 'PAUSED' | 'COMPLETED' | 'CANCELLED';
+  status: 'DRAFT' | 'SCHEDULED' | 'IN_PROGRESS' | 'PAUSED' | 'COMPLETED' | 'CANCELLED';
   plannedQuantity?: number;
   completedQuantity?: number;
   scheduledStartAt?: string;
