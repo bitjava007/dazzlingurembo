@@ -488,12 +488,16 @@ export interface SupplierInvoice {
   purchaseOrderId?: string;
   branchId?: string;
   branch?: Branch;
-  status: 'PENDING' | 'APPROVED' | 'COMPLETED' | 'CANCELLED';
+  status: 'PENDING' | 'PROCESSING' | 'COMPLETED' | 'FAILED' | 'REFUNDED';
   originalAmount: number;
   originalCurrencyCode?: string;
+  convertedAmount?: number;
+  convertedCurrencyCode?: string;
   method?: string;
+  transactionRef?: string;
   paidAt?: string;
   notes?: string;
+  processedById?: string;
   createdAt: string;
   updatedAt: string;
 }
@@ -729,12 +733,17 @@ export interface Return {
   customer?: Customer;
   branchId: string;
   branch?: Branch;
-  status: 'PENDING' | 'APPROVED' | 'REJECTED' | 'COMPLETED';
+  status: 'REQUESTED' | 'APPROVED' | 'RECEIVED' | 'INSPECTED' | 'REFUND_ISSUED' | 'REJECTED';
   reason: string;
   description?: string;
+  requestedAt: string;
+  approvedAt?: string;
+  receivedAt?: string;
+  inspectedAt?: string;
+  resolvedAt?: string;
   resolutionType?: string;
   notes?: string;
-  items: ReturnItem[];
+  items?: ReturnItem[];
   createdAt: string;
   updatedAt: string;
 }

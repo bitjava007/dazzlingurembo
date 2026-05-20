@@ -66,14 +66,14 @@ export default function ReturnsPage() {
     { header: 'Order', render: (r: Return) => r.order?.orderNumber ?? r.orderId ?? '—' },
     { header: 'Customer', render: (r: Return) => r.customer ? `${r.customer.firstName} ${r.customer.lastName}` : '—' },
     { header: 'Reason', render: (r: Return) => r.reason },
-    { header: 'Items', render: (r: Return) => r.items.length },
+    { header: 'Items', render: (r: Return) => r.items?.length ?? 0 },
     { header: 'Status', render: (r: Return) => <StatusBadge status={r.status} /> },
     { header: 'Date', render: (r: Return) => new Date(r.createdAt).toLocaleDateString() },
     {
       header: 'Actions',
       render: (r: Return) => (
         <div className="flex gap-1">
-          {r.status === 'PENDING' && (
+          {r.status === 'REQUESTED' && (
             <>
               <Button variant="ghost" size="sm" className="h-7 text-green-400 hover:text-green-300 px-2" onClick={() => approveMutation.mutate(r.id)} disabled={approveMutation.isPending}>
                 <CheckCircle className="h-3 w-3 mr-1" />Approve
