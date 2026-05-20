@@ -88,7 +88,7 @@ export default function NotificationsPage() {
     setValue('code', t.code);
     setValue('channel', t.channel as 'EMAIL' | 'SMS' | 'PUSH' | 'IN_APP');
     setValue('subject', t.subject ?? '');
-    setValue('bodyTemplate', t.bodyTemplate);
+    setValue('bodyTemplate', t.bodyText ?? t.bodyHtml ?? '');
     setModalOpen(true);
   };
 
@@ -122,12 +122,12 @@ export default function NotificationsPage() {
   ];
 
   const logColumns = [
-    { header: 'Recipient', accessor: 'recipient' as keyof NotificationLog },
+    { header: 'Recipient', render: (r: NotificationLog) => r.recipientAddress ?? r.recipientId ?? '—' },
     { header: 'Channel', accessor: 'channel' as keyof NotificationLog },
     { header: 'Status', render: (r: NotificationLog) => <StatusBadge status={r.status} /> },
     { header: 'Subject', render: (r: NotificationLog) => r.subject ?? '—' },
     { header: 'Sent At', render: (r: NotificationLog) => r.sentAt ? new Date(r.sentAt).toLocaleDateString() : '—' },
-    { header: 'Entity Type', render: (r: NotificationLog) => r.entityType ?? '—' },
+    { header: 'Ref Type', render: (r: NotificationLog) => r.referenceType ?? '—' },
   ];
 
   return (

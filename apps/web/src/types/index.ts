@@ -980,9 +980,11 @@ export interface NotificationTemplate {
   code: string;
   channel: string;
   subject?: string;
-  bodyTemplate: string;
+  bodyText?: string;
+  bodyHtml?: string;
   variables?: string[];
   isActive: boolean;
+  language?: string;
   createdAt: string;
   updatedAt: string;
 }
@@ -991,17 +993,22 @@ export interface NotificationLog {
   id: string;
   templateId?: string;
   template?: NotificationTemplate;
-  userId?: string;
   channel: string;
-  recipient: string;
+  status: string;
+  recipientId?: string;
+  recipientType?: string;
+  recipientAddress?: string;
   subject?: string;
   body?: string;
-  status: string;
-  errorMessage?: string;
-  entityType?: string;
-  entityId?: string;
+  referenceType?: string;
+  referenceId?: string;
   sentAt?: string;
+  deliveredAt?: string;
+  readAt?: string;
+  failureReason?: string;
+  retryCount: number;
   createdAt: string;
+  updatedAt: string;
 }
 
 export interface MaterialConsumption {
