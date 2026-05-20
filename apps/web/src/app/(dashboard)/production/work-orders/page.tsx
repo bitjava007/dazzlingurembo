@@ -19,10 +19,13 @@ import { toast } from '@/hooks/use-toast';
 import type { WorkOrder } from '@/types';
 
 const schema = z.object({
-  quantity: z.string().min(1, 'Required'),
+  title: z.string().min(1, 'Title is required'),
+  workshopId: z.string().min(1, 'Workshop ID is required'),
+  branchId: z.string().min(1, 'Branch ID is required'),
+  plannedQuantity: z.string().optional(),
   notes: z.string().optional(),
-  startDate: z.string().optional(),
-  endDate: z.string().optional(),
+  scheduledStartAt: z.string().optional(),
+  scheduledEndAt: z.string().optional(),
 });
 type FormData = z.infer<typeof schema>;
 
@@ -39,7 +42,15 @@ export default function WorkOrdersPage() {
   });
 
   const createM = useMutation({
-    mutationFn: (d: FormData) => productionService.createWorkOrder({ ...d, quantity: parseInt(d.quantity) }),
+    mutationFn: (d: FormData) => productionService.createWorkOrder({
+      title: d.title,
+      workshopId: d.workshopId,
+      branchId: d.branchId,
+      plannedQuantity: d.plannedQuantity ? parseInt(d.plannedQuantity) : undefined,
+      notes: d.notes || undefined,
+      scheduledStartAt: d.scheduledStartAt || undefined,
+      scheduledEndAt: d.scheduledEndAt || undefined,
+    }),
     onSuccess: () => { qc.invalidateQueries({ queryKey: ['work-orders'] }); setModalOpen(false); reset(); toast({ title: 'Work order created' }); },
   });
 
@@ -50,11 +61,11 @@ export default function WorkOrdersPage() {
 
   const columns = [
     { header: 'WO #', accessor: 'workOrderNumber' as keyof WorkOrder },
-    { header: 'Product', render: (r: WorkOrder) => r.product?.name ?? '—' },
-    { header: 'Quantity', accessor: 'quantity' as keyof WorkOrder },
+    { header: 'Title', render: (r: WorkOrder) => r.title ?? '—' },
+    { header: 'Qty', render: (r: WorkOrder) => r.plannedQuantity ?? '—' },
     { header: 'Status', render: (r: WorkOrder) => <StatusBadge status={r.status} /> },
-    { header: 'Start Date', render: (r: WorkOrder) => r.startDate ? new Date(r.startDate).toLocaleDateString() : '—' },
-    { header: 'End Date', render: (r: WorkOrder) => r.dueDate ? new Date(r.dueDate).toLocaleDateString() : '—' },
+    { header: 'Start', render: (r: WorkOrder) => r.scheduledStartAt ? new Date(r.scheduledStartAt).toLocaleDateString() : '—' },
+    { header: 'End', render: (r: WorkOrder) => r.scheduledEndAt ? new Date(r.scheduledEndAt).toLocaleDateString() : '—' },
     {
       header: 'Actions', render: (r: WorkOrder) => r.status === 'DRAFT' ? (
         <Button variant="ghost" size="sm" className="h-7 text-[#C9A84C]" onClick={() => statusM.mutate({ id: r.id, status: 'IN_PROGRESS' })}>Start</Button>
@@ -73,10 +84,15 @@ export default function WorkOrdersPage() {
 
       <FormModal open={modalOpen} onOpenChange={setModalOpen} title="New Work Order">
         <form onSubmit={handleSubmit((d) => createM.mutate(d))} className="space-y-4 mt-2">
-          <div className="space-y-1"><Label className="text-gray-300">Quantity</Label><Input type="number" {...register('quantity')} className="bg-[#111111] border-[#2A2A2A] text-white" /></div>
+          <div className="space-y-1"><Label className="text-gray-300">Title</Label><Input {...register('title')} className="bg-[#111111] border-[#2A2A2A] text-white" placeholder="Work order title" /></div>
           <div className="grid grid-cols-2 gap-4">
-            <div className="space-y-1"><Label className="text-gray-300">Start Date</Label><Input type="date" {...register('startDate')} className="bg-[#111111] border-[#2A2A2A] text-white" /></div>
-            <div className="space-y-1"><Label className="text-gray-300">End Date</Label><Input type="date" {...register('endDate')} className="bg-[#111111] border-[#2A2A2A] text-white" /></div>
+            <div className="space-y-1"><Label className="text-gray-300">Workshop ID</Label><Input {...register('workshopId')} className="bg-[#111111] border-[#2A2A2A] text-white" /></div>
+            <div className="space-y-1"><Label className="text-gray-300">Branch ID</Label><Input {...register('branchId')} className="bg-[#111111] border-[#2A2A2A] text-white" /></div>
+          </div>
+          <div className="space-y-1"><Label className="text-gray-300">Planned Quantity</Label><Input type="number" {...register('plannedQuantity')} className="bg-[#111111] border-[#2A2A2A] text-white" /></div>
+          <div className="grid grid-cols-2 gap-4">
+            <div className="space-y-1"><Label className="text-gray-300">Scheduled Start</Label><Input type="date" {...register('scheduledStartAt')} className="bg-[#111111] border-[#2A2A2A] text-white" /></div>
+            <div className="space-y-1"><Label className="text-gray-300">Scheduled End</Label><Input type="date" {...register('scheduledEndAt')} className="bg-[#111111] border-[#2A2A2A] text-white" /></div>
           </div>
           <div className="space-y-1"><Label className="text-gray-300">Notes</Label><Input {...register('notes')} className="bg-[#111111] border-[#2A2A2A] text-white" /></div>
           <div className="flex justify-end gap-2 pt-2">

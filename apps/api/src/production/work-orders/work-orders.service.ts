@@ -39,6 +39,7 @@ export class WorkOrdersService {
         include: {
           workshop: { select: { id: true, name: true, code: true } },
           branch: { select: { id: true, name: true, code: true } },
+          outputVariant: { select: { id: true, name: true, sku: true, product: { select: { id: true, name: true } } } },
           _count: { select: { stages: true, operatorAssignments: true } },
         },
         orderBy: { createdAt: 'desc' },

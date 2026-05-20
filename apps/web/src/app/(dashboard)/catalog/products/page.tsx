@@ -48,9 +48,6 @@ export default function ProductsPage() {
     resolver: zodResolver(schema),
     defaultValues: { status: 'DRAFT' as const },
   });
-  const nameValue = watch('name');
-  // Auto-populate slug when typing name (only if slug hasn't been manually edited)
-  const slugValue = watch('slug');
 
   const createM = useMutation({ mutationFn: (d: FormData) => catalogService.createProduct(d), onSuccess: () => { qc.invalidateQueries({ queryKey: ['products'] }); setModalOpen(false); reset(); toast({ title: 'Product created' }); } });
   const updateM = useMutation({ mutationFn: (d: FormData) => catalogService.updateProduct(editItem!.id, d), onSuccess: () => { qc.invalidateQueries({ queryKey: ['products'] }); setModalOpen(false); setEditItem(null); reset(); toast({ title: 'Product updated' }); } });

@@ -484,17 +484,19 @@ export interface SupplierInvoice {
 export interface WorkOrder {
   id: string;
   workOrderNumber: string;
-  productId?: string;
-  product?: Product;
-  variantId?: string;
+  title?: string;
+  outputVariantId?: string;
+  outputVariant?: Variant;
   workshopId?: string;
   workshop?: Workshop;
+  branchId?: string;
   status: 'DRAFT' | 'IN_PROGRESS' | 'PAUSED' | 'COMPLETED' | 'CANCELLED';
-  quantity: number;
-  quantityCompleted?: number;
-  startDate?: string;
-  dueDate?: string;
-  completedAt?: string;
+  plannedQuantity?: number;
+  completedQuantity?: number;
+  scheduledStartAt?: string;
+  scheduledEndAt?: string;
+  actualStartAt?: string;
+  actualEndAt?: string;
   stages?: WorkOrderStage[];
   notes?: string;
   createdAt: string;
