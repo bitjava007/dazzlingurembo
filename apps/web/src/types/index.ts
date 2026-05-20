@@ -151,13 +151,16 @@ export interface StockTransfer {
   fromWarehouse?: Warehouse;
   toWarehouseId: string;
   toWarehouse?: Warehouse;
-  fromBranchId?: string;
-  toBranchId?: string;
+  fromBranchId: string;
+  toBranchId: string;
   status: 'DRAFT' | 'IN_TRANSIT' | 'PARTIALLY_RECEIVED' | 'RECEIVED' | 'CANCELLED';
-  items: StockTransferItem[];
-  notes?: string;
-  createdById?: string;
+  requestedById?: string;
   approvedById?: string;
+  shippedAt?: string;
+  receivedAt?: string;
+  notes?: string;
+  trackingNumber?: string;
+  items?: StockTransferItem[];
   createdAt: string;
   updatedAt: string;
 }
@@ -167,7 +170,10 @@ export interface StockTransferItem {
   transferId: string;
   variantId: string;
   variant?: Variant;
-  quantity: number;
+  quantityRequested: number;
+  quantityShipped: number;
+  quantityReceived: number;
+  notes?: string;
 }
 
 export interface StockAdjustment {

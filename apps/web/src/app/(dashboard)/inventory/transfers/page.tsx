@@ -22,7 +22,7 @@ export default function TransfersPage() {
   const columns = [
     { header: 'From', render: (r: StockTransfer) => r.fromWarehouse?.name ?? '—' },
     { header: 'To', render: (r: StockTransfer) => r.toWarehouse?.name ?? '—' },
-    { header: 'Items', render: (r: StockTransfer) => r.items.length },
+    { header: 'Items', render: (r: StockTransfer) => r.items?.length ?? 0 },
     { header: 'Status', render: (r: StockTransfer) => <StatusBadge status={r.status} /> },
     { header: 'Notes', render: (r: StockTransfer) => r.notes ?? '—' },
     { header: 'Date', render: (r: StockTransfer) => new Date(r.createdAt).toLocaleDateString() },
