@@ -34,11 +34,11 @@ export default function OperatorsPage() {
 
   const { data, isLoading } = useQuery({
     queryKey: ['operator-assignments', page],
-    queryFn: () => productionService.getAssignments({ page, limit: 20 }),
+    queryFn: () => productionService.getOperatorAssignments({ page, limit: 20 }),
   });
 
   const assignM = useMutation({
-    mutationFn: (d: FormData) => productionService.createAssignment(d),
+    mutationFn: (d: FormData) => productionService.assignOperator(d),
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ['operator-assignments'] });
       setModalOpen(false);

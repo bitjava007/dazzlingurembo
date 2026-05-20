@@ -16,6 +16,11 @@ export const documentsService = {
     return response.data as Blob;
   },
 
+  async downloadDeliveryNotePdf(id: string): Promise<Blob> {
+    const response = await api.get(`/documents/delivery-notes/${id}/pdf`, { responseType: 'blob' });
+    return response.data as Blob;
+  },
+
   async downloadPurchaseOrderPdf(id: string): Promise<Blob> {
     const response = await api.get(`/documents/purchase-orders/${id}/pdf`, { responseType: 'blob' });
     return response.data as Blob;

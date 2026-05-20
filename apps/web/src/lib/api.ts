@@ -7,7 +7,7 @@ export const api = axios.create({
   headers: {
     'Content-Type': 'application/json',
   },
-});
+}); 
 
 api.interceptors.request.use((config) => {
   if (typeof window !== 'undefined') {
@@ -22,10 +22,18 @@ api.interceptors.request.use((config) => {
 api.interceptors.response.use(
   (response) => response,
   (error) => {
-    if (error.response?.status === 401 && typeof window !== 'undefined') {
+    const requestUrl = error.config?.url;
+
+    // Ignore login endpoint failures
+    if (
+      error.response?.status === 401 &&
+      typeof window !== 'undefined' &&
+      !requestUrl?.includes('/auth/login')
+    ) {
       localStorage.removeItem('auth_token');
       window.location.href = '/login';
     }
+
     return Promise.reject(error);
   },
 );

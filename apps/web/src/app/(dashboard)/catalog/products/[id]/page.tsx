@@ -128,6 +128,7 @@ export default function ProductDetailPage() {
 
   return (
     <div className="space-y-6">
+      {/* Header */}
       <div className="bg-[#1A1A1A] border border-[#2A2A2A] rounded-lg p-6">
         <div className="flex items-start justify-between">
           <div>
@@ -143,6 +144,7 @@ export default function ProductDetailPage() {
         </div>
       </div>
 
+      {/* Tabs */}
       <div className="border-b border-[#2A2A2A] flex gap-0">
         {tabs.map((t) => (
           <button
@@ -159,6 +161,7 @@ export default function ProductDetailPage() {
         ))}
       </div>
 
+      {/* Variants Tab */}
       {activeTab === 'variants' && (
         <div className="space-y-4">
           <div className="bg-[#1A1A1A] border border-[#2A2A2A] rounded-lg p-4">
@@ -208,6 +211,7 @@ export default function ProductDetailPage() {
         </div>
       )}
 
+      {/* Media Tab */}
       {activeTab === 'media' && (
         <div className="space-y-4">
           <div className="bg-[#1A1A1A] border border-[#2A2A2A] rounded-lg p-4">

@@ -38,7 +38,7 @@ export default function ProductionMaterialsPage() {
   });
 
   const recordM = useMutation({
-    mutationFn: (d: FormData) => productionService.recordMaterial({
+    mutationFn: (d: FormData) => productionService.recordMaterialConsumption({
       workOrderId: d.workOrderId,
       productId: d.productId,
       quantity: parseFloat(d.quantity),

@@ -62,7 +62,7 @@ export default function SupplierInvoicesPage() {
     { header: 'Paid', render: (r: SupplierInvoice) => `$${r.paidAmount.toFixed(2)}` },
     { header: 'Due Date', render: (r: SupplierInvoice) => new Date(r.dueDate).toLocaleDateString() },
     {
-      header: 'Actions', render: (r: SupplierInvoice) => (r.status === 'PENDING' || r.status === 'APPROVED') ? (
+      header: 'Actions', render: (r: SupplierInvoice) => r.status === 'PENDING' || r.status === 'APPROVED' ? (
         <Button variant="ghost" size="sm" className="h-7 text-green-400 hover:text-green-300" onClick={() => markPaidM.mutate(r.id)}>
           <CheckCircle className="h-3 w-3 mr-1" />Mark Paid
         </Button>

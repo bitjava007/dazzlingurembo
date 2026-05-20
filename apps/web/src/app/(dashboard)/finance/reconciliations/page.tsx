@@ -53,7 +53,7 @@ export default function ReconciliationsPage() {
 
   const columns = [
     { header: 'Branch', render: (r: Reconciliation) => r.branch?.name ?? r.branchId },
-    { header: 'Difference', render: (r: Reconciliation) => r.difference != null ? `$${r.difference.toFixed(2)}` : '—' },
+    { header: 'Discrepancy', render: (r: Reconciliation) => r.difference != null ? `$${r.difference.toFixed(2)}` : '—' },
     { header: 'Notes', render: (r: Reconciliation) => r.notes ?? '—' },
     { header: 'Status', render: (r: Reconciliation) => <StatusBadge status={r.status} /> },
     { header: 'Date', render: (r: Reconciliation) => new Date(r.createdAt).toLocaleDateString() },

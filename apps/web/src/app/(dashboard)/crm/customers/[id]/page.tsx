@@ -116,6 +116,7 @@ export default function CustomerDetailPage() {
 
   return (
     <div className="space-y-6">
+      {/* Header */}
       <div className="bg-[#1A1A1A] border border-[#2A2A2A] rounded-lg p-6">
         <div className="flex items-start justify-between">
           <div>
@@ -138,6 +139,7 @@ export default function CustomerDetailPage() {
         </div>
       </div>
 
+      {/* Tabs */}
       <div className="border-b border-[#2A2A2A] flex gap-0">
         {tabs.map((t) => (
           <button
@@ -154,6 +156,7 @@ export default function CustomerDetailPage() {
         ))}
       </div>
 
+      {/* Notes Tab */}
       {activeTab === 'notes' && (
         <div className="space-y-4">
           <div className="bg-[#1A1A1A] border border-[#2A2A2A] rounded-lg p-4">
@@ -175,11 +178,11 @@ export default function CustomerDetailPage() {
 
           {loadingNotes ? (
             <div className="text-gray-400">Loading notes...</div>
-          ) : (notes as CustomerNote[]).length === 0 ? (
+          ) : notes.length === 0 ? (
             <div className="text-gray-500 text-center py-8">No notes yet.</div>
           ) : (
             <div className="space-y-2">
-              {(notes as CustomerNote[]).map((note) => (
+              {notes.map((note: CustomerNote) => (
                 <div key={note.id} className="bg-[#1A1A1A] border border-[#2A2A2A] rounded-lg p-4 flex justify-between items-start">
                   <div>
                     <p className="text-gray-300 text-sm">{note.content}</p>
@@ -201,6 +204,7 @@ export default function CustomerDetailPage() {
         </div>
       )}
 
+      {/* Communications Tab */}
       {activeTab === 'communications' && (
         <div className="space-y-4">
           <div className="bg-[#1A1A1A] border border-[#2A2A2A] rounded-lg p-4">
@@ -249,11 +253,11 @@ export default function CustomerDetailPage() {
 
           {loadingComms ? (
             <div className="text-gray-400">Loading communications...</div>
-          ) : (communications as CustomerCommunication[]).length === 0 ? (
+          ) : communications.length === 0 ? (
             <div className="text-gray-500 text-center py-8">No communications yet.</div>
           ) : (
             <div className="space-y-2">
-              {(communications as CustomerCommunication[]).map((comm) => (
+              {communications.map((comm: CustomerCommunication) => (
                 <div key={comm.id} className="bg-[#1A1A1A] border border-[#2A2A2A] rounded-lg p-4">
                   <div className="flex items-center gap-2 mb-1">
                     <span className="text-xs font-semibold px-2 py-0.5 rounded bg-[#2A2A2A] text-gray-300">{comm.channel}</span>
@@ -269,6 +273,7 @@ export default function CustomerDetailPage() {
         </div>
       )}
 
+      {/* Loyalty Tab */}
       {activeTab === 'loyalty' && (
         <div className="space-y-4">
           {loadingLoyalty ? (
