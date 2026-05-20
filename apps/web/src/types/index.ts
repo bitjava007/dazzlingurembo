@@ -570,15 +570,26 @@ export interface AttendanceRecord {
 
 export interface PayrollRun {
   id: string;
-  month: number;
-  year: number;
+  payrollNumber: string;
+  employeeId: string;
+  employee?: Employee;
+  periodStartDate: string;
+  periodEndDate: string;
   status: 'DRAFT' | 'APPROVED' | 'PAID';
-  totalGross: number;
-  totalDeductions: number;
-  totalNet: number;
-  employeeCount: number;
+  baseSalary: number;
+  overtimePay: number;
+  allowances: number;
+  bonuses: number;
+  deductions: number;
+  taxAmount: number;
+  grossPay: number;
+  netPay: number;
+  currencyCode: string;
   approvedById?: string;
   paidAt?: string;
+  paymentMethod?: string;
+  paymentRef?: string;
+  notes?: string;
   createdAt: string;
   updatedAt: string;
 }

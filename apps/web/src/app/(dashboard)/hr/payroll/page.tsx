@@ -12,8 +12,6 @@ import { toast } from '@/hooks/use-toast';
 import type { PayrollRun } from '@/types';
 import { CheckCircle, DollarSign } from 'lucide-react';
 
-const MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-
 export default function PayrollPage() {
   const qc = useQueryClient();
   const [page, setPage] = useState(1);
@@ -27,11 +25,12 @@ export default function PayrollPage() {
   const payM = useMutation({ mutationFn: (id: string) => hrService.payPayroll(id), onSuccess: () => { qc.invalidateQueries({ queryKey: ['payroll'] }); toast({ title: 'Payroll paid' }); } });
 
   const columns = [
-    { header: 'Period', render: (r: PayrollRun) => `${MONTHS[r.month - 1]} ${r.year}` },
-    { header: 'Employees', accessor: 'employeeCount' as keyof PayrollRun },
-    { header: 'Gross', render: (r: PayrollRun) => `$${r.totalGross.toFixed(2)}` },
-    { header: 'Deductions', render: (r: PayrollRun) => `$${r.totalDeductions.toFixed(2)}` },
-    { header: 'Net', render: (r: PayrollRun) => `$${r.totalNet.toFixed(2)}` },
+    { header: 'Ref #', render: (r: PayrollRun) => <span className="font-mono text-xs text-[#C9A84C]">{r.payrollNumber}</span> },
+    { header: 'Employee', render: (r: PayrollRun) => r.employee ? `${r.employee.firstName} ${r.employee.lastName}` : r.employeeId },
+    { header: 'Period', render: (r: PayrollRun) => `${new Date(r.periodStartDate).toLocaleDateString()} – ${new Date(r.periodEndDate).toLocaleDateString()}` },
+    { header: 'Gross', render: (r: PayrollRun) => `${Number(r.grossPay).toFixed(2)} ${r.currencyCode}` },
+    { header: 'Deductions', render: (r: PayrollRun) => `${Number(r.deductions).toFixed(2)}` },
+    { header: 'Net', render: (r: PayrollRun) => `${Number(r.netPay).toFixed(2)} ${r.currencyCode}` },
     { header: 'Status', render: (r: PayrollRun) => <StatusBadge status={r.status} /> },
     {
       header: 'Actions', render: (r: PayrollRun) => (
