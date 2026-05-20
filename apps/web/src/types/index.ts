@@ -508,8 +508,9 @@ export interface WorkOrderStage {
   id: string;
   workOrderId: string;
   name: string;
-  status: 'PENDING' | 'IN_PROGRESS' | 'COMPLETED';
-  order: number;
+  description?: string;
+  sequence: number;
+  status: string;
   startedAt?: string;
   completedAt?: string;
   notes?: string;
@@ -788,8 +789,9 @@ export interface DamagedStock {
   estimatedLoss?: number;
   currencyCode?: string;
   disposalMethod?: string;
-  resolvedAt?: string;
-  resolvedById?: string;
+  disposedAt?: string;
+  reportedById?: string;
+  approvedById?: string;
   createdAt: string;
   updatedAt: string;
 }
@@ -941,13 +943,15 @@ export interface NotificationLog {
 export interface MaterialConsumption {
   id: string;
   workOrderId: string;
-  productId: string;
-  product?: Product;
-  variantId?: string;
-  quantity: number;
+  variantId: string;
+  variant?: Variant;
+  warehouseId: string;
+  plannedQuantity: number;
+  consumedQuantity: number;
   unit: string;
+  unitCost?: number;
+  consumedAt?: string;
   notes?: string;
-  recordedById?: string;
   createdAt: string;
 }
 

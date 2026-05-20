@@ -17,12 +17,13 @@ import type { DamagedStock } from '@/types';
 import { CheckCircle } from 'lucide-react';
 
 const schema = z.object({
-  productId: z.string().min(1, 'Required'),
-  variantId: z.string().optional(),
+  variantId: z.string().min(1, 'Required'),
+  warehouseId: z.string().min(1, 'Required'),
+  branchId: z.string().min(1, 'Required'),
   quantity: z.string().min(1, 'Required'),
   reason: z.string().min(1, 'Required'),
+  description: z.string().optional(),
   estimatedLoss: z.string().optional(),
-  branchId: z.string().min(1, 'Required'),
 });
 type FormData = z.infer<typeof schema>;
 
@@ -57,10 +58,10 @@ export default function DamagedStockPage() {
     { header: 'Quantity', render: (r: DamagedStock) => r.quantity },
     { header: 'Reason', render: (r: DamagedStock) => r.reason },
     { header: 'Est. Loss', render: (r: DamagedStock) => r.estimatedLoss != null ? `$${r.estimatedLoss.toFixed(2)}` : '—' },
-    { header: 'Status', render: (r: DamagedStock) => r.resolvedAt ? <span className="text-green-400">Resolved</span> : <span className="text-yellow-400">Unresolved</span> },
+    { header: 'Status', render: (r: DamagedStock) => r.disposedAt ? <span className="text-green-400">Disposed</span> : <span className="text-yellow-400">Unresolved</span> },
     { header: 'Created At', render: (r: DamagedStock) => new Date(r.createdAt).toLocaleDateString() },
     {
-      header: 'Actions', render: (r: DamagedStock) => !r.resolvedAt ? (
+      header: 'Actions', render: (r: DamagedStock) => !r.disposedAt ? (
         <Button variant="ghost" size="sm" className="h-7 text-green-400 hover:text-green-300" onClick={() => resolveM.mutate(r.id)}>
           <CheckCircle className="h-3 w-3 mr-1" />Resolve
         </Button>
@@ -75,15 +76,21 @@ export default function DamagedStockPage() {
 
       <FormModal open={modalOpen} onOpenChange={setModalOpen} title="Report Damaged Stock">
         <form onSubmit={handleSubmit((d) => createM.mutate(d))} className="space-y-4 mt-2">
+          <div className="space-y-1">
+            <Label className="text-gray-300">Variant ID</Label>
+            <Input {...register('variantId')} placeholder="Variant ID" className="bg-[#111111] border-[#2A2A2A] text-white" />
+            {errors.variantId && <p className="text-red-400 text-xs">{errors.variantId.message}</p>}
+          </div>
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-1">
-              <Label className="text-gray-300">Product ID</Label>
-              <Input {...register('productId')} placeholder="Product ID" className="bg-[#111111] border-[#2A2A2A] text-white" />
-              {errors.productId && <p className="text-red-400 text-xs">{errors.productId.message}</p>}
+              <Label className="text-gray-300">Warehouse ID</Label>
+              <Input {...register('warehouseId')} placeholder="Warehouse ID" className="bg-[#111111] border-[#2A2A2A] text-white" />
+              {errors.warehouseId && <p className="text-red-400 text-xs">{errors.warehouseId.message}</p>}
             </div>
             <div className="space-y-1">
-              <Label className="text-gray-300">Variant ID (optional)</Label>
-              <Input {...register('variantId')} placeholder="Variant ID" className="bg-[#111111] border-[#2A2A2A] text-white" />
+              <Label className="text-gray-300">Branch ID</Label>
+              <Input {...register('branchId')} placeholder="Branch ID" className="bg-[#111111] border-[#2A2A2A] text-white" />
+              {errors.branchId && <p className="text-red-400 text-xs">{errors.branchId.message}</p>}
             </div>
           </div>
           <div className="grid grid-cols-2 gap-4">
@@ -96,11 +103,6 @@ export default function DamagedStockPage() {
               <Label className="text-gray-300">Est. Loss ($)</Label>
               <Input type="number" step="0.01" {...register('estimatedLoss')} className="bg-[#111111] border-[#2A2A2A] text-white" />
             </div>
-          </div>
-          <div className="space-y-1">
-            <Label className="text-gray-300">Branch ID</Label>
-            <Input {...register('branchId')} placeholder="Branch ID" className="bg-[#111111] border-[#2A2A2A] text-white" />
-            {errors.branchId && <p className="text-red-400 text-xs">{errors.branchId.message}</p>}
           </div>
           <div className="space-y-1">
             <Label className="text-gray-300">Reason</Label>

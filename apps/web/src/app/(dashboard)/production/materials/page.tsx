@@ -17,9 +17,11 @@ import type { MaterialConsumption } from '@/types';
 
 const schema = z.object({
   workOrderId: z.string().min(1, 'Work Order ID is required'),
-  productId: z.string().min(1, 'Product ID is required'),
-  quantity: z.string().min(1, 'Quantity is required'),
-  unit: z.string().min(1, 'Unit is required'),
+  variantId: z.string().min(1, 'Variant ID is required'),
+  warehouseId: z.string().min(1, 'Warehouse ID is required'),
+  plannedQuantity: z.string().min(1, 'Planned quantity is required'),
+  consumedQuantity: z.string().optional(),
+  unit: z.string().optional(),
   notes: z.string().optional(),
 });
 type FormData = z.infer<typeof schema>;
@@ -40,8 +42,10 @@ export default function ProductionMaterialsPage() {
   const recordM = useMutation({
     mutationFn: (d: FormData) => productionService.recordMaterialConsumption({
       workOrderId: d.workOrderId,
-      productId: d.productId,
-      quantity: parseFloat(d.quantity),
+      variantId: d.variantId,
+      warehouseId: d.warehouseId,
+      plannedQuantity: parseFloat(d.plannedQuantity),
+      consumedQuantity: d.consumedQuantity ? parseFloat(d.consumedQuantity) : undefined,
       unit: d.unit,
       notes: d.notes,
     }),
@@ -55,8 +59,9 @@ export default function ProductionMaterialsPage() {
 
   const columns = [
     { header: 'Work Order ID', render: (r: MaterialConsumption) => r.workOrderId ?? '—' },
-    { header: 'Product ID', render: (r: MaterialConsumption) => r.productId ?? '—' },
-    { header: 'Quantity', render: (r: MaterialConsumption) => r.quantity?.toString() ?? '—' },
+    { header: 'Variant ID', render: (r: MaterialConsumption) => r.variantId ?? '—' },
+    { header: 'Planned Qty', render: (r: MaterialConsumption) => r.plannedQuantity?.toString() ?? '—' },
+    { header: 'Consumed Qty', render: (r: MaterialConsumption) => r.consumedQuantity?.toString() ?? '—' },
     { header: 'Unit', accessor: 'unit' as keyof MaterialConsumption },
     { header: 'Recorded At', render: (r: MaterialConsumption) => new Date(r.createdAt).toLocaleDateString() },
   ];
@@ -97,21 +102,29 @@ export default function ProductionMaterialsPage() {
             {errors.workOrderId && <p className="text-red-400 text-xs">{errors.workOrderId.message}</p>}
           </div>
           <div className="space-y-1">
-            <Label className="text-gray-300">Product ID</Label>
-            <Input {...register('productId')} className="bg-[#111111] border-[#2A2A2A] text-white" placeholder="Enter product ID" />
-            {errors.productId && <p className="text-red-400 text-xs">{errors.productId.message}</p>}
+            <Label className="text-gray-300">Variant ID</Label>
+            <Input {...register('variantId')} className="bg-[#111111] border-[#2A2A2A] text-white" placeholder="Enter variant ID" />
+            {errors.variantId && <p className="text-red-400 text-xs">{errors.variantId.message}</p>}
+          </div>
+          <div className="space-y-1">
+            <Label className="text-gray-300">Warehouse ID</Label>
+            <Input {...register('warehouseId')} className="bg-[#111111] border-[#2A2A2A] text-white" placeholder="Enter warehouse ID" />
+            {errors.warehouseId && <p className="text-red-400 text-xs">{errors.warehouseId.message}</p>}
           </div>
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-1">
-              <Label className="text-gray-300">Quantity</Label>
-              <Input type="number" step="0.01" {...register('quantity')} className="bg-[#111111] border-[#2A2A2A] text-white" />
-              {errors.quantity && <p className="text-red-400 text-xs">{errors.quantity.message}</p>}
+              <Label className="text-gray-300">Planned Quantity</Label>
+              <Input type="number" step="0.001" {...register('plannedQuantity')} className="bg-[#111111] border-[#2A2A2A] text-white" />
+              {errors.plannedQuantity && <p className="text-red-400 text-xs">{errors.plannedQuantity.message}</p>}
             </div>
             <div className="space-y-1">
-              <Label className="text-gray-300">Unit</Label>
-              <Input {...register('unit')} className="bg-[#111111] border-[#2A2A2A] text-white" placeholder="e.g. kg, m, pcs" />
-              {errors.unit && <p className="text-red-400 text-xs">{errors.unit.message}</p>}
+              <Label className="text-gray-300">Consumed Quantity</Label>
+              <Input type="number" step="0.001" {...register('consumedQuantity')} className="bg-[#111111] border-[#2A2A2A] text-white" />
             </div>
+          </div>
+          <div className="space-y-1">
+            <Label className="text-gray-300">Unit (optional)</Label>
+            <Input {...register('unit')} className="bg-[#111111] border-[#2A2A2A] text-white" placeholder="e.g. kg, m, pcs" />
           </div>
           <div className="space-y-1">
             <Label className="text-gray-300">Notes (optional)</Label>
