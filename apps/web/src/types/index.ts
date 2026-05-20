@@ -873,20 +873,22 @@ export interface GoodsReceiptItem {
 
 export interface SupplierPayment {
   id: string;
+  paymentNumber?: string;
   supplierId: string;
   supplier?: Supplier;
-  supplierInvoiceId?: string;
-  amount: number;
-  currencyCode: string;
-  paymentMethod: string;
-  paymentDate: string;
-  reference?: string;
-  notes?: string;
-  originalCurrencyCode?: string;
-  originalAmount?: number;
+  purchaseOrderId?: string;
+  branchId: string;
+  branch?: Branch;
+  originalCurrencyCode: string;
+  originalAmount: number;
   convertedCurrencyCode?: string;
   convertedAmount?: number;
   exchangeRateSnapshot?: number;
+  method: string;
+  status: string;
+  transactionRef?: string;
+  paidAt?: string;
+  notes?: string;
   createdAt: string;
   updatedAt: string;
 }

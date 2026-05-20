@@ -9,6 +9,7 @@ import { PageHeader } from '@/components/ui/page-header';
 import { DataTable } from '@/components/ui/data-table';
 import { Pagination } from '@/components/ui/pagination';
 import { FormModal } from '@/components/ui/form-modal';
+import { StatusBadge } from '@/components/ui/status-badge';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -18,12 +19,12 @@ import type { SupplierPayment } from '@/types';
 
 const schema = z.object({
   supplierId: z.string().min(1, 'Supplier ID is required'),
-  supplierInvoiceId: z.string().optional(),
-  amount: z.string().min(1, 'Amount is required'),
-  currencyCode: z.enum(['XOF', 'USD']),
-  paymentMethod: z.enum(['CASH', 'WAVE', 'ORANGE_MONEY', 'BANK_TRANSFER']),
-  paymentDate: z.string().min(1, 'Payment date is required'),
-  reference: z.string().optional(),
+  branchId: z.string().min(1, 'Branch ID is required'),
+  purchaseOrderId: z.string().optional(),
+  originalAmount: z.string().min(1, 'Amount is required'),
+  originalCurrencyCode: z.enum(['XOF', 'USD', 'EUR']),
+  method: z.enum(['CASH', 'WAVE', 'ORANGE_MONEY', 'BANK_TRANSFER', 'CHECK', 'OTHER']),
+  transactionRef: z.string().optional(),
   notes: z.string().optional(),
 });
 type FormData = z.infer<typeof schema>;
@@ -42,12 +43,12 @@ export default function SupplierPaymentsPage() {
   const createM = useMutation({
     mutationFn: (d: FormData) => procurementService.createSupplierPayment({
       supplierId: d.supplierId,
-      supplierInvoiceId: d.supplierInvoiceId || undefined,
-      amount: parseFloat(d.amount),
-      currencyCode: d.currencyCode,
-      paymentMethod: d.paymentMethod,
-      paymentDate: d.paymentDate,
-      reference: d.reference || undefined,
+      branchId: d.branchId,
+      purchaseOrderId: d.purchaseOrderId || undefined,
+      originalAmount: parseFloat(d.originalAmount),
+      originalCurrencyCode: d.originalCurrencyCode,
+      method: d.method,
+      transactionRef: d.transactionRef || undefined,
       notes: d.notes || undefined,
     }),
     onSuccess: () => {
@@ -60,11 +61,10 @@ export default function SupplierPaymentsPage() {
 
   const columns = [
     { header: 'Supplier ID', render: (r: SupplierPayment) => r.supplierId ?? '—' },
-    { header: 'Amount', render: (r: SupplierPayment) => r.amount?.toFixed(2) ?? '—' },
-    { header: 'Currency', accessor: 'currencyCode' as keyof SupplierPayment },
-    { header: 'Method', accessor: 'paymentMethod' as keyof SupplierPayment },
-    { header: 'Date', render: (r: SupplierPayment) => new Date(r.paymentDate).toLocaleDateString() },
-    { header: 'Reference', render: (r: SupplierPayment) => r.reference ?? '—' },
+    { header: 'Amount', render: (r: SupplierPayment) => `${r.originalAmount?.toFixed(2)} ${r.originalCurrencyCode}` },
+    { header: 'Method', render: (r: SupplierPayment) => r.method ?? '—' },
+    { header: 'Status', render: (r: SupplierPayment) => <StatusBadge status={r.status} /> },
+    { header: 'Ref', render: (r: SupplierPayment) => r.transactionRef ?? '—' },
     { header: 'Created At', render: (r: SupplierPayment) => new Date(r.createdAt).toLocaleDateString() },
   ];
 
@@ -76,48 +76,51 @@ export default function SupplierPaymentsPage() {
 
       <FormModal open={modalOpen} onOpenChange={setModalOpen} title="New Supplier Payment">
         <form onSubmit={handleSubmit((d) => createM.mutate(d))} className="space-y-4 mt-2">
-          <div className="space-y-1">
-            <Label className="text-gray-300">Supplier ID</Label>
-            <Input {...register('supplierId')} className="bg-[#111111] border-[#2A2A2A] text-white" placeholder="Enter supplier ID" />
-            {errors.supplierId && <p className="text-red-400 text-xs">{errors.supplierId.message}</p>}
+          <div className="grid grid-cols-2 gap-4">
+            <div className="space-y-1">
+              <Label className="text-gray-300">Supplier ID</Label>
+              <Input {...register('supplierId')} className="bg-[#111111] border-[#2A2A2A] text-white" placeholder="Enter supplier ID" />
+              {errors.supplierId && <p className="text-red-400 text-xs">{errors.supplierId.message}</p>}
+            </div>
+            <div className="space-y-1">
+              <Label className="text-gray-300">Branch ID</Label>
+              <Input {...register('branchId')} className="bg-[#111111] border-[#2A2A2A] text-white" placeholder="Enter branch ID" />
+              {errors.branchId && <p className="text-red-400 text-xs">{errors.branchId.message}</p>}
+            </div>
           </div>
           <div className="space-y-1">
-            <Label className="text-gray-300">Supplier Invoice ID (optional)</Label>
-            <Input {...register('supplierInvoiceId')} className="bg-[#111111] border-[#2A2A2A] text-white" placeholder="Enter invoice ID" />
+            <Label className="text-gray-300">Purchase Order ID (optional)</Label>
+            <Input {...register('purchaseOrderId')} className="bg-[#111111] border-[#2A2A2A] text-white" placeholder="Enter PO ID" />
           </div>
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-1">
               <Label className="text-gray-300">Amount</Label>
-              <Input type="number" step="0.01" {...register('amount')} className="bg-[#111111] border-[#2A2A2A] text-white" />
-              {errors.amount && <p className="text-red-400 text-xs">{errors.amount.message}</p>}
+              <Input type="number" step="0.01" {...register('originalAmount')} className="bg-[#111111] border-[#2A2A2A] text-white" />
+              {errors.originalAmount && <p className="text-red-400 text-xs">{errors.originalAmount.message}</p>}
             </div>
             <div className="space-y-1">
               <Label className="text-gray-300">Currency</Label>
-              <select {...register('currencyCode')} className="w-full h-10 rounded-md border border-[#2A2A2A] bg-[#111111] text-white px-3">
+              <select {...register('originalCurrencyCode')} className="w-full h-10 rounded-md border border-[#2A2A2A] bg-[#111111] text-white px-3">
                 <option value="XOF">XOF</option>
                 <option value="USD">USD</option>
+                <option value="EUR">EUR</option>
               </select>
-            </div>
-          </div>
-          <div className="grid grid-cols-2 gap-4">
-            <div className="space-y-1">
-              <Label className="text-gray-300">Payment Method</Label>
-              <select {...register('paymentMethod')} className="w-full h-10 rounded-md border border-[#2A2A2A] bg-[#111111] text-white px-3">
-                <option value="CASH">Cash</option>
-                <option value="WAVE">Wave</option>
-                <option value="ORANGE_MONEY">Orange Money</option>
-                <option value="BANK_TRANSFER">Bank Transfer</option>
-              </select>
-            </div>
-            <div className="space-y-1">
-              <Label className="text-gray-300">Payment Date</Label>
-              <Input type="date" {...register('paymentDate')} className="bg-[#111111] border-[#2A2A2A] text-white" />
-              {errors.paymentDate && <p className="text-red-400 text-xs">{errors.paymentDate.message}</p>}
             </div>
           </div>
           <div className="space-y-1">
-            <Label className="text-gray-300">Reference (optional)</Label>
-            <Input {...register('reference')} className="bg-[#111111] border-[#2A2A2A] text-white" placeholder="Payment reference" />
+            <Label className="text-gray-300">Payment Method</Label>
+            <select {...register('method')} className="w-full h-10 rounded-md border border-[#2A2A2A] bg-[#111111] text-white px-3">
+              <option value="CASH">Cash</option>
+              <option value="WAVE">Wave</option>
+              <option value="ORANGE_MONEY">Orange Money</option>
+              <option value="BANK_TRANSFER">Bank Transfer</option>
+              <option value="CHECK">Check</option>
+              <option value="OTHER">Other</option>
+            </select>
+          </div>
+          <div className="space-y-1">
+            <Label className="text-gray-300">Transaction Ref (optional)</Label>
+            <Input {...register('transactionRef')} className="bg-[#111111] border-[#2A2A2A] text-white" placeholder="Payment reference" />
           </div>
           <div className="space-y-1">
             <Label className="text-gray-300">Notes (optional)</Label>
