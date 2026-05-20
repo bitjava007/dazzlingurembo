@@ -1,7 +1,48 @@
 import api from '@/lib/api';
-import type { Expense, CashClosure, ExchangeRate, JournalEntry, PaginatedResponse, ListParams } from '@/types';
+import type {
+  Expense,
+  CashClosure,
+  ExchangeRate,
+  JournalEntry,
+  ExpenseCategory,
+  Reconciliation,
+  PaginatedResponse,
+  ListParams,
+} from '@/types';
 
 export const financeService = {
+  // Journal
+  async getJournalEntries(params?: ListParams): Promise<PaginatedResponse<JournalEntry>> {
+    const response = await api.get<PaginatedResponse<JournalEntry>>('/finance/journal', { params });
+    return response.data;
+  },
+
+  async createJournalEntry(data: Record<string, unknown>): Promise<JournalEntry> {
+    const response = await api.post<JournalEntry>('/finance/journal', data);
+    return response.data;
+  },
+
+  // Expense Categories
+  async getExpenseCategories(params?: ListParams): Promise<PaginatedResponse<ExpenseCategory>> {
+    const response = await api.get<PaginatedResponse<ExpenseCategory>>('/finance/expense-categories', { params });
+    return response.data;
+  },
+
+  async createExpenseCategory(data: Partial<ExpenseCategory>): Promise<ExpenseCategory> {
+    const response = await api.post<ExpenseCategory>('/finance/expense-categories', data);
+    return response.data;
+  },
+
+  async updateExpenseCategory(id: string, data: Partial<ExpenseCategory>): Promise<ExpenseCategory> {
+    const response = await api.patch<ExpenseCategory>(`/finance/expense-categories/${id}`, data);
+    return response.data;
+  },
+
+  async deleteExpenseCategory(id: string): Promise<void> {
+    await api.delete(`/finance/expense-categories/${id}`);
+  },
+
+  // Expenses
   async getExpenses(params?: ListParams): Promise<PaginatedResponse<Expense>> {
     const response = await api.get<PaginatedResponse<Expense>>('/finance/expenses', { params });
     return response.data;
@@ -17,11 +58,44 @@ export const financeService = {
     return response.data;
   },
 
+  async rejectExpense(id: string, reason?: string): Promise<Expense> {
+    const response = await api.patch<Expense>(`/finance/expenses/${id}/reject`, { reason });
+    return response.data;
+  },
+
+  // Cash Closures
   async getCashClosures(params?: ListParams): Promise<PaginatedResponse<CashClosure>> {
     const response = await api.get<PaginatedResponse<CashClosure>>('/finance/cash-closures', { params });
     return response.data;
   },
 
+  async createCashClosure(data: Record<string, unknown>): Promise<CashClosure> {
+    const response = await api.post<CashClosure>('/finance/cash-closures', data);
+    return response.data;
+  },
+
+  async closeCashClosure(id: string): Promise<CashClosure> {
+    const response = await api.patch<CashClosure>(`/finance/cash-closures/${id}/close`);
+    return response.data;
+  },
+
+  // Reconciliations
+  async getReconciliations(params?: ListParams): Promise<PaginatedResponse<Reconciliation>> {
+    const response = await api.get<PaginatedResponse<Reconciliation>>('/finance/reconciliations', { params });
+    return response.data;
+  },
+
+  async createReconciliation(data: Record<string, unknown>): Promise<Reconciliation> {
+    const response = await api.post<Reconciliation>('/finance/reconciliations', data);
+    return response.data;
+  },
+
+  async approveReconciliation(id: string): Promise<Reconciliation> {
+    const response = await api.patch<Reconciliation>(`/finance/reconciliations/${id}/approve`);
+    return response.data;
+  },
+
+  // Exchange Rates
   async getExchangeRates(params?: ListParams): Promise<PaginatedResponse<ExchangeRate>> {
     const response = await api.get<PaginatedResponse<ExchangeRate>>('/finance/exchange-rates', { params });
     return response.data;
@@ -32,13 +106,8 @@ export const financeService = {
     return response.data;
   },
 
-  async getJournalEntries(params?: ListParams): Promise<PaginatedResponse<JournalEntry>> {
-    const response = await api.get<PaginatedResponse<JournalEntry>>('/finance/journal', { params });
-    return response.data;
-  },
-
-  async createJournalEntry(data: Partial<JournalEntry>): Promise<JournalEntry> {
-    const response = await api.post<JournalEntry>('/finance/journal', data);
+  async getLatestExchangeRate(from: string, to: string): Promise<ExchangeRate> {
+    const response = await api.get<ExchangeRate>('/finance/exchange-rates/latest', { params: { from, to } });
     return response.data;
   },
 };

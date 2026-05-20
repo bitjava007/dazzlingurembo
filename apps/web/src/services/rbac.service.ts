@@ -4,7 +4,6 @@ import type { Role, Permission, PaginatedResponse, ApiResponse, ListParams } fro
 export interface CreateRoleDto {
   name: string;
   description?: string;
-  isSystem?: boolean;
 }
 
 export interface UpdateRoleDto {
@@ -13,23 +12,18 @@ export interface UpdateRoleDto {
 }
 
 export const rbacService = {
-  async getRoles(params?: ListParams): Promise<Role[]> {
-    const response = await api.get<Role[]>('/rbac/roles', { params });
+  async getRoles(params?: ListParams): Promise<PaginatedResponse<Role>> {
+    const response = await api.get<PaginatedResponse<Role>>('/rbac/roles', { params });
     return response.data;
   },
 
-  async getRole(id: string): Promise<Role> {
-    const response = await api.get<Role>(`/rbac/roles/${id}`);
+  async createRole(dto: CreateRoleDto): Promise<ApiResponse<Role>> {
+    const response = await api.post<ApiResponse<Role>>('/rbac/roles', dto);
     return response.data;
   },
 
-  async createRole(dto: CreateRoleDto): Promise<Role> {
-    const response = await api.post<Role>('/rbac/roles', dto);
-    return response.data;
-  },
-
-  async updateRole(id: string, dto: UpdateRoleDto): Promise<Role> {
-    const response = await api.patch<Role>(`/rbac/roles/${id}`, dto);
+  async updateRole(id: string, dto: UpdateRoleDto): Promise<ApiResponse<Role>> {
+    const response = await api.patch<ApiResponse<Role>>(`/rbac/roles/${id}`, dto);
     return response.data;
   },
 
@@ -45,11 +39,8 @@ export const rbacService = {
     await api.delete(`/rbac/roles/${roleId}/permissions/${permissionId}`);
   },
 
-  async getPermissions(): Promise<Permission[]> {
-    const response = await api.get<Permission[]>('/rbac/permissions');
+  async getPermissions(params?: ListParams): Promise<PaginatedResponse<Permission>> {
+    const response = await api.get<PaginatedResponse<Permission>>('/rbac/permissions', { params });
     return response.data;
   },
 };
-
-// Keep legacy exports for compatibility
-export type { PaginatedResponse, ApiResponse, ListParams };
