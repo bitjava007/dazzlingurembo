@@ -16,7 +16,7 @@ export class BOMService {
         where: { deletedAt: null },
         skip, take: limit,
         include: {
-          product: { select: { id: true, name: true, sku: true } },
+          product: { select: { id: true, name: true, slug: true } },
           items: { include: { materialVariant: { select: { id: true, name: true, sku: true } } } },
         },
         orderBy: { createdAt: 'desc' },
