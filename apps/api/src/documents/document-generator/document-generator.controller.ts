@@ -16,7 +16,7 @@ export class DocumentGeneratorController {
   async invoicePdf(@Param('id') id: string, @Res() res: Response) {
     const { buffer, filename } = await this.svc.generateInvoicePdf(id);
     res.set({
-      'Content-Type': 'text/html',
+      'Content-Type': 'application/pdf',
       'Content-Disposition': `attachment; filename="${filename}"`,
       'Content-Length': buffer.length,
     }).send(buffer);
@@ -27,7 +27,7 @@ export class DocumentGeneratorController {
   async quotationPdf(@Param('id') id: string, @Res() res: Response) {
     const { buffer, filename } = await this.svc.generateQuotationPdf(id);
     res.set({
-      'Content-Type': 'text/html',
+      'Content-Type': 'application/pdf',
       'Content-Disposition': `attachment; filename="${filename}"`,
       'Content-Length': buffer.length,
     }).send(buffer);
@@ -38,7 +38,7 @@ export class DocumentGeneratorController {
   async receiptPdf(@Param('id') id: string, @Res() res: Response) {
     const { buffer, filename } = await this.svc.generateReceiptPdf(id);
     res.set({
-      'Content-Type': 'text/html',
+      'Content-Type': 'application/pdf',
       'Content-Disposition': `attachment; filename="${filename}"`,
       'Content-Length': buffer.length,
     }).send(buffer);
@@ -49,7 +49,7 @@ export class DocumentGeneratorController {
   async deliveryNotePdf(@Param('id') id: string, @Res() res: Response) {
     const { buffer, filename } = await this.svc.generateDeliveryNotePdf(id);
     res.set({
-      'Content-Type': 'text/html',
+      'Content-Type': 'application/pdf',
       'Content-Disposition': `attachment; filename="${filename}"`,
       'Content-Length': buffer.length,
     }).send(buffer);
@@ -60,7 +60,7 @@ export class DocumentGeneratorController {
   async purchaseOrderPdf(@Param('id') id: string, @Res() res: Response) {
     const { buffer, filename } = await this.svc.generatePurchaseOrderPdf(id);
     res.set({
-      'Content-Type': 'text/html',
+      'Content-Type': 'application/pdf',
       'Content-Disposition': `attachment; filename="${filename}"`,
       'Content-Length': buffer.length,
     }).send(buffer);
