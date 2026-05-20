@@ -53,12 +53,12 @@ export default function ReconciliationsPage() {
 
   const columns = [
     { header: 'Branch', render: (r: Reconciliation) => r.branch?.name ?? r.branchId },
-    { header: 'Discrepancy', render: (r: Reconciliation) => r.difference != null ? `$${r.difference.toFixed(2)}` : '—' },
+    { header: 'Discrepancy', render: (r: Reconciliation) => r.discrepancyAmount != null ? `${Number(r.discrepancyAmount).toFixed(2)}` : '—' },
     { header: 'Notes', render: (r: Reconciliation) => r.notes ?? '—' },
     { header: 'Status', render: (r: Reconciliation) => <StatusBadge status={r.status} /> },
     { header: 'Date', render: (r: Reconciliation) => new Date(r.createdAt).toLocaleDateString() },
     {
-      header: 'Actions', render: (r: Reconciliation) => r.status === 'PENDING' ? (
+      header: 'Actions', render: (r: Reconciliation) => (r.status === 'OPEN' || r.status === 'IN_PROGRESS') ? (
         <Button variant="ghost" size="sm" className="h-7 text-green-400 hover:text-green-300" onClick={() => approveM.mutate(r.id)}>
           <CheckCircle className="h-3 w-3 mr-1" />Approve
         </Button>

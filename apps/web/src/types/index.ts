@@ -128,13 +128,19 @@ export interface StockMovement {
   variant?: Variant;
   warehouseId: string;
   warehouse?: Warehouse;
-  quantityChange: number;
-  quantityBefore?: number;
-  quantityAfter?: number;
+  branchId: string;
+  branch?: Branch;
+  quantity: number;
+  quantityBefore: number;
+  quantityAfter: number;
   unitCost?: number;
+  batchNumber?: string;
+  serialNumber?: string;
+  lotNumber?: string;
   referenceType?: string;
   referenceId?: string;
   notes?: string;
+  performedById?: string;
   createdAt: string;
 }
 
@@ -896,16 +902,15 @@ export interface ExpenseCategory {
 
 export interface Reconciliation {
   id: string;
+  dailyClosureId: string;
   branchId: string;
   branch?: { id: string; name: string };
-  dailyClosureId?: string;
+  status: 'OPEN' | 'IN_PROGRESS' | 'RECONCILED' | 'DISPUTED';
+  reconciledById?: string;
+  reconciledAt?: string;
   discrepancyAmount?: number;
   discrepancyNotes?: string;
   notes?: string;
-  status: string;
-  approvedById?: string;
-  approvedAt?: string;
-  difference?: number;
   createdAt: string;
   updatedAt: string;
 }
