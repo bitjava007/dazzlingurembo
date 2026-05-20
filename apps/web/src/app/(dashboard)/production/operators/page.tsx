@@ -21,8 +21,8 @@ import { UserMinus } from 'lucide-react';
 const schema = z.object({
   workOrderId: z.string().min(1, 'Work Order ID is required'),
   operatorId: z.string().min(1, 'Operator ID is required'),
-  role: z.string().min(1, 'Role is required'),
-  startDate: z.string().min(1, 'Start date is required'),
+  role: z.string().optional(),
+  startAt: z.string().optional(),
 });
 type FormData = z.infer<typeof schema>;
 
@@ -55,16 +55,16 @@ export default function OperatorsPage() {
   const columns = [
     { header: 'Work Order ID', render: (r: OperatorAssignment) => r.workOrderId ?? '—' },
     { header: 'Operator ID', render: (r: OperatorAssignment) => r.operatorId ?? '—' },
-    { header: 'Role', accessor: 'role' as keyof OperatorAssignment },
-    { header: 'Start Date', render: (r: OperatorAssignment) => new Date(r.startDate).toLocaleDateString() },
-    { header: 'Status', render: (r: OperatorAssignment) => <StatusBadge status={r.unassignedAt ? 'INACTIVE' : 'ACTIVE'} /> },
+    { header: 'Role', render: (r: OperatorAssignment) => r.role ?? '—' },
+    { header: 'Start At', render: (r: OperatorAssignment) => r.startAt ? new Date(r.startAt).toLocaleDateString() : '—' },
+    { header: 'Assigned', render: (r: OperatorAssignment) => r.assignedAt ? new Date(r.assignedAt).toLocaleDateString() : '—' },
     {
       header: 'Actions',
-      render: (r: OperatorAssignment) => !r.unassignedAt ? (
+      render: (r: OperatorAssignment) => (
         <Button variant="ghost" size="sm" className="h-7 text-red-400 hover:text-red-300" onClick={() => unassignM.mutate(r.id)}>
           <UserMinus className="h-3 w-3 mr-1" />Unassign
         </Button>
-      ) : null,
+      ),
     },
   ];
 
@@ -92,9 +92,8 @@ export default function OperatorsPage() {
             {errors.role && <p className="text-red-400 text-xs">{errors.role.message}</p>}
           </div>
           <div className="space-y-1">
-            <Label className="text-gray-300">Start Date</Label>
-            <Input type="date" {...register('startDate')} className="bg-[#111111] border-[#2A2A2A] text-white" />
-            {errors.startDate && <p className="text-red-400 text-xs">{errors.startDate.message}</p>}
+            <Label className="text-gray-300">Start Date (optional)</Label>
+            <Input type="date" {...register('startAt')} className="bg-[#111111] border-[#2A2A2A] text-white" />
           </div>
           <div className="flex justify-end gap-2 pt-2">
             <Button type="button" variant="ghost" onClick={() => setModalOpen(false)} className="text-gray-400">Cancel</Button>

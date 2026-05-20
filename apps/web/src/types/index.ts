@@ -954,13 +954,13 @@ export interface MaterialConsumption {
 export interface OperatorAssignment {
   id: string;
   workOrderId: string;
-  stageId?: string;
   operatorId: string;
-  role: string;
-  startDate: string;
-  endDate?: string;
-  unassignedAt?: string;
-  createdAt: string;
+  role?: string;
+  startAt?: string;
+  endAt?: string;
+  assignedAt: string;
+  notes?: string;
+  createdAt?: string;
 }
 
 export interface ProofOfDelivery {
