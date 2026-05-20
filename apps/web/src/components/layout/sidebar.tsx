@@ -129,6 +129,7 @@ const navGroups: NavGroup[] = [
     items: [
       { href: '/admin/users', label: 'Users', icon: Users },
       { href: '/admin/roles', label: 'RBAC', icon: Shield },
+      { href: '/admin/permissions', label: 'Permissions', icon: Key },
       { href: '/admin/organization', label: 'Organization', icon: Building2 },
       { href: '/documents', label: 'Documents', icon: FileText },
       { href: '/notifications', label: 'Notifications', icon: Bell },
