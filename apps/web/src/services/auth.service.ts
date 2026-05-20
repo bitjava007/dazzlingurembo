@@ -3,7 +3,9 @@ import type { User } from '@/types';
 
 interface LoginResponse {
   user: User;
-  token: string;
+  accessToken: string;
+  refreshToken: string;
+  expiresIn: string;
 }
 
 export const authService = {
