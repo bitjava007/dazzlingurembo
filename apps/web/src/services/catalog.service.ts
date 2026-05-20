@@ -1,5 +1,5 @@
 import api from '@/lib/api';
-import type { Category, Product, Variant, PaginatedResponse, ListParams } from '@/types';
+import type { Category, Product, Variant, ProductSku, ProductMedia, PaginatedResponse, ListParams } from '@/types';
 
 export const catalogService = {
   // Categories
@@ -53,8 +53,8 @@ export const catalogService = {
   },
 
   // Variants
-  async getVariants(productId: string, params?: ListParams): Promise<PaginatedResponse<Variant>> {
-    const response = await api.get<PaginatedResponse<Variant>>(`/catalog/products/${productId}/variants`, { params });
+  async getVariants(productId: string): Promise<Variant[]> {
+    const response = await api.get<Variant[]>(`/catalog/products/${productId}/variants`);
     return response.data;
   },
 
@@ -63,12 +63,42 @@ export const catalogService = {
     return response.data;
   },
 
-  async updateVariant(productId: string, variantId: string, data: Partial<Variant>): Promise<Variant> {
-    const response = await api.patch<Variant>(`/catalog/products/${productId}/variants/${variantId}`, data);
+  async updateVariant(variantId: string, data: Partial<Variant>): Promise<Variant> {
+    const response = await api.patch<Variant>(`/catalog/variants/${variantId}`, data);
     return response.data;
   },
 
-  async deleteVariant(productId: string, variantId: string): Promise<void> {
-    await api.delete(`/catalog/products/${productId}/variants/${variantId}`);
+  async deleteVariant(variantId: string): Promise<void> {
+    await api.delete(`/catalog/variants/${variantId}`);
+  },
+
+  // SKUs
+  async getSkus(variantId: string): Promise<ProductSku[]> {
+    const response = await api.get<ProductSku[]>(`/catalog/variants/${variantId}/skus`);
+    return response.data;
+  },
+
+  async createSku(variantId: string, data: Partial<ProductSku>): Promise<ProductSku> {
+    const response = await api.post<ProductSku>(`/catalog/variants/${variantId}/skus`, data);
+    return response.data;
+  },
+
+  async deleteSku(skuId: string): Promise<void> {
+    await api.delete(`/catalog/skus/${skuId}`);
+  },
+
+  // Media
+  async getMedia(productId: string): Promise<ProductMedia[]> {
+    const response = await api.get<ProductMedia[]>(`/catalog/products/${productId}/media`);
+    return response.data;
+  },
+
+  async createMedia(productId: string, data: Partial<ProductMedia>): Promise<ProductMedia> {
+    const response = await api.post<ProductMedia>(`/catalog/products/${productId}/media`, data);
+    return response.data;
+  },
+
+  async deleteMedia(mediaId: string): Promise<void> {
+    await api.delete(`/catalog/media/${mediaId}`);
   },
 };
