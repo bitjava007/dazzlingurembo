@@ -62,11 +62,11 @@ export default function MediaPage() {
   const handleSearch = () => setProductId(productInput.trim());
 
   const columns = [
-    { header: 'Type', render: (r: ProductMedia) => r.mediaType },
+    { header: 'Type', render: (r: ProductMedia) => r.type },
     { header: 'URL', render: (r: ProductMedia) => <span className="text-gray-400 text-xs truncate max-w-xs block" title={r.url}>{r.url.length > 50 ? r.url.slice(0, 50) + '…' : r.url}</span> },
     { header: 'Alt Text', render: (r: ProductMedia) => r.altText ?? '—' },
     { header: 'Primary', render: (r: ProductMedia) => r.isPrimary ? <span className="text-[#C9A84C]">Yes</span> : '—' },
-    { header: 'Position', render: (r: ProductMedia) => r.sortOrder },
+    { header: 'Position', render: (r: ProductMedia) => r.position },
     {
       header: 'Actions', render: (r: ProductMedia) => (
         <Button variant="ghost" size="icon" className="h-7 w-7 text-gray-400 hover:text-red-400" onClick={() => { setDeleteItem(r); setDeleteOpen(true); }}>

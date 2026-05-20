@@ -809,12 +809,19 @@ export interface ProductSku {
 export interface ProductMedia {
   id: string;
   productId: string;
+  type: string;
   url: string;
+  thumbnailUrl?: string;
   altText?: string;
-  mediaType: string;
+  title?: string;
+  mimeType?: string;
+  sizeBytes?: number;
+  width?: number;
+  height?: number;
+  position: number;
   isPrimary: boolean;
-  sortOrder: number;
   createdAt: string;
+  updatedAt: string;
 }
 
 export interface InventoryCount {
