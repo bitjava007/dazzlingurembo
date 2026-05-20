@@ -77,4 +77,26 @@ export const financeService = {
     const response = await api.patch<Reconciliation>(`/finance/reconciliations/${id}/approve`);
     return response.data;
   },
+
+  // Treasury
+  getBankAccounts: (params?: object) => api.get('/finance/treasury/bank-accounts', { params }).then(r => r.data),
+  createBankAccount: (data: object) => api.post('/finance/treasury/bank-accounts', data).then(r => r.data),
+  updateBankAccount: (id: string, data: object) => api.patch(`/finance/treasury/bank-accounts/${id}`, data).then(r => r.data),
+  deleteBankAccount: (id: string) => api.delete(`/finance/treasury/bank-accounts/${id}`),
+  getBankTransactions: (accountId: string, params?: object) => api.get(`/finance/treasury/bank-accounts/${accountId}/transactions`, { params }).then(r => r.data),
+  createBankTransaction: (accountId: string, data: object) => api.post(`/finance/treasury/bank-accounts/${accountId}/transactions`, data).then(r => r.data),
+  getCashPosition: () => api.get('/finance/treasury/cash-position').then(r => r.data),
+  getCashflow: (from: string, to: string) => api.get(`/finance/treasury/cashflow?from=${from}&to=${to}`).then(r => r.data),
+
+  // Analytics
+  getAnalyticsSummary: (from: string, to: string) => api.get(`/finance/analytics/summary?from=${from}&to=${to}`).then(r => r.data),
+  getProfitabilityByBranch: (from: string, to: string) => api.get(`/finance/analytics/profitability/branch?from=${from}&to=${to}`).then(r => r.data),
+  getProfitabilityByCustomer: (from: string, to: string, limit = 10) => api.get(`/finance/analytics/profitability/customer?from=${from}&to=${to}&limit=${limit}`).then(r => r.data),
+  getProfitabilityByPeriod: (from: string, to: string, granularity = 'month') => api.get(`/finance/analytics/profitability/period?from=${from}&to=${to}&granularity=${granularity}`).then(r => r.data),
+  getProfitabilityByWorkshop: (from: string, to: string) => api.get(`/finance/analytics/profitability/workshop?from=${from}&to=${to}`).then(r => r.data),
+  getEmployeeCosts: (from: string, to: string) => api.get(`/finance/analytics/employee-costs?from=${from}&to=${to}`).then(r => r.data),
+
+  // Expense approvals
+  rejectExpense: (id: string, reason: string) => api.patch(`/finance/expenses/${id}/reject`, { rejectionReason: reason }).then(r => r.data),
+  submitExpense: (id: string) => api.patch(`/finance/expenses/${id}/submit`).then(r => r.data),
 };

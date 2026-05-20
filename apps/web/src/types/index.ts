@@ -286,17 +286,34 @@ export interface Delivery {
 
 export interface Expense {
   id: string;
-  title: string;
-  amount: number;
-  category: string;
-  status: 'PENDING' | 'APPROVED' | 'REJECTED' | 'PAID';
-  description?: string;
-  receiptUrl?: string;
-  branchId?: string;
+  expenseNumber: string;
+  categoryId: string;
+  category?: ExpenseCategory;
+  branchId: string;
   branch?: Branch;
+  status: 'DRAFT' | 'SUBMITTED' | 'APPROVED' | 'REJECTED' | 'PAID' | 'REIMBURSED';
+  description: string;
+  vendor?: string;
+  originalCurrencyCode: string;
+  originalAmount: number;
+  convertedCurrencyCode?: string;
+  convertedAmount?: number;
+  taxAmount?: number;
+  expenseDate: string;
+  submittedAt?: string;
+  approvedAt?: string;
+  paidAt?: string;
+  paymentMethod?: string;
+  receiptUrl?: string;
+  notes?: string;
+  isRecurring?: boolean;
+  createdById?: string;
   approvedById?: string;
   createdAt: string;
   updatedAt: string;
+  // Legacy fields kept for backward compatibility
+  title?: string;
+  amount?: number;
 }
 
 export interface CashClosure {
@@ -1016,5 +1033,102 @@ export interface ProductionSchedule {
   notes?: string;
   createdAt: string;
   updatedAt: string;
+}
+
+// =============================================================================
+// MODULE: TREASURY
+// =============================================================================
+
+export interface BankAccount {
+  id: string;
+  name: string;
+  bankName: string;
+  accountNumber: string;
+  iban?: string;
+  swift?: string;
+  currencyCode: string;
+  branchId: string;
+  branch?: Branch;
+  currentBalance: number;
+  isActive: boolean;
+  notes?: string;
+  transactions?: BankTransaction[];
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface BankTransaction {
+  id: string;
+  bankAccountId: string;
+  type: 'INFLOW' | 'OUTFLOW';
+  amount: number;
+  currencyCode: string;
+  description: string;
+  referenceType?: string;
+  referenceId?: string;
+  transactionDate: string;
+  createdAt: string;
+}
+
+export interface CashPosition {
+  accounts: BankAccount[];
+  inflowLast30d: number;
+  outflowLast30d: number;
+  netLast30d: number;
+}
+
+// =============================================================================
+// MODULE: ANALYTICS
+// =============================================================================
+
+export interface AnalyticsSummary {
+  totalRevenue: number;
+  totalExpenses: number;
+  grossProfit: number;
+  margin: number;
+  totalPayroll: number;
+  totalAdvances: number;
+  period: { from: string; to: string };
+}
+
+export interface ProfitabilityByBranch {
+  branchId: string;
+  branchName: string;
+  revenue: number;
+  expenses: number;
+  profit: number;
+  margin: number;
+}
+
+export interface EmployeeCostSummary {
+  summary: {
+    totalBaseSalary: number;
+    totalAllowances: number;
+    totalDeductions: number;
+    totalNetPay: number;
+    totalGrossPay: number;
+    totalAdvancesDisbursed: number;
+    headcount: number;
+  };
+  payrollByEmployee: Array<{
+    id: string;
+    employeeId: string;
+    grossPay: number;
+    netPay: number;
+    deductions: number;
+    baseSalary: number;
+    allowances: number;
+    status: string;
+    periodStartDate: string;
+    periodEndDate: string;
+  }>;
+  advances: Array<{
+    id: string;
+    employeeId: string;
+    originalAmount: number;
+    originalCurrencyCode: string;
+    status: string;
+    requestedAt: string;
+  }>;
 }
 

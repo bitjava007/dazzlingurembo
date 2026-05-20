@@ -37,6 +37,8 @@ import {
   Scissors,
   Ruler,
   CalendarDays,
+  Landmark,
+  ClipboardCheck,
 } from 'lucide-react';
 
 interface NavItem {
@@ -89,6 +91,10 @@ const navGroups: NavGroup[] = [
       { href: '/finance/cash-closures', label: 'Cash Closures', icon: DollarSign },
       { href: '/finance/reconciliations', label: 'Reconciliations', icon: RefreshCw },
       { href: '/finance/exchange-rates', label: 'Exchange Rates', icon: CreditCard },
+      { href: '/finance/treasury', label: 'Treasury', icon: Landmark },
+      { href: '/finance/analytics', label: 'Analytics', icon: BarChart3 },
+      { href: '/finance/approvals', label: 'Expense Approvals', icon: ClipboardCheck },
+      { href: '/finance/employee-costs', label: 'Employee Costs', icon: Users },
     ],
   },
   {

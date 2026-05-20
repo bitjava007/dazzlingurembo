@@ -591,6 +591,9 @@ model Branch {
   // Documents
   documents Document[]
 
+  // Finance - Treasury
+  bankAccounts BankAccount[] @relation("BranchBankAccounts")
+
   @@index([countryId])
   @@index([code])
   @@index([isActive])
@@ -2596,4 +2599,51 @@ model ProductionSchedule {
   @@index([workshopId])
   @@index([scheduledDate])
   @@map("production_schedules")
+}
+
+// =============================================================================
+// MODULE: TREASURY
+// =============================================================================
+
+model BankAccount {
+  id             String   @id @default(uuid())
+  name           String
+  bankName       String
+  accountNumber  String   @unique
+  iban           String?
+  swift          String?
+  currencyCode   String   @default("XOF")
+  branchId       String
+  branch         Branch   @relation("BranchBankAccounts", fields: [branchId], references: [id])
+  currentBalance Decimal  @default(0) @db.Decimal(15, 2)
+  isActive       Boolean  @default(true)
+  notes          String?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+  deletedAt      DateTime?
+  transactions   BankTransaction[]
+
+  @@index([branchId])
+  @@index([deletedAt])
+  @@map("bank_accounts")
+}
+
+model BankTransaction {
+  id              String      @id @default(uuid())
+  bankAccountId   String
+  bankAccount     BankAccount @relation(fields: [bankAccountId], references: [id])
+  type            String      // INFLOW | OUTFLOW
+  amount          Decimal     @db.Decimal(15, 2)
+  currencyCode    String
+  description     String
+  referenceType   String?     // INVOICE | EXPENSE | PAYROLL | MANUAL
+  referenceId     String?
+  transactionDate DateTime    @default(now())
+  createdAt       DateTime    @default(now())
+  updatedAt       DateTime    @updatedAt
+
+  @@index([bankAccountId])
+  @@index([type])
+  @@index([transactionDate])
+  @@map("bank_transactions")
 }
