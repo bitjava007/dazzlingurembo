@@ -668,6 +668,49 @@ export interface ProductMedia {
   createdAt: string;
 }
 
+export interface InventoryCount {
+  id: string;
+  branchId: string;
+  warehouseId: string;
+  status: string;
+  notes?: string;
+  scheduledAt?: string;
+  appliedAt?: string;
+  createdById?: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface DamagedStock {
+  id: string;
+  variantId: string;
+  warehouseId: string;
+  branchId: string;
+  quantity: number;
+  reason: string;
+  description?: string;
+  estimatedLoss?: number;
+  currencyCode?: string;
+  disposalMethod?: string;
+  resolvedAt?: string;
+  resolvedById?: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface SKU {
+  id: string;
+  variantId: string;
+  sku: string;
+  barcode?: string;
+  serialNumber?: string;
+  batchNumber?: string;
+  condition: string;
+  isActive: boolean;
+  createdAt: string;
+  updatedAt: string;
+}
+
 export interface AuthResponse {
   accessToken: string;
   refreshToken: string;

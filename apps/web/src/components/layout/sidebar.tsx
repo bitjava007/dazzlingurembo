@@ -29,6 +29,11 @@ import {
   BookOpen,
   RefreshCw,
   Tag,
+  Image,
+  Hash,
+  AlertTriangle,
+  ListChecks,
+  Key,
 } from 'lucide-react';
 
 interface NavItem {
@@ -52,7 +57,11 @@ const navGroups: NavGroup[] = [
     items: [
       { href: '/crm/customers', label: 'CRM', icon: Users },
       { href: '/catalog/products', label: 'Catalog', icon: Package },
+      { href: '/catalog/skus', label: 'SKUs', icon: Hash },
+      { href: '/catalog/media', label: 'Media', icon: Image },
       { href: '/inventory/stock', label: 'Inventory', icon: Boxes },
+      { href: '/inventory/counts', label: 'Counts', icon: ListChecks },
+      { href: '/inventory/damaged', label: 'Damaged Stock', icon: AlertTriangle },
     ],
   },
   {
