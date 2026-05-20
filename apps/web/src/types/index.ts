@@ -15,15 +15,15 @@ export interface Role {
   id: string;
   name: string;
   description?: string;
-  permissions: Permission[];
+  isSystem?: boolean;
+  permissions?: Permission[];
   createdAt: string;
   updatedAt: string;
 }
 
 export interface Permission {
   id: string;
-  name: string;
-  resource: string;
+  module: string;
   action: string;
   description?: string;
 }
@@ -155,10 +155,26 @@ export interface Warehouse {
   id: string;
   name: string;
   code: string;
-  branchId?: string;
+  branchId: string;
   branch?: Branch;
   address?: string;
-  status: 'ACTIVE' | 'INACTIVE';
+  totalCapacity?: number;
+  isActive: boolean;
+  isDefault: boolean;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface Workshop {
+  id: string;
+  name: string;
+  code: string;
+  branchId: string;
+  branch?: Branch;
+  address?: string;
+  capacity?: number;
+  isActive: boolean;
+  specialties?: string[];
   createdAt: string;
   updatedAt: string;
 }
@@ -467,10 +483,15 @@ export interface PayrollRun {
 export interface Country {
   id: string;
   name: string;
-  code: string;
-  currency: string;
+  isoCode2: string;
+  isoCode3: string;
+  currencyCode: string;
+  currencyName: string;
   currencySymbol: string;
-  timezone: string;
+  dialCode?: string;
+  locale?: string;
+  timezone?: string;
+  isActive: boolean;
   createdAt: string;
   updatedAt: string;
 }
@@ -479,12 +500,19 @@ export interface Branch {
   id: string;
   name: string;
   code: string;
+  type: string;
   countryId: string;
   country?: Country;
   address?: string;
+  city?: string;
+  stateRegion?: string;
+  postalCode?: string;
   phone?: string;
   email?: string;
-  status: 'ACTIVE' | 'INACTIVE';
+  isActive: boolean;
+  isHeadOffice: boolean;
+  openingDate?: string;
+  managerId?: string;
   createdAt: string;
   updatedAt: string;
 }
