@@ -59,7 +59,7 @@ export default function OrganizationPage() {
   const countryColumns = [
     { header: 'Name', accessor: 'name' as keyof Country },
     { header: 'Code', accessor: 'code' as keyof Country },
-    { header: 'Currency', render: (r: Country) => `${r.currencySymbol} ${r.currency}` },
+    { header: 'Currency', render: (r: Country) => `${r.currencySymbol} ${r.currencyCode}` },
     { header: 'Timezone', accessor: 'timezone' as keyof Country },
   ];
 
@@ -67,7 +67,7 @@ export default function OrganizationPage() {
     { header: 'Name', accessor: 'name' as keyof Branch },
     { header: 'Code', accessor: 'code' as keyof Branch },
     { header: 'Country', render: (r: Branch) => r.country?.name ?? '—' },
-    { header: 'Status', render: (r: Branch) => <StatusBadge status={r.status} /> },
+    { header: 'Status', render: (r: Branch) => <StatusBadge status={r.isActive ? 'ACTIVE' : 'INACTIVE'} /> },
     {
       header: 'Actions', render: (r: Branch) => (
         <Button variant="ghost" size="icon" className="h-7 w-7 text-gray-400 hover:text-white" onClick={() => openEditBranch(r)}><Pencil className="h-3 w-3" /></Button>

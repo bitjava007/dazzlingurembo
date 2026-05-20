@@ -646,6 +646,27 @@ export interface DeliveryNoteItem {
   quantity: number;
 }
 
+export interface ProductSku {
+  id: string;
+  variantId: string;
+  sku: string;
+  barcode?: string;
+  isActive: boolean;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface ProductMedia {
+  id: string;
+  productId: string;
+  url: string;
+  altText?: string;
+  mediaType: string;
+  isPrimary: boolean;
+  sortOrder: number;
+  createdAt: string;
+}
+
 export interface AuthResponse {
   accessToken: string;
   refreshToken: string;
@@ -665,6 +686,156 @@ export interface PaginatedResponse<T> {
 
 export interface ApiResponse<T> {
   data: T;
+}
+
+export interface ExpenseCategory {
+  id: string;
+  name: string;
+  code: string;
+  description?: string;
+  parentId?: string;
+  parent?: ExpenseCategory;
+  children?: ExpenseCategory[];
+  deletedAt?: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface Reconciliation {
+  id: string;
+  branchId: string;
+  branch?: Branch;
+  date: string;
+  accountCode: string;
+  systemBalance: number;
+  actualBalance: number;
+  difference: number;
+  notes?: string;
+  status: 'PENDING' | 'APPROVED';
+  approvedById?: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface SalaryAdvance {
+  id: string;
+  employeeId: string;
+  employee?: Employee;
+  amount: number;
+  currencyCode: string;
+  reason: string;
+  requestedDate: string;
+  repaymentDate?: string;
+  status: 'PENDING' | 'APPROVED' | 'REJECTED' | 'REPAID';
+  approvedById?: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface ProofOfDelivery {
+  id: string;
+  deliveryId: string;
+  delivery?: Delivery;
+  signatureName: string;
+  signatureUrl?: string;
+  photoUrl?: string;
+  notes?: string;
+  deliveredAt: string;
+  createdAt: string;
+}
+
+export interface GoodsReceipt {
+  id: string;
+  purchaseOrderId: string;
+  purchaseOrder?: PurchaseOrder;
+  branchId: string;
+  branch?: Branch;
+  receivedDate: string;
+  notes?: string;
+  items: GoodsReceiptItem[];
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface GoodsReceiptItem {
+  id: string;
+  goodsReceiptId: string;
+  purchaseOrderItemId: string;
+  quantityReceived: number;
+  notes?: string;
+}
+
+export interface SupplierPayment {
+  id: string;
+  supplierId: string;
+  supplier?: Supplier;
+  supplierInvoiceId?: string;
+  amount: number;
+  currencyCode: string;
+  paymentMethod: string;
+  paymentDate: string;
+  reference?: string;
+  notes?: string;
+  originalCurrencyCode?: string;
+  originalAmount?: number;
+  convertedCurrencyCode?: string;
+  convertedAmount?: number;
+  exchangeRateSnapshot?: number;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface MaterialConsumption {
+  id: string;
+  workOrderId: string;
+  workOrder?: WorkOrder;
+  productId: string;
+  product?: Product;
+  variantId?: string;
+  variant?: Variant;
+  quantity: number;
+  unit: string;
+  notes?: string;
+  createdAt: string;
+}
+
+export interface OperatorAssignment {
+  id: string;
+  workOrderId: string;
+  workOrder?: WorkOrder;
+  stageId?: string;
+  operatorId: string;
+  role?: string;
+  startDate: string;
+  endDate?: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface NotificationTemplate {
+  id: string;
+  name: string;
+  code: string;
+  channel: 'EMAIL' | 'SMS' | 'PUSH' | 'IN_APP';
+  subject?: string;
+  bodyTemplate: string;
+  variables?: string[];
+  isActive: boolean;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface NotificationLog {
+  id: string;
+  templateId?: string;
+  channel: string;
+  recipient: string;
+  subject?: string;
+  status: 'SENT' | 'FAILED' | 'PENDING';
+  entityType?: string;
+  entityId?: string;
+  sentAt?: string;
+  createdAt: string;
 }
 
 export interface ListParams {
