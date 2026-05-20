@@ -466,16 +466,17 @@ export interface PurchaseOrderItem {
 
 export interface SupplierInvoice {
   id: string;
-  invoiceNumber: string;
+  paymentNumber?: string;
   supplierId: string;
   supplier?: Supplier;
   purchaseOrderId?: string;
   branchId?: string;
-  status: 'PENDING' | 'APPROVED' | 'PAID' | 'OVERDUE' | 'DISPUTED';
+  branch?: Branch;
+  status: 'PENDING' | 'APPROVED' | 'COMPLETED' | 'CANCELLED';
   originalAmount: number;
   originalCurrencyCode?: string;
-  paidAmount?: number;
-  dueDate: string;
+  method?: string;
+  paidAt?: string;
   notes?: string;
   createdAt: string;
   updatedAt: string;

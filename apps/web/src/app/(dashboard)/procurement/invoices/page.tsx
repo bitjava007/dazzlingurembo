@@ -20,12 +20,12 @@ export default function SupplierInvoicesPage() {
   });
 
   const columns = [
-    { header: 'Invoice #', accessor: 'invoiceNumber' as keyof SupplierInvoice },
+    { header: 'Ref #', render: (r: SupplierInvoice) => r.paymentNumber ?? '—' },
     { header: 'Supplier', render: (r: SupplierInvoice) => r.supplier?.name ?? '—' },
     { header: 'Status', render: (r: SupplierInvoice) => <StatusBadge status={r.status} /> },
-    { header: 'Total', render: (r: SupplierInvoice) => `$${r.originalAmount.toFixed(2)}` },
-    { header: 'Paid', render: (r: SupplierInvoice) => `$${(r.paidAmount ?? 0).toFixed(2)}` },
-    { header: 'Due Date', render: (r: SupplierInvoice) => new Date(r.dueDate).toLocaleDateString() },
+    { header: 'Amount', render: (r: SupplierInvoice) => `${r.originalAmount.toFixed(2)} ${r.originalCurrencyCode ?? ''}` },
+    { header: 'Method', render: (r: SupplierInvoice) => r.method ?? '—' },
+    { header: 'Paid At', render: (r: SupplierInvoice) => r.paidAt ? new Date(r.paidAt).toLocaleDateString() : '—' },
   ];
 
   return (
