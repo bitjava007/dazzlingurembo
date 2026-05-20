@@ -17,12 +17,12 @@ export default function CashClosuresPage() {
   });
 
   const columns = [
-    { header: 'Date', render: (r: CashClosure) => new Date(r.date).toLocaleDateString() },
+    { header: 'Date', render: (r: CashClosure) => new Date(r.closureDate).toLocaleDateString() },
     { header: 'Branch', render: (r: CashClosure) => r.branch?.name ?? '—' },
-    { header: 'Opening', render: (r: CashClosure) => `$${r.openingBalance.toFixed(2)}` },
-    { header: 'Closing', render: (r: CashClosure) => `$${r.closingBalance.toFixed(2)}` },
-    { header: 'Sales', render: (r: CashClosure) => `$${r.cashSales.toFixed(2)}` },
-    { header: 'Difference', render: (r: CashClosure) => <span className={r.difference !== 0 ? 'text-red-400' : 'text-green-400'}>${r.difference.toFixed(2)}</span> },
+    { header: 'Sales', render: (r: CashClosure) => `${Number(r.totalSales).toFixed(2)} ${r.currencyCode}` },
+    { header: 'Refunds', render: (r: CashClosure) => `${Number(r.totalRefunds).toFixed(2)}` },
+    { header: 'Net Revenue', render: (r: CashClosure) => `${Number(r.netRevenue).toFixed(2)} ${r.currencyCode}` },
+    { header: 'Variance', render: (r: CashClosure) => r.cashVariance != null ? <span className={Number(r.cashVariance) !== 0 ? 'text-red-400' : 'text-green-400'}>{Number(r.cashVariance).toFixed(2)}</span> : '—' },
     { header: 'Status', render: (r: CashClosure) => <StatusBadge status={r.status} /> },
   ];
 

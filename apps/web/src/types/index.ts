@@ -373,17 +373,21 @@ export interface Expense {
 
 export interface CashClosure {
   id: string;
-  date: string;
+  closureDate: string;
   branchId: string;
   branch?: Branch;
-  openingBalance: number;
-  closingBalance: number;
-  cashSales: number;
-  cashIn: number;
-  cashOut: number;
-  difference: number;
-  status: 'OPEN' | 'CLOSED';
+  totalSales: number;
+  totalRefunds: number;
+  totalExpenses: number;
+  netRevenue: number;
+  cashInDrawer?: number;
+  expectedCash?: number;
+  cashVariance?: number;
+  currencyCode: string;
+  status: string;
   closedById?: string;
+  closedAt?: string;
+  notes?: string;
   createdAt: string;
   updatedAt: string;
 }
