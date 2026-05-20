@@ -555,10 +555,14 @@ export interface AttendanceRecord {
   id: string;
   employeeId: string;
   employee?: Employee;
+  branchId?: string;
   date: string;
-  checkIn?: string;
-  checkOut?: string;
   status: 'PRESENT' | 'ABSENT' | 'LATE' | 'HALF_DAY' | 'LEAVE';
+  checkInAt?: string;
+  checkOutAt?: string;
+  breakMinutes?: number;
+  workedMinutes?: number;
+  overtimeMinutes?: number;
   notes?: string;
   createdAt: string;
   updatedAt: string;

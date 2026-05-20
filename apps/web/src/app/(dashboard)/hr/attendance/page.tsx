@@ -22,8 +22,8 @@ export default function AttendancePage() {
   const columns = [
     { header: 'Employee', render: (r: AttendanceRecord) => r.employee ? `${r.employee.firstName} ${r.employee.lastName}` : '—' },
     { header: 'Date', render: (r: AttendanceRecord) => new Date(r.date).toLocaleDateString() },
-    { header: 'Check In', render: (r: AttendanceRecord) => r.checkIn ? new Date(r.checkIn).toLocaleTimeString() : '—' },
-    { header: 'Check Out', render: (r: AttendanceRecord) => r.checkOut ? new Date(r.checkOut).toLocaleTimeString() : '—' },
+    { header: 'Check In', render: (r: AttendanceRecord) => r.checkInAt ? new Date(r.checkInAt).toLocaleTimeString() : '—' },
+    { header: 'Check Out', render: (r: AttendanceRecord) => r.checkOutAt ? new Date(r.checkOutAt).toLocaleTimeString() : '—' },
     { header: 'Status', render: (r: AttendanceRecord) => <StatusBadge status={r.status} /> },
     { header: 'Notes', render: (r: AttendanceRecord) => r.notes ?? '—' },
   ];
