@@ -53,7 +53,19 @@ const navGroups: NavGroup[] = [
       { href: '/crm/customers', label: 'CRM', icon: Users },
       { href: '/catalog/products', label: 'Catalog', icon: Package },
       { href: '/inventory/stock', label: 'Inventory', icon: Boxes },
-      { href: '/sales/orders', label: 'Sales', icon: ShoppingCart },
+    ],
+  },
+  {
+    title: 'Sales',
+    items: [
+      { href: '/sales/orders', label: 'Orders', icon: ShoppingCart },
+      { href: '/sales/quotations', label: 'Quotations', icon: FileText },
+      { href: '/sales/invoices', label: 'Invoices', icon: Receipt },
+      { href: '/sales/payments', label: 'Payments', icon: CreditCard },
+      { href: '/sales/receipts', label: 'Receipts', icon: Receipt },
+      { href: '/sales/refunds', label: 'Refunds', icon: RefreshCw },
+      { href: '/sales/returns', label: 'Returns', icon: PackageCheck },
+      { href: '/sales/delivery-notes', label: 'Delivery Notes', icon: Truck },
     ],
   },
   {
