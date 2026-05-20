@@ -27,7 +27,7 @@ interface VariantFormData {
 interface MediaFormData {
   url: string;
   altText: string;
-  mediaType: string;
+  type: string;
 }
 
 export default function ProductDetailPage() {
@@ -56,7 +56,7 @@ export default function ProductDetailPage() {
   });
 
   const variantForm = useForm<VariantFormData>({ defaultValues: { name: '', sku: '', priceAdjustment: 0, costAdjustment: 0 } });
-  const mediaForm = useForm<MediaFormData>({ defaultValues: { url: '', altText: '', mediaType: 'IMAGE' } });
+  const mediaForm = useForm<MediaFormData>({ defaultValues: { url: '', altText: '', type: 'IMAGE' } });
 
   const createVariantMutation = useMutation({
     mutationFn: (d: VariantFormData) => catalogService.createVariant(id, { ...d, priceAdjustment: Number(d.priceAdjustment), costAdjustment: Number(d.costAdjustment) }),
@@ -72,7 +72,7 @@ export default function ProductDetailPage() {
 
   const createMediaMutation = useMutation({
     mutationFn: (d: MediaFormData) => catalogService.createMedia(id, d),
-    onSuccess: () => { qc.invalidateQueries({ queryKey: ['media', id] }); mediaForm.reset({ url: '', altText: '', mediaType: 'IMAGE' }); toast({ title: 'Media added' }); },
+    onSuccess: () => { qc.invalidateQueries({ queryKey: ['media', id] }); mediaForm.reset({ url: '', altText: '', type: 'IMAGE' }); toast({ title: 'Media added' }); },
     onError: () => toast({ title: 'Error adding media', variant: 'destructive' }),
   });
 
@@ -229,7 +229,7 @@ export default function ProductDetailPage() {
                 <div className="space-y-1">
                   <Label className="text-gray-300">Type</Label>
                   <select
-                    {...mediaForm.register('mediaType')}
+                    {...mediaForm.register('type')}
                     className="w-full bg-[#111111] border border-[#2A2A2A] text-white rounded-md p-2 text-sm focus:outline-none focus:border-[#C9A84C]"
                   >
                     <option value="IMAGE">IMAGE</option>
