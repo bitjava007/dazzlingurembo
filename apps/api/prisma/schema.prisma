@@ -575,6 +575,10 @@ model Branch {
   // Production
   workOrders WorkOrder[]
 
+  // Fashion
+  customOrders CustomOrder[] @relation("BranchCustomOrders")
+  alterations  Alteration[]  @relation("BranchAlterations")
+
   // Logistics
   deliveries Delivery[]
 
@@ -608,7 +612,10 @@ model Workshop {
   updatedAt   DateTime  @updatedAt
   deletedAt   DateTime?
 
-  workOrders WorkOrder[]
+  workOrders        WorkOrder[]
+  tailoringTeams    TailoringTeam[]
+  alterations       Alteration[]        @relation("WorkshopAlterations")
+  workshopSchedules ProductionSchedule[] @relation("WorkshopSchedules")
 
   @@index([branchId])
   @@index([deletedAt])
@@ -690,6 +697,8 @@ model Customer {
   orders               Order[]
   quotations           Quotation[]
   returns              Return[]
+  customOrders         CustomOrder[]         @relation("CustomerCustomOrders")
+  alterations          Alteration[]          @relation("CustomerAlterations")
 
   @@index([email])
   @@index([phone])
@@ -848,6 +857,7 @@ model Product {
   media         ProductMedia[]
   stockBalances StockBalance[]
   orderItems    OrderItem[]
+  bom           BOM?            @relation("ProductBOM")
 
   @@index([slug])
   @@index([categoryId])
@@ -892,6 +902,7 @@ model ProductVariant {
   batchTracking        BatchTracking[]
   workOrderOutputs     WorkOrder[]           @relation("WorkOrderOutputVariant")
   returnItems          ReturnItem[]
+  bomItems             BOMItem[]             @relation("BOMItemMaterial")
 
   @@index([productId])
   @@index([sku])
@@ -1955,6 +1966,7 @@ model WorkOrder {
   qualityControls     QualityControl[]
   batchTracking       BatchTracking[]
   operatorAssignments OperatorAssignment[]
+  schedules           ProductionSchedule[]
 
   @@index([workshopId])
   @@index([branchId])
@@ -2411,4 +2423,177 @@ model Document {
   @@index([uploadedById])
   @@index([deletedAt])
   @@map("documents")
+}
+
+// =============================================================================
+// MODULE: FASHION MANUFACTURING
+// =============================================================================
+
+model BOM {
+  id          String    @id @default(uuid())
+  productId   String    @unique
+  product     Product   @relation("ProductBOM", fields: [productId], references: [id])
+  name        String
+  version     String    @default("1.0")
+  isActive    Boolean   @default(true)
+  notes       String?
+  createdById String?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  deletedAt   DateTime?
+
+  items BOMItem[]
+
+  @@index([productId])
+  @@index([deletedAt])
+  @@map("boms")
+}
+
+model BOMItem {
+  id                String         @id @default(uuid())
+  bomId             String
+  bom               BOM            @relation(fields: [bomId], references: [id], onDelete: Cascade)
+  materialVariantId String
+  materialVariant   ProductVariant @relation("BOMItemMaterial", fields: [materialVariantId], references: [id])
+  quantity          Decimal        @db.Decimal(10, 3)
+  unit              String         @default("PCS")
+  wastagePercent    Decimal?       @db.Decimal(5, 2)
+  materialType      String         @default("FABRIC") // FABRIC | ZIPPER | BUTTON | ACCESSORY | LINING | THREAD | OTHER
+  notes             String?
+
+  @@index([bomId])
+  @@index([materialVariantId])
+  @@map("bom_items")
+}
+
+model TailoringTeam {
+  id          String    @id @default(uuid())
+  name        String
+  code        String    @unique
+  workshopId  String
+  workshop    Workshop  @relation(fields: [workshopId], references: [id])
+  leaderId    String?
+  capacity    Int?
+  specialties String[]  @default([])
+  isActive    Boolean   @default(true)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  deletedAt   DateTime?
+
+  schedules ProductionSchedule[]
+
+  @@index([workshopId])
+  @@index([deletedAt])
+  @@map("tailoring_teams")
+}
+
+model CustomOrder {
+  id             String    @id @default(uuid())
+  orderNumber    String    @unique
+  customerId     String
+  customer       Customer  @relation("CustomerCustomOrders", fields: [customerId], references: [id])
+  branchId       String
+  branch         Branch    @relation("BranchCustomOrders", fields: [branchId], references: [id])
+  status         String    @default("PENDING")
+  title          String
+  description    String?
+
+  bust             Decimal? @db.Decimal(6, 2)
+  waist            Decimal? @db.Decimal(6, 2)
+  hips             Decimal? @db.Decimal(6, 2)
+  length           Decimal? @db.Decimal(6, 2)
+  shoulders        Decimal? @db.Decimal(6, 2)
+  sleeves          Decimal? @db.Decimal(6, 2)
+  inseam           Decimal? @db.Decimal(6, 2)
+  neck             Decimal? @db.Decimal(6, 2)
+  measurementNotes String?
+
+  stylePreferences    String?
+  colorPreferences    String?
+  fabricPreferences   String?
+  embellishments      String?
+  specialInstructions String?
+
+  primaryFabricVariantId   String?
+  secondaryFabricVariantId String?
+  liningVariantId          String?
+
+  estimatedPrice Decimal? @db.Decimal(15, 2)
+  finalPrice     Decimal? @db.Decimal(15, 2)
+  depositAmount  Decimal? @db.Decimal(15, 2)
+  currencyCode   String   @default("XOF")
+
+  requiredByDate DateTime?
+  fittingDate    DateTime?
+  deliveryDate   DateTime?
+
+  workOrderId    String?
+  createdById    String?
+  notes          String?
+  attachmentUrls String[] @default([])
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+  deletedAt      DateTime?
+
+  @@index([customerId])
+  @@index([branchId])
+  @@index([status])
+  @@index([deletedAt])
+  @@map("custom_orders")
+}
+
+model Alteration {
+  id               String    @id @default(uuid())
+  alterationNumber String    @unique
+  customerId       String
+  customer         Customer  @relation("CustomerAlterations", fields: [customerId], references: [id])
+  branchId         String
+  branch           Branch    @relation("BranchAlterations", fields: [branchId], references: [id])
+  workshopId       String?
+  workshop         Workshop? @relation("WorkshopAlterations", fields: [workshopId], references: [id])
+  status           String    @default("RECEIVED")
+  description      String
+  alterationType   String    @default("RESIZE")
+  estimatedTime    Int?
+  actualTime       Int?
+  estimatedCost    Decimal?  @db.Decimal(15, 2)
+  finalCost        Decimal?  @db.Decimal(15, 2)
+  currencyCode     String    @default("XOF")
+  receivedAt       DateTime  @default(now())
+  completedAt      DateTime?
+  deliveredAt      DateTime?
+  tailorId         String?
+  notes            String?
+  imageUrls        String[]  @default([])
+  createdById      String?
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
+
+  @@index([customerId])
+  @@index([branchId])
+  @@index([status])
+  @@map("alterations")
+}
+
+model ProductionSchedule {
+  id            String         @id @default(uuid())
+  workOrderId   String
+  workOrder     WorkOrder      @relation(fields: [workOrderId], references: [id], onDelete: Cascade)
+  workshopId    String
+  workshop      Workshop       @relation("WorkshopSchedules", fields: [workshopId], references: [id])
+  teamId        String?
+  team          TailoringTeam? @relation(fields: [teamId], references: [id])
+  scheduledDate DateTime
+  startTime     DateTime?
+  endTime       DateTime?
+  title         String
+  notes         String?
+  createdById   String?
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+
+  @@index([workOrderId])
+  @@index([workshopId])
+  @@index([scheduledDate])
+  @@map("production_schedules")
 }
