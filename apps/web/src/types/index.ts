@@ -327,14 +327,20 @@ export interface Payment {
 
 export interface Delivery {
   id: string;
-  orderId: string;
+  deliveryNumber?: string;
+  orderId?: string;
   order?: Order;
+  branchId?: string;
   status: 'PENDING' | 'DISPATCHED' | 'DELIVERED' | 'FAILED' | 'RETURNED';
-  driverName?: string;
-  vehicleNumber?: string;
-  dispatchedAt?: string;
+  carrierName?: string;
+  carrierService?: string;
+  trackingNumber?: string;
+  recipientName?: string;
+  recipientPhone?: string;
+  scheduledAt?: string;
+  pickedUpAt?: string;
   deliveredAt?: string;
-  notes?: string;
+  deliveryNotes?: string;
   createdAt: string;
   updatedAt: string;
 }
@@ -739,18 +745,20 @@ export interface ReturnItem {
 
 export interface DeliveryNote {
   id: string;
-  deliveryNumber: string;
+  noteNumber: string;
   orderId: string;
   order?: Order;
   branchId: string;
   branch?: Branch;
-  status: 'DRAFT' | 'DISPATCHED' | 'DELIVERED';
-  notes?: string;
-  dispatchedAt?: string;
+  issuedAt: string;
+  shippedAt?: string;
   deliveredAt?: string;
+  carrierName?: string;
+  trackingNumber?: string;
+  notes?: string;
+  signedBy?: string;
   createdAt: string;
   updatedAt: string;
-  items?: DeliveryNoteItem[];
 }
 
 export interface DeliveryNoteItem {
@@ -886,13 +894,16 @@ export interface Reconciliation {
 
 export interface GoodsReceipt {
   id: string;
+  receiptNumber?: string;
   purchaseOrderId: string;
   purchaseOrder?: PurchaseOrder;
+  warehouseId?: string;
   branchId: string;
-  receivedDate: string;
+  receivedAt: string;
   notes?: string;
+  qualityCheckStatus?: string;
   items?: GoodsReceiptItem[];
-  createdById?: string;
+  receivedById?: string;
   createdAt: string;
   updatedAt: string;
 }

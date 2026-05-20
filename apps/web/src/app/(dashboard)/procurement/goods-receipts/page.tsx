@@ -45,7 +45,7 @@ export default function GoodsReceiptsPage() {
     { header: 'Branch', render: (r: GoodsReceipt) => r.branchId },
     { header: 'Items', render: (r: GoodsReceipt) => r.items?.length ?? 0 },
     { header: 'Notes', render: (r: GoodsReceipt) => r.notes ?? '—' },
-    { header: 'Received', render: (r: GoodsReceipt) => r.receivedDate ? new Date(r.receivedDate).toLocaleDateString() : new Date(r.createdAt).toLocaleDateString() },
+    { header: 'Received', render: (r: GoodsReceipt) => r.receivedAt ? new Date(r.receivedAt).toLocaleDateString() : new Date(r.createdAt).toLocaleDateString() },
   ];
 
   return (

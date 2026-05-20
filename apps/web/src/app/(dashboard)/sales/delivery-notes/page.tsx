@@ -52,24 +52,26 @@ export default function DeliveryNotesPage() {
     onError: () => toast({ title: 'Error marking as delivered', variant: 'destructive' }),
   });
 
+  const getStatus = (r: DeliveryNote) => r.deliveredAt ? 'DELIVERED' : r.shippedAt ? 'SHIPPED' : 'PENDING';
+
   const columns = [
-    { header: 'Delivery #', accessor: 'deliveryNumber' as keyof DeliveryNote },
+    { header: 'Note #', render: (r: DeliveryNote) => <span className="font-mono text-xs text-[#C9A84C]">{r.noteNumber}</span> },
     { header: 'Order', render: (r: DeliveryNote) => r.order?.orderNumber ?? r.orderId },
     { header: 'Branch', render: (r: DeliveryNote) => r.branch?.name ?? '—' },
-    { header: 'Status', render: (r: DeliveryNote) => <StatusBadge status={r.status} /> },
-    { header: 'Notes', render: (r: DeliveryNote) => r.notes ?? '—' },
-    { header: 'Dispatched', render: (r: DeliveryNote) => r.dispatchedAt ? new Date(r.dispatchedAt).toLocaleDateString() : '—' },
+    { header: 'Status', render: (r: DeliveryNote) => <StatusBadge status={getStatus(r)} /> },
+    { header: 'Carrier', render: (r: DeliveryNote) => r.carrierName ?? '—' },
+    { header: 'Shipped', render: (r: DeliveryNote) => r.shippedAt ? new Date(r.shippedAt).toLocaleDateString() : '—' },
     { header: 'Delivered', render: (r: DeliveryNote) => r.deliveredAt ? new Date(r.deliveredAt).toLocaleDateString() : '—' },
     {
       header: 'Actions',
       render: (r: DeliveryNote) => (
         <div className="flex gap-1">
-          {r.status === 'DRAFT' && (
+          {!r.shippedAt && (
             <Button variant="ghost" size="sm" className="h-7 text-[#C9A84C] hover:text-[#D4AF37] px-2" onClick={() => dispatchMutation.mutate(r.id)} disabled={dispatchMutation.isPending}>
               <Truck className="h-3 w-3 mr-1" />Dispatch
             </Button>
           )}
-          {r.status === 'DISPATCHED' && (
+          {r.shippedAt && !r.deliveredAt && (
             <Button variant="ghost" size="sm" className="h-7 text-green-400 hover:text-green-300 px-2" onClick={() => deliverMutation.mutate(r.id)} disabled={deliverMutation.isPending}>
               <PackageCheck className="h-3 w-3 mr-1" />Deliver
             </Button>
