@@ -23,14 +23,12 @@ export class StockBalancesController {
     @Query('branchId') branchId?: string,
     @Query('productId') productId?: string,
     @Query('variantId') variantId?: string,
+    @Query('search') search?: string,
     @Query('page') page?: string,
     @Query('limit') limit?: string,
   ) {
     return this.svc.findAll({
-      warehouseId,
-      branchId,
-      productId,
-      variantId,
+      warehouseId, branchId, productId, variantId, search,
       page: page ? parseInt(page, 10) : 1,
       limit: limit ? parseInt(limit, 10) : 20,
     });

@@ -34,11 +34,12 @@ export class ExpensesController {
     @Query('branchId') branchId?: string,
     @Query('categoryId') categoryId?: string,
     @Query('status') status?: string,
+    @Query('search') search?: string,
     @Query('page') page?: string,
     @Query('limit') limit?: string,
   ) {
     return this.svc.findAll({
-      branchId, categoryId, status,
+      branchId, categoryId, status, search,
       page: page ? parseInt(page, 10) : 1,
       limit: limit ? parseInt(limit, 10) : 20,
     });

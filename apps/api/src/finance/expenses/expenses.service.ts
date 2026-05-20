@@ -8,6 +8,7 @@ export interface QueryExpensesDto {
   branchId?: string;
   categoryId?: string;
   status?: string;
+  search?: string;
   page?: number;
   limit?: number;
 }
@@ -20,12 +21,19 @@ export class ExpensesService {
   ) {}
 
   async findAll(query: QueryExpensesDto) {
-    const { page = 1, limit = 20, branchId, categoryId, status } = query;
+    const { page = 1, limit = 20, branchId, categoryId, status, search } = query;
     const skip = (page - 1) * limit;
     const where: Record<string, unknown> = { deletedAt: null };
     if (branchId) where['branchId'] = branchId;
     if (categoryId) where['categoryId'] = categoryId;
     if (status) where['status'] = status;
+    if (search) {
+      where['OR'] = [
+        { expenseNumber: { contains: search, mode: 'insensitive' } },
+        { description: { contains: search, mode: 'insensitive' } },
+        { vendor: { contains: search, mode: 'insensitive' } },
+      ];
+    }
 
     const [data, total] = await Promise.all([
       this.prisma.expense.findMany({

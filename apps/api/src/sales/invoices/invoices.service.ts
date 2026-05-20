@@ -8,6 +8,7 @@ export interface QueryInvoicesDto {
   branchId?: string;
   orderId?: string;
   status?: string;
+  search?: string;
   page?: number;
   limit?: number;
 }
@@ -20,13 +21,18 @@ export class InvoicesService {
   ) {}
 
   async findAll(query: QueryInvoicesDto) {
-    const { page = 1, limit = 20, customerId, branchId, orderId, status } = query;
+    const { page = 1, limit = 20, customerId, branchId, orderId, status, search } = query;
     const skip = (page - 1) * limit;
     const where: Record<string, unknown> = { deletedAt: null };
     if (customerId) where['customerId'] = customerId;
     if (branchId) where['branchId'] = branchId;
     if (orderId) where['orderId'] = orderId;
     if (status) where['status'] = status;
+    if (search) {
+      where['OR'] = [
+        { invoiceNumber: { contains: search, mode: 'insensitive' } },
+      ];
+    }
 
     const [data, total] = await Promise.all([
       this.prisma.invoice.findMany({

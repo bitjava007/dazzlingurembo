@@ -8,6 +8,7 @@ export interface QueryQuotationsDto {
   customerId?: string;
   branchId?: string;
   status?: string;
+  search?: string;
   page?: number;
   limit?: number;
 }
@@ -20,12 +21,19 @@ export class QuotationsService {
   ) {}
 
   async findAll(query: QueryQuotationsDto) {
-    const { page = 1, limit = 20, customerId, branchId, status } = query;
+    const { page = 1, limit = 20, customerId, branchId, status, search } = query;
     const skip = (page - 1) * limit;
     const where: Record<string, unknown> = { deletedAt: null };
     if (customerId) where['customerId'] = customerId;
     if (branchId) where['branchId'] = branchId;
     if (status) where['status'] = status;
+    if (search) {
+      where['OR'] = [
+        { quotationNumber: { contains: search, mode: 'insensitive' } },
+        { customer: { firstName: { contains: search, mode: 'insensitive' } } },
+        { customer: { lastName: { contains: search, mode: 'insensitive' } } },
+      ];
+    }
 
     const [data, total] = await Promise.all([
       this.prisma.quotation.findMany({

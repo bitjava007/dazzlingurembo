@@ -6,6 +6,7 @@ export interface QueryStockBalancesDto {
   branchId?: string;
   productId?: string;
   variantId?: string;
+  search?: string;
   page?: number;
   limit?: number;
 }
@@ -15,13 +16,20 @@ export class StockBalancesService {
   constructor(private readonly prisma: PrismaService) {}
 
   async findAll(query: QueryStockBalancesDto) {
-    const { page = 1, limit = 20, warehouseId, branchId, productId, variantId } = query;
+    const { page = 1, limit = 20, warehouseId, branchId, productId, variantId, search } = query;
     const skip = (page - 1) * limit;
     const where: Record<string, unknown> = {};
     if (warehouseId) where['warehouseId'] = warehouseId;
     if (branchId) where['branchId'] = branchId;
     if (productId) where['productId'] = productId;
     if (variantId) where['variantId'] = variantId;
+    if (search) {
+      where['OR'] = [
+        { product: { name: { contains: search, mode: 'insensitive' } } },
+        { variant: { sku: { contains: search, mode: 'insensitive' } } },
+        { variant: { name: { contains: search, mode: 'insensitive' } } },
+      ];
+    }
 
     const [data, total] = await Promise.all([
       this.prisma.stockBalance.findMany({

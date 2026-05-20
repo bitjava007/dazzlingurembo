@@ -25,11 +25,12 @@ export class PurchaseOrdersController {
     @Query('supplierId') supplierId?: string,
     @Query('branchId') branchId?: string,
     @Query('status') status?: string,
+    @Query('search') search?: string,
     @Query('page') page?: string,
     @Query('limit') limit?: string,
   ) {
     return this.svc.findAll({
-      supplierId, branchId, status,
+      supplierId, branchId, status, search,
       page: page ? parseInt(page, 10) : 1,
       limit: limit ? parseInt(limit, 10) : 20,
     });

@@ -8,6 +8,7 @@ export interface QueryPurchaseOrdersDto {
   supplierId?: string;
   branchId?: string;
   status?: string;
+  search?: string;
   page?: number;
   limit?: number;
 }
@@ -20,12 +21,18 @@ export class PurchaseOrdersService {
   ) {}
 
   async findAll(query: QueryPurchaseOrdersDto) {
-    const { page = 1, limit = 20, supplierId, branchId, status } = query;
+    const { page = 1, limit = 20, supplierId, branchId, status, search } = query;
     const skip = (page - 1) * limit;
     const where: Record<string, unknown> = { deletedAt: null };
     if (supplierId) where['supplierId'] = supplierId;
     if (branchId) where['branchId'] = branchId;
     if (status) where['status'] = status;
+    if (search) {
+      where['OR'] = [
+        { poNumber: { contains: search, mode: 'insensitive' } },
+        { supplier: { name: { contains: search, mode: 'insensitive' } } },
+      ];
+    }
 
     const [data, total] = await Promise.all([
       this.prisma.purchaseOrder.findMany({
