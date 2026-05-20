@@ -19,9 +19,13 @@ import { toast } from '@/hooks/use-toast';
 import { Pencil, Trash2 } from 'lucide-react';
 import type { Category } from '@/types';
 
+const toSlug = (s: string) => s.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+
 const schema = z.object({
   name: z.string().min(1, 'Required'),
+  slug: z.string().min(1, 'Required'),
   description: z.string().optional(),
+  parentId: z.string().optional(),
 });
 type FormData = z.infer<typeof schema>;
 
@@ -38,14 +42,14 @@ export default function CategoriesPage() {
     queryFn: () => catalogService.getCategories({ search, page, limit: 20 }),
   });
 
-  const { register, handleSubmit, reset, formState: { errors } } = useForm<FormData>({ resolver: zodResolver(schema) });
+  const { register, handleSubmit, reset, setValue, formState: { errors } } = useForm<FormData>({ resolver: zodResolver(schema) });
 
   const createM = useMutation({ mutationFn: (d: FormData) => catalogService.createCategory(d), onSuccess: () => { qc.invalidateQueries({ queryKey: ['categories'] }); setModalOpen(false); reset(); toast({ title: 'Category created' }); } });
   const updateM = useMutation({ mutationFn: (d: FormData) => catalogService.updateCategory(editItem!.id, d), onSuccess: () => { qc.invalidateQueries({ queryKey: ['categories'] }); setModalOpen(false); setEditItem(null); reset(); toast({ title: 'Category updated' }); } });
   const deleteM = useMutation({ mutationFn: (id: string) => catalogService.deleteCategory(id), onSuccess: () => { qc.invalidateQueries({ queryKey: ['categories'] }); setDeleteId(null); toast({ title: 'Category deleted' }); } });
 
-  const openCreate = () => { setEditItem(null); reset(); setModalOpen(true); };
-  const openEdit = (item: Category) => { setEditItem(item); reset({ name: item.name, description: item.description }); setModalOpen(true); };
+  const openCreate = () => { setEditItem(null); reset({ slug: '', parentId: '' }); setModalOpen(true); };
+  const openEdit = (item: Category) => { setEditItem(item); reset({ name: item.name, slug: item.slug, description: item.description, parentId: item.parentId ?? '' }); setModalOpen(true); };
   const onSubmit = (d: FormData) => editItem ? updateM.mutate(d) : createM.mutate(d);
 
   const columns = [
@@ -72,8 +76,10 @@ export default function CategoriesPage() {
 
       <FormModal open={modalOpen} onOpenChange={setModalOpen} title={editItem ? 'Edit Category' : 'New Category'}>
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 mt-2">
-          <div className="space-y-1"><Label className="text-gray-300">Name</Label><Input {...register('name')} className="bg-[#111111] border-[#2A2A2A] text-white" />{errors.name && <p className="text-red-400 text-xs">{errors.name.message}</p>}</div>
+          <div className="space-y-1"><Label className="text-gray-300">Name</Label><Input {...register('name')} onChange={(e) => { register('name').onChange(e); if (!editItem) setValue('slug', toSlug(e.target.value)); }} className="bg-[#111111] border-[#2A2A2A] text-white" />{errors.name && <p className="text-red-400 text-xs">{errors.name.message}</p>}</div>
+          <div className="space-y-1"><Label className="text-gray-300">Slug</Label><Input {...register('slug')} className="bg-[#111111] border-[#2A2A2A] text-white font-mono text-xs" placeholder="auto-generated-from-name" />{errors.slug && <p className="text-red-400 text-xs">{errors.slug.message}</p>}</div>
           <div className="space-y-1"><Label className="text-gray-300">Description</Label><Input {...register('description')} className="bg-[#111111] border-[#2A2A2A] text-white" /></div>
+          <div className="space-y-1"><Label className="text-gray-300">Parent Category ID (optional)</Label><Input {...register('parentId')} className="bg-[#111111] border-[#2A2A2A] text-white" placeholder="Leave empty for top-level" /></div>
           <div className="flex justify-end gap-2 pt-2">
             <Button type="button" variant="ghost" onClick={() => setModalOpen(false)} className="text-gray-400">Cancel</Button>
             <Button type="submit" disabled={createM.isPending || updateM.isPending} className="bg-[#C9A84C] hover:bg-[#D4AF37] text-black font-semibold">{editItem ? 'Update' : 'Create'}</Button>

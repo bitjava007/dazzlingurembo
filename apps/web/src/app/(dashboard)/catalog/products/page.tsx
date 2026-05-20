@@ -21,10 +21,13 @@ import { toast } from '@/hooks/use-toast';
 import { Pencil, Trash2 } from 'lucide-react';
 import type { Product } from '@/types';
 
+const toSlug = (s: string) => s.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+
 const schema = z.object({
   name: z.string().min(1, 'Required'),
+  slug: z.string().min(1, 'Required'),
   description: z.string().optional(),
-  status: z.enum(['ACTIVE', 'INACTIVE', 'DISCONTINUED']),
+  status: z.enum(['DRAFT', 'ACTIVE', 'DISCONTINUED', 'ARCHIVED']),
 });
 type FormData = z.infer<typeof schema>;
 
@@ -43,15 +46,18 @@ export default function ProductsPage() {
 
   const { register, handleSubmit, reset, setValue, watch, formState: { errors } } = useForm<FormData>({
     resolver: zodResolver(schema),
-    defaultValues: { status: 'ACTIVE' },
+    defaultValues: { status: 'DRAFT' as const },
   });
+  const nameValue = watch('name');
+  // Auto-populate slug when typing name (only if slug hasn't been manually edited)
+  const slugValue = watch('slug');
 
   const createM = useMutation({ mutationFn: (d: FormData) => catalogService.createProduct(d), onSuccess: () => { qc.invalidateQueries({ queryKey: ['products'] }); setModalOpen(false); reset(); toast({ title: 'Product created' }); } });
   const updateM = useMutation({ mutationFn: (d: FormData) => catalogService.updateProduct(editItem!.id, d), onSuccess: () => { qc.invalidateQueries({ queryKey: ['products'] }); setModalOpen(false); setEditItem(null); reset(); toast({ title: 'Product updated' }); } });
   const deleteM = useMutation({ mutationFn: (id: string) => catalogService.deleteProduct(id), onSuccess: () => { qc.invalidateQueries({ queryKey: ['products'] }); setDeleteId(null); toast({ title: 'Product deleted' }); } });
 
-  const openCreate = () => { setEditItem(null); reset({ status: 'ACTIVE' }); setModalOpen(true); };
-  const openEdit = (item: Product) => { setEditItem(item); reset({ name: item.name, description: item.description, status: item.status }); setModalOpen(true); };
+  const openCreate = () => { setEditItem(null); reset({ status: 'DRAFT', slug: '' }); setModalOpen(true); };
+  const openEdit = (item: Product) => { setEditItem(item); reset({ name: item.name, slug: item.slug, description: item.description, status: item.status }); setModalOpen(true); };
   const onSubmit = (d: FormData) => editItem ? updateM.mutate(d) : createM.mutate(d);
 
   const columns = [
@@ -78,14 +84,15 @@ export default function ProductsPage() {
 
       <FormModal open={modalOpen} onOpenChange={setModalOpen} title={editItem ? 'Edit Product' : 'New Product'}>
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 mt-2">
-          <div className="space-y-1"><Label className="text-gray-300">Name</Label><Input {...register('name')} className="bg-[#111111] border-[#2A2A2A] text-white" />{errors.name && <p className="text-red-400 text-xs">{errors.name.message}</p>}</div>
+          <div className="space-y-1"><Label className="text-gray-300">Name</Label><Input {...register('name')} onChange={(e) => { register('name').onChange(e); if (!editItem) setValue('slug', toSlug(e.target.value)); }} className="bg-[#111111] border-[#2A2A2A] text-white" />{errors.name && <p className="text-red-400 text-xs">{errors.name.message}</p>}</div>
+          <div className="space-y-1"><Label className="text-gray-300">Slug</Label><Input {...register('slug')} className="bg-[#111111] border-[#2A2A2A] text-white font-mono text-xs" placeholder="auto-generated-from-name" />{errors.slug && <p className="text-red-400 text-xs">{errors.slug.message}</p>}</div>
           <div className="space-y-1"><Label className="text-gray-300">Description</Label><Input {...register('description')} className="bg-[#111111] border-[#2A2A2A] text-white" /></div>
           <div className="space-y-1">
             <Label className="text-gray-300">Status</Label>
             <Select value={watch('status')} onValueChange={(v) => setValue('status', v as FormData['status'])}>
               <SelectTrigger className="bg-[#111111] border-[#2A2A2A] text-white"><SelectValue /></SelectTrigger>
               <SelectContent className="bg-[#1A1A1A] border-[#2A2A2A]">
-                {['ACTIVE', 'INACTIVE', 'DISCONTINUED'].map((s) => <SelectItem key={s} value={s} className="text-white">{s}</SelectItem>)}
+                {['DRAFT', 'ACTIVE', 'DISCONTINUED', 'ARCHIVED'].map((s) => <SelectItem key={s} value={s} className="text-white">{s}</SelectItem>)}
               </SelectContent>
             </Select>
           </div>

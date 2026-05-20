@@ -74,10 +74,16 @@ export interface Category {
 export interface Product {
   id: string;
   name: string;
+  slug: string;
   description?: string;
+  shortDescription?: string;
+  brand?: string;
   categoryId?: string;
   category?: Category;
-  status: 'ACTIVE' | 'INACTIVE' | 'DISCONTINUED';
+  status: 'DRAFT' | 'ACTIVE' | 'DISCONTINUED' | 'ARCHIVED';
+  trackInventory?: boolean;
+  reorderPoint?: number;
+  minStockLevel?: number;
   variants?: Variant[];
   createdAt: string;
   updatedAt: string;
