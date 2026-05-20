@@ -62,9 +62,13 @@ const navGroups: NavGroup[] = [
     items: [
       { href: '/crm/customers', label: 'CRM', icon: Users },
       { href: '/catalog/products', label: 'Catalog', icon: Package },
+      { href: '/catalog/categories', label: 'Categories', icon: Tag },
       { href: '/catalog/skus', label: 'SKUs', icon: Hash },
       { href: '/catalog/media', label: 'Media', icon: Image },
       { href: '/inventory/stock', label: 'Inventory', icon: Boxes },
+      { href: '/inventory/movements', label: 'Movements', icon: RefreshCw },
+      { href: '/inventory/transfers', label: 'Transfers', icon: Truck },
+      { href: '/inventory/adjustments', label: 'Adjustments', icon: Wrench },
       { href: '/inventory/counts', label: 'Counts', icon: ListChecks },
       { href: '/inventory/damaged', label: 'Damaged Stock', icon: AlertTriangle },
     ],
