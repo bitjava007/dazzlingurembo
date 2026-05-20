@@ -214,6 +214,8 @@ export interface Order {
   number: string;
   customerId: string;
   customer?: Customer;
+  branchId?: string;
+  branch?: Branch;
   status: 'PENDING' | 'CONFIRMED' | 'PROCESSING' | 'SHIPPED' | 'DELIVERED' | 'CANCELLED';
   items: OrderItem[];
   subtotal: number;
@@ -244,6 +246,8 @@ export interface Invoice {
   order?: Order;
   customerId: string;
   customer?: Customer;
+  branchId?: string;
+  branch?: Branch;
   status: 'DRAFT' | 'SENT' | 'PARTIAL' | 'PAID' | 'OVERDUE' | 'CANCELLED';
   dueDate: string;
   totalAmount: number;
