@@ -17,15 +17,18 @@ export class DepartmentsController {
   @Get()
   @ApiOperation({ summary: 'List departments' })
   @ApiQuery({ name: 'branchId', required: false })
+  @ApiQuery({ name: 'search', required: false })
   @ApiQuery({ name: 'page', required: false, type: Number })
   @ApiQuery({ name: 'limit', required: false, type: Number })
   findAll(
     @Query('branchId') branchId?: string,
+    @Query('search') search?: string,
     @Query('page') page?: string,
     @Query('limit') limit?: string,
   ) {
     return this.svc.findAll({
       branchId,
+      search,
       page: page ? parseInt(page, 10) : 1,
       limit: limit ? parseInt(limit, 10) : 20,
     });

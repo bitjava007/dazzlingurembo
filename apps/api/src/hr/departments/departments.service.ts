@@ -11,11 +11,15 @@ export class DepartmentsService {
     private readonly audit: AuditService,
   ) {}
 
-  async findAll(query: { page?: number; limit?: number; branchId?: string }) {
-    const { page = 1, limit = 20, branchId } = query;
+  async findAll(query: { page?: number; limit?: number; branchId?: string; search?: string }) {
+    const { page = 1, limit = 20, branchId, search } = query;
     const skip = (page - 1) * limit;
     const where: Record<string, unknown> = { deletedAt: null };
     if (branchId) where['branchId'] = branchId;
+    if (search) where['OR'] = [
+      { name: { contains: search, mode: 'insensitive' } },
+      { code: { contains: search, mode: 'insensitive' } },
+    ];
 
     const [data, total] = await Promise.all([
       this.prisma.department.findMany({
