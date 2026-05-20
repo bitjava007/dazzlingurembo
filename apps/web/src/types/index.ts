@@ -507,6 +507,13 @@ export interface CustomerCommunication {
   createdAt: string;
 }
 
+export interface AuthResponse {
+  accessToken: string;
+  refreshToken: string;
+  expiresIn: string;
+  user: User;
+}
+
 export interface PaginatedResponse<T> {
   data: T[];
   meta: {

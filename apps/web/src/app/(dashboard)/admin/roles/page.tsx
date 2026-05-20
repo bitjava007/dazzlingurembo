@@ -35,17 +35,17 @@ export default function RolesPage() {
   const { data, isLoading } = useQuery({
     queryKey: ['roles', search, page],
     queryFn: async () => {
-      const res = await api.get<PaginatedResponse<Role>>('/admin/roles', { params: { search, page, limit: 20 } });
+      const res = await api.get<PaginatedResponse<Role>>('/rbac/roles', { params: { search, page, limit: 20 } });
       return res.data;
     },
   });
 
   const createM = useMutation({
-    mutationFn: (d: FormData) => api.post<Role>('/admin/roles', d).then(r => r.data),
+    mutationFn: (d: FormData) => api.post<Role>('/rbac/roles', d).then(r => r.data),
     onSuccess: () => { qc.invalidateQueries({ queryKey: ['roles'] }); setModalOpen(false); reset(); toast({ title: 'Role created' }); },
   });
   const updateM = useMutation({
-    mutationFn: (d: FormData) => api.patch<Role>(`/admin/roles/${editItem!.id}`, d).then(r => r.data),
+    mutationFn: (d: FormData) => api.patch<Role>(`/rbac/roles/${editItem!.id}`, d).then(r => r.data),
     onSuccess: () => { qc.invalidateQueries({ queryKey: ['roles'] }); setModalOpen(false); setEditItem(null); reset(); toast({ title: 'Role updated' }); },
   });
 

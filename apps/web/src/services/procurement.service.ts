@@ -47,7 +47,7 @@ export const procurementService = {
   },
 
   async getSupplierInvoices(params?: ListParams): Promise<PaginatedResponse<SupplierInvoice>> {
-    const response = await api.get<PaginatedResponse<SupplierInvoice>>('/procurement/invoices', { params });
+    const response = await api.get<PaginatedResponse<SupplierInvoice>>('/procurement/supplier-invoices', { params });
     return response.data;
   },
 };
