@@ -22,21 +22,6 @@ export const inventoryService = {
     return response.data;
   },
 
-  async approveTransfer(id: string): Promise<StockTransfer> {
-    const response = await api.patch<StockTransfer>(`/inventory/stock-transfers/${id}/approve`);
-    return response.data;
-  },
-
-  async receiveTransfer(id: string): Promise<StockTransfer> {
-    const response = await api.patch<StockTransfer>(`/inventory/stock-transfers/${id}/receive`);
-    return response.data;
-  },
-
-  async cancelTransfer(id: string): Promise<StockTransfer> {
-    const response = await api.patch<StockTransfer>(`/inventory/stock-transfers/${id}/cancel`);
-    return response.data;
-  },
-
   async getAdjustments(params?: ListParams): Promise<PaginatedResponse<StockAdjustment>> {
     const response = await api.get<PaginatedResponse<StockAdjustment>>('/inventory/stock-adjustments', { params });
     return response.data;
@@ -49,11 +34,6 @@ export const inventoryService = {
 
   async approveAdjustment(id: string): Promise<StockAdjustment> {
     const response = await api.patch<StockAdjustment>(`/inventory/stock-adjustments/${id}/approve`);
-    return response.data;
-  },
-
-  async rejectAdjustment(id: string, reason?: string): Promise<StockAdjustment> {
-    const response = await api.patch<StockAdjustment>(`/inventory/stock-adjustments/${id}/reject`, { reason });
     return response.data;
   },
 };
