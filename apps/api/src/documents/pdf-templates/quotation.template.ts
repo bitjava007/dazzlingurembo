@@ -23,17 +23,53 @@ export interface QuotationData {
   items?: QuotationItem[];
 }
 
+const BRAND_CSS = `
+  :root { --gold: #C9A84C; --dark: #1A1A1A; }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: Arial, sans-serif; font-size: 13px; color: #333; background: #fff; }
+  .page { padding: 48px; max-width: 800px; margin: 0 auto; }
+  .header { background: var(--dark); color: #fff; padding: 32px 48px; margin: -48px -48px 32px; display: flex; justify-content: space-between; align-items: center; }
+  .brand-name { font-size: 22px; font-weight: bold; color: var(--gold); letter-spacing: 1px; }
+  .brand-sub { font-size: 10px; color: #999; text-transform: uppercase; letter-spacing: 2px; margin-top: 2px; }
+  .brand-contact { font-size: 11px; color: #aaa; margin-top: 8px; line-height: 1.6; }
+  .doc-title { font-size: 28px; font-weight: bold; color: var(--gold); letter-spacing: 2px; }
+  .doc-number { font-size: 14px; color: #ccc; margin-top: 4px; }
+  .doc-dates { font-size: 11px; color: #aaa; margin-top: 8px; line-height: 1.8; }
+  .status-badge { display: inline-block; padding: 3px 10px; border-radius: 3px; font-size: 10px; font-weight: bold; text-transform: uppercase; letter-spacing: 1px; background: var(--gold); color: var(--dark); margin-top: 6px; }
+  .section { margin-bottom: 28px; }
+  .section-title { font-size: 10px; font-weight: bold; text-transform: uppercase; letter-spacing: 2px; color: var(--gold); border-bottom: 1px solid #e8e0d0; padding-bottom: 6px; margin-bottom: 12px; }
+  .validity-banner { background: #fff8e6; border: 1px solid #f0d080; border-left: 4px solid var(--gold); padding: 12px 16px; border-radius: 0 4px 4px 0; font-size: 12px; color: #7a5c00; margin-bottom: 28px; }
+  .bill-to { background: #fafaf8; border-left: 3px solid var(--gold); padding: 12px 16px; }
+  .bill-to .name { font-size: 15px; font-weight: bold; color: var(--dark); }
+  .bill-to .detail { font-size: 12px; color: #666; margin-top: 3px; }
+  table { width: 100%; border-collapse: collapse; }
+  thead th { background: var(--dark); color: var(--gold); padding: 10px 12px; text-align: right; font-size: 11px; text-transform: uppercase; letter-spacing: 1px; }
+  thead th:first-child { text-align: left; }
+  tbody td { padding: 10px 12px; border-bottom: 1px solid #f0ece4; text-align: right; }
+  tbody td:first-child { text-align: left; }
+  tbody tr:nth-child(even) td { background: #faf9f7; }
+  .sku { font-size: 11px; color: #999; }
+  .totals-wrap { display: flex; justify-content: flex-end; margin-top: 16px; }
+  .totals { width: 280px; }
+  .totals-row { display: flex; justify-content: space-between; padding: 5px 0; }
+  .totals-row.grand-total { border-top: 2px solid var(--gold); padding-top: 8px; margin-top: 4px; font-size: 15px; font-weight: bold; color: var(--dark); }
+  .notes-box { background: #fafaf8; border: 1px solid #e8e0d0; border-radius: 4px; padding: 14px; font-size: 12px; color: #555; line-height: 1.6; }
+  .footer { margin-top: 48px; padding-top: 16px; border-top: 1px solid #e8e0d0; display: flex; justify-content: space-between; align-items: center; font-size: 11px; color: #aaa; }
+  .footer-note { color: var(--gold); font-style: italic; }
+  @media print { body { -webkit-print-color-adjust: exact; print-color-adjust: exact; } }
+`;
+
 export function generateQuotationHtml(quotation: QuotationData): string {
-  const fmt = (n: number) => `${quotation.currencyCode} ${Number(n).toFixed(2)}`;
-  const date = (d?: Date | null) => d ? new Date(d).toLocaleDateString() : '-';
+  const fmt = (n: number) => `${quotation.currencyCode} ${Number(n).toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+  const date = (d?: Date | null) => d ? new Date(d).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }) : '—';
 
   const itemRows = (quotation.items ?? []).map(item => `
     <tr>
-      <td>${item.name}${item.sku ? ` <small>(${item.sku})</small>` : ''}</td>
-      <td style="text-align:center">${item.quantity}</td>
-      <td style="text-align:right">${fmt(item.unitPrice)}</td>
-      <td style="text-align:right">${fmt(item.taxAmount)}</td>
-      <td style="text-align:right">${fmt(item.lineTotal)}</td>
+      <td>${item.name}${item.sku ? `<br/><span class="sku">${item.sku}</span>` : ''}</td>
+      <td>${item.quantity}</td>
+      <td>${fmt(item.unitPrice)}</td>
+      <td>${item.taxAmount > 0 ? fmt(item.taxAmount) : '—'}</td>
+      <td>${fmt(item.lineTotal)}</td>
     </tr>
   `).join('');
 
@@ -42,89 +78,71 @@ export function generateQuotationHtml(quotation: QuotationData): string {
 <head>
 <meta charset="UTF-8" />
 <title>Quotation ${quotation.quotationNumber}</title>
-<style>
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  body { font-family: Arial, sans-serif; font-size: 13px; color: #333; padding: 40px; }
-  .header { display: flex; justify-content: space-between; margin-bottom: 32px; }
-  .company-name { font-size: 24px; font-weight: bold; color: #1a1a2e; }
-  .doc-title { font-size: 32px; font-weight: bold; color: #27ae60; text-align: right; }
-  .doc-meta { text-align: right; color: #666; }
-  .section { margin-bottom: 24px; }
-  .section-title { font-weight: bold; color: #1a1a2e; border-bottom: 2px solid #27ae60; padding-bottom: 4px; margin-bottom: 8px; }
-  table { width: 100%; border-collapse: collapse; }
-  th { background: #1a1a2e; color: #fff; padding: 8px; text-align: left; }
-  td { padding: 8px; border-bottom: 1px solid #eee; }
-  tr:nth-child(even) td { background: #f8f9fa; }
-  .totals { width: 300px; margin-left: auto; margin-top: 16px; }
-  .totals td { border: none; padding: 4px 8px; }
-  .totals .total-row td { font-weight: bold; font-size: 15px; border-top: 2px solid #27ae60; }
-  .footer { margin-top: 40px; padding-top: 16px; border-top: 1px solid #eee; color: #999; font-size: 11px; }
-  .validity-notice { background: #fff8e1; border-left: 4px solid #ffc107; padding: 12px; margin-bottom: 24px; }
-  @media print { body { padding: 20px; } }
-</style>
+<style>${BRAND_CSS}</style>
 </head>
 <body>
-<div class="header">
-  <div>
-    <div class="company-name">${quotation.branch?.name ?? 'Dazzling UM'}</div>
-    ${quotation.branch?.address ? `<div>${quotation.branch.address}</div>` : ''}
-    ${quotation.branch?.city ? `<div>${quotation.branch.city}</div>` : ''}
-    ${quotation.branch?.phone ? `<div>${quotation.branch.phone}</div>` : ''}
-    ${quotation.branch?.email ? `<div>${quotation.branch.email}</div>` : ''}
-  </div>
-  <div>
-    <div class="doc-title">QUOTATION</div>
-    <div class="doc-meta">
-      <div><strong>#${quotation.quotationNumber}</strong></div>
-      <div>Status: ${quotation.status}</div>
-      <div>Valid Until: ${date(quotation.validUntil)}</div>
+<div class="page">
+  <div class="header">
+    <div>
+      <div class="brand-name">Dazzling Urembo</div>
+      <div class="brand-sub">Fashion &amp; Tailoring</div>
+      <div class="brand-contact">
+        ${quotation.branch?.name ? `${quotation.branch.name}<br/>` : ''}
+        ${quotation.branch?.address ? `${quotation.branch.address}<br/>` : ''}
+        ${quotation.branch?.city ? `${quotation.branch.city}<br/>` : ''}
+        ${quotation.branch?.phone ? `${quotation.branch.phone}<br/>` : ''}
+        ${quotation.branch?.email ? quotation.branch.email : ''}
+      </div>
+    </div>
+    <div style="text-align:right">
+      <div class="doc-title">QUOTATION</div>
+      <div class="doc-number"># ${quotation.quotationNumber}</div>
+      <div class="doc-dates">Valid until: ${date(quotation.validUntil)}</div>
+      <div><span class="status-badge">${quotation.status}</span></div>
     </div>
   </div>
-</div>
 
-${quotation.validUntil ? `
-<div class="validity-notice">
-  This quotation is valid until <strong>${date(quotation.validUntil)}</strong>.
-</div>
-` : ''}
+  ${quotation.validUntil ? `
+  <div class="validity-banner">
+    This quotation is valid until <strong>${date(quotation.validUntil)}</strong>. Please confirm your order before this date.
+  </div>` : ''}
 
-${quotation.customer ? `
-<div class="section">
-  <div class="section-title">Prepared For</div>
-  <div>${quotation.customer.firstName ?? ''} ${quotation.customer.lastName ?? ''}</div>
-  ${quotation.customer.email ? `<div>${quotation.customer.email}</div>` : ''}
-  ${quotation.customer.phone ? `<div>${quotation.customer.phone}</div>` : ''}
-</div>
-` : ''}
+  ${quotation.customer ? `
+  <div class="section">
+    <div class="section-title">Prepared For</div>
+    <div class="bill-to">
+      <div class="name">${(quotation.customer.firstName ?? '') + ' ' + (quotation.customer.lastName ?? '')}</div>
+      ${quotation.customer.email ? `<div class="detail">${quotation.customer.email}</div>` : ''}
+      ${quotation.customer.phone ? `<div class="detail">${quotation.customer.phone}</div>` : ''}
+    </div>
+  </div>` : ''}
 
-<div class="section">
-  <div class="section-title">Items</div>
-  <table>
-    <thead>
-      <tr>
-        <th>Description</th>
-        <th style="text-align:center">Qty</th>
-        <th style="text-align:right">Unit Price</th>
-        <th style="text-align:right">Tax</th>
-        <th style="text-align:right">Total</th>
-      </tr>
-    </thead>
-    <tbody>${itemRows}</tbody>
-  </table>
-</div>
+  <div class="section">
+    <div class="section-title">Items</div>
+    <table>
+      <thead>
+        <tr><th>Description</th><th>Qty</th><th>Unit Price</th><th>Tax</th><th>Amount</th></tr>
+      </thead>
+      <tbody>${itemRows || '<tr><td colspan="5" style="text-align:center;color:#aaa;padding:20px">No items</td></tr>'}</tbody>
+    </table>
+  </div>
 
-<table class="totals">
-  <tr><td>Subtotal</td><td style="text-align:right">${fmt(quotation.subtotal)}</td></tr>
-  ${quotation.discountAmount > 0 ? `<tr><td>Discount</td><td style="text-align:right">-${fmt(quotation.discountAmount)}</td></tr>` : ''}
-  ${quotation.taxAmount > 0 ? `<tr><td>Tax</td><td style="text-align:right">${fmt(quotation.taxAmount)}</td></tr>` : ''}
-  <tr class="total-row"><td>Total</td><td style="text-align:right">${fmt(quotation.totalAmount)}</td></tr>
-</table>
+  <div class="totals-wrap">
+    <div class="totals">
+      <div class="totals-row"><span style="color:#666">Subtotal</span><span>${fmt(quotation.subtotal)}</span></div>
+      ${quotation.discountAmount > 0 ? `<div class="totals-row"><span style="color:#666">Discount</span><span>-${fmt(quotation.discountAmount)}</span></div>` : ''}
+      ${quotation.taxAmount > 0 ? `<div class="totals-row"><span style="color:#666">Tax</span><span>${fmt(quotation.taxAmount)}</span></div>` : ''}
+      <div class="totals-row grand-total"><span>Total</span><span>${fmt(quotation.totalAmount)}</span></div>
+    </div>
+  </div>
 
-${quotation.notes ? `<div class="section"><div class="section-title">Notes</div><p>${quotation.notes}</p></div>` : ''}
-${quotation.termsConditions ? `<div class="section"><div class="section-title">Terms & Conditions</div><p>${quotation.termsConditions}</p></div>` : ''}
+  ${quotation.notes ? `<div class="section" style="margin-top:28px"><div class="section-title">Notes</div><div class="notes-box">${quotation.notes}</div></div>` : ''}
+  ${quotation.termsConditions ? `<div class="section"><div class="section-title">Terms &amp; Conditions</div><div class="notes-box">${quotation.termsConditions}</div></div>` : ''}
 
-<div class="footer">
-  <p>Generated by Dazzling UM ERP. This quotation is subject to acceptance within the validity period.</p>
+  <div class="footer">
+    <span>Generated by Dazzling Urembo ERP</span>
+    <span class="footer-note">We look forward to working with you!</span>
+  </div>
 </div>
 </body>
 </html>`;

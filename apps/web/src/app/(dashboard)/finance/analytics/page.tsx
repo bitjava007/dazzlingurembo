@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import api from '@/lib/api';
 import { PageHeader } from '@/components/ui/page-header';
+import { StatsChart } from '@/components/dashboard/stats-chart';
 import type { AnalyticsSummary, ProfitabilityByBranch, EmployeeCostSummary } from '@/types';
 import { DollarSign, TrendingUp, TrendingDown, Users, Briefcase, CreditCard } from 'lucide-react';
 
@@ -208,29 +209,47 @@ export default function AnalyticsPage() {
           )}
 
           {profitSubTab === 'period' && (
-            <div className="bg-[#111111] border border-[#2A2A2A] rounded-lg overflow-hidden">
-              <table className="w-full text-sm">
-                <thead className="border-b border-[#2A2A2A]">
-                  <tr>
-                    <th className="px-4 py-3 text-left text-gray-400 font-medium">Period</th>
-                    <th className="px-4 py-3 text-right text-gray-400 font-medium">Revenue</th>
-                    <th className="px-4 py-3 text-right text-gray-400 font-medium">Expenses</th>
-                    <th className="px-4 py-3 text-right text-gray-400 font-medium">Profit</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {periodLoading ? (
-                    <tr><td colSpan={4} className="px-4 py-8 text-center text-gray-500">Loading...</td></tr>
-                  ) : (periodData ?? []).map((row) => (
-                    <tr key={row.period} className="border-b border-[#2A2A2A] hover:bg-[#1A1A1A]">
-                      <td className="px-4 py-3 text-white font-medium">{row.period}</td>
-                      <td className="px-4 py-3 text-right text-green-400">{fmt(row.revenue)}</td>
-                      <td className="px-4 py-3 text-right text-red-400">{fmt(row.expenses)}</td>
-                      <td className={`px-4 py-3 text-right font-semibold ${row.profit >= 0 ? 'text-green-400' : 'text-red-400'}`}>{fmt(row.profit)}</td>
+            <div className="space-y-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <StatsChart
+                  title="Revenue Trend"
+                  type="line"
+                  color="#4ade80"
+                  data={(periodData ?? []).map((r) => ({ label: r.period, value: r.revenue }))}
+                  formatValue={(v) => fmt(v)}
+                />
+                <StatsChart
+                  title="Expenses Trend"
+                  type="line"
+                  color="#f87171"
+                  data={(periodData ?? []).map((r) => ({ label: r.period, value: r.expenses }))}
+                  formatValue={(v) => fmt(v)}
+                />
+              </div>
+              <div className="bg-[#111111] border border-[#2A2A2A] rounded-lg overflow-hidden">
+                <table className="w-full text-sm">
+                  <thead className="border-b border-[#2A2A2A]">
+                    <tr>
+                      <th className="px-4 py-3 text-left text-gray-400 font-medium">Period</th>
+                      <th className="px-4 py-3 text-right text-gray-400 font-medium">Revenue</th>
+                      <th className="px-4 py-3 text-right text-gray-400 font-medium">Expenses</th>
+                      <th className="px-4 py-3 text-right text-gray-400 font-medium">Profit</th>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
+                  </thead>
+                  <tbody>
+                    {periodLoading ? (
+                      <tr><td colSpan={4} className="px-4 py-8 text-center text-gray-500">Loading...</td></tr>
+                    ) : (periodData ?? []).map((row) => (
+                      <tr key={row.period} className="border-b border-[#2A2A2A] hover:bg-[#1A1A1A]">
+                        <td className="px-4 py-3 text-white font-medium">{row.period}</td>
+                        <td className="px-4 py-3 text-right text-green-400">{fmt(row.revenue)}</td>
+                        <td className="px-4 py-3 text-right text-red-400">{fmt(row.expenses)}</td>
+                        <td className={`px-4 py-3 text-right font-semibold ${row.profit >= 0 ? 'text-green-400' : 'text-red-400'}`}>{fmt(row.profit)}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
             </div>
           )}
         </div>

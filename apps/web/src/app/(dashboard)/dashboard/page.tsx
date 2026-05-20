@@ -245,7 +245,7 @@ export default function DashboardPage() {
       {/* Chart + Delivery Summary */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
         <div className="lg:col-span-2">
-          <StatsChart data={salesChartData} title="Sales Revenue — Last 7 Days (XOF)" />
+          <StatsChart data={salesChartData} title="Sales Revenue — Last 7 Days (XOF)" type="line" color="#C9A84C" formatValue={(v) => fmtCurrency(v)} />
         </div>
         <div className="bg-[#111111] border border-[#2A2A2A] rounded-lg p-6">
           <h3 className="text-sm font-semibold text-gray-400 mb-4">Delivery Summary</h3>

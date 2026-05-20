@@ -15,6 +15,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { BranchFilter } from '@/components/ui/branch-filter';
 import { financeService } from '@/services/finance.service';
 import { toast } from '@/hooks/use-toast';
 import type { Expense, ExpenseCategory } from '@/types';
@@ -38,6 +39,7 @@ export default function ExpensesPage() {
   const qc = useQueryClient();
   const [search, setSearch] = useState('');
   const [page, setPage] = useState(1);
+  const [filterBranchId, setFilterBranchId] = useState('');
   const [modalOpen, setModalOpen] = useState(false);
   const { register, handleSubmit, reset, setValue, watch, formState: { errors } } = useForm<FormData>({
     resolver: zodResolver(schema) as never,
@@ -45,8 +47,8 @@ export default function ExpensesPage() {
   });
 
   const { data, isLoading } = useQuery({
-    queryKey: ['expenses', search, page],
-    queryFn: () => financeService.getExpenses({ search, page, limit: 20 }),
+    queryKey: ['expenses', search, page, filterBranchId],
+    queryFn: () => financeService.getExpenses({ search, page, limit: 20, ...(filterBranchId && { branchId: filterBranchId }) }),
   });
 
   const { data: categoriesData } = useQuery({
@@ -128,7 +130,10 @@ export default function ExpensesPage() {
   return (
     <div>
       <PageHeader title="Expenses" subtitle="Expense management" onAction={() => setModalOpen(true)} />
-      <div className="mb-4"><SearchInput value={search} onChange={(v) => { setSearch(v); setPage(1); }} placeholder="Search expenses..." /></div>
+      <div className="mb-4 flex gap-3">
+        <SearchInput value={search} onChange={(v) => { setSearch(v); setPage(1); }} placeholder="Search expenses..." />
+        <BranchFilter value={filterBranchId} onChange={(v) => { setFilterBranchId(v); setPage(1); }} />
+      </div>
       <DataTable columns={columns} data={(data as { data: Expense[] } | undefined)?.data ?? []} loading={isLoading} keyExtractor={(r) => r.id} />
       <Pagination page={page} totalPages={(data as { meta: { totalPages: number } } | undefined)?.meta.totalPages ?? 1} onPageChange={setPage} />
 

@@ -7,16 +7,18 @@ import { DataTable } from '@/components/ui/data-table';
 import { SearchInput } from '@/components/ui/search-input';
 import { Pagination } from '@/components/ui/pagination';
 import { StatusBadge } from '@/components/ui/status-badge';
+import { BranchFilter } from '@/components/ui/branch-filter';
 import { hrService } from '@/services/hr.service';
 import type { AttendanceRecord } from '@/types';
 
 export default function AttendancePage() {
   const [search, setSearch] = useState('');
   const [page, setPage] = useState(1);
+  const [branchId, setBranchId] = useState('');
 
   const { data, isLoading } = useQuery({
-    queryKey: ['attendance', search, page],
-    queryFn: () => hrService.getAttendance({ search, page, limit: 20 }),
+    queryKey: ['attendance', search, page, branchId],
+    queryFn: () => hrService.getAttendance({ search, page, limit: 20, ...(branchId && { branchId }) }),
   });
 
   const columns = [
@@ -31,7 +33,10 @@ export default function AttendancePage() {
   return (
     <div>
       <PageHeader title="Attendance" subtitle="Employee attendance records" />
-      <div className="mb-4"><SearchInput value={search} onChange={(v) => { setSearch(v); setPage(1); }} placeholder="Search attendance..." /></div>
+      <div className="mb-4 flex gap-3">
+        <SearchInput value={search} onChange={(v) => { setSearch(v); setPage(1); }} placeholder="Search attendance..." />
+        <BranchFilter value={branchId} onChange={(v) => { setBranchId(v); setPage(1); }} />
+      </div>
       <DataTable columns={columns} data={data?.data ?? []} loading={isLoading} keyExtractor={(r) => r.id} />
       <Pagination page={page} totalPages={data?.meta.totalPages ?? 1} onPageChange={setPage} />
     </div>
