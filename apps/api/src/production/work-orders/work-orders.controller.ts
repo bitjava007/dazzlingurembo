@@ -25,11 +25,12 @@ export class WorkOrdersController {
     @Query('branchId') branchId?: string,
     @Query('workshopId') workshopId?: string,
     @Query('status') status?: string,
+    @Query('search') search?: string,
     @Query('page') page?: string,
     @Query('limit') limit?: string,
   ) {
     return this.svc.findAll({
-      branchId, workshopId, status,
+      branchId, workshopId, status, search,
       page: page ? parseInt(page, 10) : 1,
       limit: limit ? parseInt(limit, 10) : 20,
     });

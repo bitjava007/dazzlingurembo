@@ -8,6 +8,7 @@ export interface QueryWorkOrdersDto {
   branchId?: string;
   workshopId?: string;
   status?: string;
+  search?: string;
   page?: number;
   limit?: number;
 }
@@ -20,12 +21,17 @@ export class WorkOrdersService {
   ) {}
 
   async findAll(query: QueryWorkOrdersDto) {
-    const { page = 1, limit = 20, branchId, workshopId, status } = query;
+    const { page = 1, limit = 20, branchId, workshopId, status, search } = query;
     const skip = (page - 1) * limit;
     const where: Record<string, unknown> = { deletedAt: null };
     if (branchId) where['branchId'] = branchId;
     if (workshopId) where['workshopId'] = workshopId;
     if (status) where['status'] = status;
+    if (search) {
+      where['OR'] = [
+        { workOrderNumber: { contains: search, mode: 'insensitive' } },
+      ];
+    }
 
     const [data, total] = await Promise.all([
       this.prisma.workOrder.findMany({

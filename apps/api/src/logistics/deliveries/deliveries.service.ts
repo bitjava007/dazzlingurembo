@@ -9,6 +9,7 @@ export interface QueryDeliveriesDto {
   status?: string;
   orderId?: string;
   assignedToId?: string;
+  search?: string;
   page?: number;
   limit?: number;
 }
@@ -21,13 +22,19 @@ export class DeliveriesService {
   ) {}
 
   async findAll(query: QueryDeliveriesDto) {
-    const { page = 1, limit = 20, branchId, status, orderId, assignedToId } = query;
+    const { page = 1, limit = 20, branchId, status, orderId, assignedToId, search } = query;
     const skip = (page - 1) * limit;
     const where: Record<string, unknown> = {};
     if (branchId) where['branchId'] = branchId;
     if (status) where['status'] = status;
     if (orderId) where['orderId'] = orderId;
     if (assignedToId) where['assignedToId'] = assignedToId;
+    if (search) {
+      where['OR'] = [
+        { order: { orderNumber: { contains: search, mode: 'insensitive' } } },
+        { driverName: { contains: search, mode: 'insensitive' } },
+      ];
+    }
 
     const [data, total] = await Promise.all([
       this.prisma.delivery.findMany({

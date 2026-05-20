@@ -48,11 +48,12 @@ export class DeliveriesController {
     @Query('status') status?: string,
     @Query('orderId') orderId?: string,
     @Query('assignedToId') assignedToId?: string,
+    @Query('search') search?: string,
     @Query('page') page?: string,
     @Query('limit') limit?: string,
   ) {
     return this.svc.findAll({
-      branchId, status, orderId, assignedToId,
+      branchId, status, orderId, assignedToId, search,
       page: page ? parseInt(page, 10) : 1,
       limit: limit ? parseInt(limit, 10) : 20,
     });
