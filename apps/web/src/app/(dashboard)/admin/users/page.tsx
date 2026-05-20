@@ -42,17 +42,17 @@ export default function UsersPage() {
   const { data, isLoading } = useQuery({
     queryKey: ['admin-users', search, page],
     queryFn: async () => {
-      const res = await api.get<PaginatedResponse<User>>('/admin/users', { params: { search, page, limit: 20 } });
+      const res = await api.get<PaginatedResponse<User>>('/users', { params: { search, page, limit: 20 } });
       return res.data;
     },
   });
 
   const createM = useMutation({
-    mutationFn: (d: FormData) => api.post<User>('/admin/users', d).then(r => r.data),
+    mutationFn: (d: FormData) => api.post<User>('/users', d).then(r => r.data),
     onSuccess: () => { qc.invalidateQueries({ queryKey: ['admin-users'] }); setModalOpen(false); reset(); toast({ title: 'User created' }); },
   });
   const updateM = useMutation({
-    mutationFn: (d: FormData) => api.patch<User>(`/admin/users/${editItem!.id}`, d).then(r => r.data),
+    mutationFn: (d: FormData) => api.patch<User>(`/users/${editItem!.id}`, d).then(r => r.data),
     onSuccess: () => { qc.invalidateQueries({ queryKey: ['admin-users'] }); setModalOpen(false); setEditItem(null); reset(); toast({ title: 'User updated' }); },
   });
 
