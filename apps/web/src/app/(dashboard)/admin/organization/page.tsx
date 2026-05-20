@@ -35,20 +35,20 @@ export default function OrganizationPage() {
 
   const { data: countriesData, isLoading: cLoading } = useQuery({
     queryKey: ['countries'],
-    queryFn: async () => { const res = await api.get<PaginatedResponse<Country>>('/admin/countries'); return res.data; },
+    queryFn: async () => { const res = await api.get<PaginatedResponse<Country>>('/organization/countries'); return res.data; },
   });
 
   const { data: branchesData, isLoading: bLoading } = useQuery({
     queryKey: ['branches'],
-    queryFn: async () => { const res = await api.get<PaginatedResponse<Branch>>('/admin/branches'); return res.data; },
+    queryFn: async () => { const res = await api.get<PaginatedResponse<Branch>>('/organization/branches'); return res.data; },
   });
 
   const createBranchM = useMutation({
-    mutationFn: (d: BranchForm) => api.post<Branch>('/admin/branches', d).then(r => r.data),
+    mutationFn: (d: BranchForm) => api.post<Branch>('/organization/branches', d).then(r => r.data),
     onSuccess: () => { qc.invalidateQueries({ queryKey: ['branches'] }); setModalOpen(false); reset(); toast({ title: 'Branch created' }); },
   });
   const updateBranchM = useMutation({
-    mutationFn: (d: BranchForm) => api.patch<Branch>(`/admin/branches/${editBranch!.id}`, d).then(r => r.data),
+    mutationFn: (d: BranchForm) => api.patch<Branch>(`/organization/branches/${editBranch!.id}`, d).then(r => r.data),
     onSuccess: () => { qc.invalidateQueries({ queryKey: ['branches'] }); setModalOpen(false); setEditBranch(null); reset(); toast({ title: 'Branch updated' }); },
   });
 
