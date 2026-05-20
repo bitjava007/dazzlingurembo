@@ -2,8 +2,8 @@ import api from '@/lib/api';
 import type { NotificationTemplate, NotificationLog, PaginatedResponse, ListParams } from '@/types';
 
 export const notificationsService = {
-  async getTemplates(): Promise<PaginatedResponse<NotificationTemplate>> {
-    const response = await api.get<PaginatedResponse<NotificationTemplate>>('/notifications/templates');
+  async getTemplates(params?: ListParams): Promise<PaginatedResponse<NotificationTemplate>> {
+    const response = await api.get<PaginatedResponse<NotificationTemplate>>('/notifications/templates', { params });
     return response.data;
   },
 

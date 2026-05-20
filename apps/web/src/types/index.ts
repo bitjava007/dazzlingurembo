@@ -3,10 +3,12 @@ export interface User {
   firstName: string;
   lastName: string;
   email: string;
+  phone?: string;
   status: 'ACTIVE' | 'INACTIVE' | 'SUSPENDED';
   roles: Role[];
   branchId?: string;
   branch?: Branch;
+  countryId?: string;
   createdAt: string;
   updatedAt: string;
 }
@@ -212,6 +214,8 @@ export interface Order {
   number: string;
   customerId: string;
   customer?: Customer;
+  branchId?: string;
+  branch?: Branch;
   status: 'PENDING' | 'CONFIRMED' | 'PROCESSING' | 'SHIPPED' | 'DELIVERED' | 'CANCELLED';
   items: OrderItem[];
   subtotal: number;
@@ -242,6 +246,8 @@ export interface Invoice {
   order?: Order;
   customerId: string;
   customer?: Customer;
+  branchId?: string;
+  branch?: Branch;
   status: 'DRAFT' | 'SENT' | 'PARTIAL' | 'PAID' | 'OVERDUE' | 'CANCELLED';
   dueDate: string;
   totalAmount: number;
@@ -280,17 +286,34 @@ export interface Delivery {
 
 export interface Expense {
   id: string;
-  title: string;
-  amount: number;
-  category: string;
-  status: 'PENDING' | 'APPROVED' | 'REJECTED' | 'PAID';
-  description?: string;
-  receiptUrl?: string;
-  branchId?: string;
+  expenseNumber: string;
+  categoryId: string;
+  category?: ExpenseCategory;
+  branchId: string;
   branch?: Branch;
+  status: 'DRAFT' | 'SUBMITTED' | 'APPROVED' | 'REJECTED' | 'PAID' | 'REIMBURSED';
+  description: string;
+  vendor?: string;
+  originalCurrencyCode: string;
+  originalAmount: number;
+  convertedCurrencyCode?: string;
+  convertedAmount?: number;
+  taxAmount?: number;
+  expenseDate: string;
+  submittedAt?: string;
+  approvedAt?: string;
+  paidAt?: string;
+  paymentMethod?: string;
+  receiptUrl?: string;
+  notes?: string;
+  isRecurring?: boolean;
+  createdById?: string;
   approvedById?: string;
   createdAt: string;
   updatedAt: string;
+  // Legacy fields kept for backward compatibility
+  title?: string;
+  amount?: number;
 }
 
 export interface CashClosure {
@@ -634,7 +657,6 @@ export interface DeliveryNote {
   deliveredAt?: string;
   createdAt: string;
   updatedAt: string;
-
   items?: DeliveryNoteItem[];
 }
 
@@ -667,6 +689,49 @@ export interface ProductMedia {
   createdAt: string;
 }
 
+export interface InventoryCount {
+  id: string;
+  branchId: string;
+  warehouseId: string;
+  status: string;
+  notes?: string;
+  scheduledAt?: string;
+  appliedAt?: string;
+  createdById?: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface DamagedStock {
+  id: string;
+  variantId: string;
+  warehouseId: string;
+  branchId: string;
+  quantity: number;
+  reason: string;
+  description?: string;
+  estimatedLoss?: number;
+  currencyCode?: string;
+  disposalMethod?: string;
+  resolvedAt?: string;
+  resolvedById?: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface SKU {
+  id: string;
+  variantId: string;
+  sku: string;
+  barcode?: string;
+  serialNumber?: string;
+  batchNumber?: string;
+  condition: string;
+  isActive: boolean;
+  createdAt: string;
+  updatedAt: string;
+}
+
 export interface AuthResponse {
   accessToken: string;
   refreshToken: string;
@@ -688,6 +753,13 @@ export interface ApiResponse<T> {
   data: T;
 }
 
+export interface ListParams {
+  page?: number;
+  limit?: number;
+  search?: string;
+  [key: string]: string | number | boolean | undefined;
+}
+
 export interface ExpenseCategory {
   id: string;
   name: string;
@@ -696,6 +768,7 @@ export interface ExpenseCategory {
   parentId?: string;
   parent?: ExpenseCategory;
   children?: ExpenseCategory[];
+  isActive: boolean;
   deletedAt?: string;
   createdAt: string;
   updatedAt: string;
@@ -704,44 +777,17 @@ export interface ExpenseCategory {
 export interface Reconciliation {
   id: string;
   branchId: string;
-  branch?: Branch;
-  date: string;
-  accountCode: string;
-  systemBalance: number;
-  actualBalance: number;
-  difference: number;
+  branch?: { id: string; name: string };
+  dailyClosureId?: string;
+  discrepancyAmount?: number;
+  discrepancyNotes?: string;
   notes?: string;
-  status: 'PENDING' | 'APPROVED';
+  status: string;
   approvedById?: string;
+  approvedAt?: string;
+  difference?: number;
   createdAt: string;
   updatedAt: string;
-}
-
-export interface SalaryAdvance {
-  id: string;
-  employeeId: string;
-  employee?: Employee;
-  amount: number;
-  currencyCode: string;
-  reason: string;
-  requestedDate: string;
-  repaymentDate?: string;
-  status: 'PENDING' | 'APPROVED' | 'REJECTED' | 'REPAID';
-  approvedById?: string;
-  createdAt: string;
-  updatedAt: string;
-}
-
-export interface ProofOfDelivery {
-  id: string;
-  deliveryId: string;
-  delivery?: Delivery;
-  signatureName: string;
-  signatureUrl?: string;
-  photoUrl?: string;
-  notes?: string;
-  deliveredAt: string;
-  createdAt: string;
 }
 
 export interface GoodsReceipt {
@@ -749,10 +795,10 @@ export interface GoodsReceipt {
   purchaseOrderId: string;
   purchaseOrder?: PurchaseOrder;
   branchId: string;
-  branch?: Branch;
   receivedDate: string;
   notes?: string;
-  items: GoodsReceiptItem[];
+  items?: GoodsReceiptItem[];
+  createdById?: string;
   createdAt: string;
   updatedAt: string;
 }
@@ -785,38 +831,11 @@ export interface SupplierPayment {
   updatedAt: string;
 }
 
-export interface MaterialConsumption {
-  id: string;
-  workOrderId: string;
-  workOrder?: WorkOrder;
-  productId: string;
-  product?: Product;
-  variantId?: string;
-  variant?: Variant;
-  quantity: number;
-  unit: string;
-  notes?: string;
-  createdAt: string;
-}
-
-export interface OperatorAssignment {
-  id: string;
-  workOrderId: string;
-  workOrder?: WorkOrder;
-  stageId?: string;
-  operatorId: string;
-  role?: string;
-  startDate: string;
-  endDate?: string;
-  createdAt: string;
-  updatedAt: string;
-}
-
 export interface NotificationTemplate {
   id: string;
   name: string;
   code: string;
-  channel: 'EMAIL' | 'SMS' | 'PUSH' | 'IN_APP';
+  channel: string;
   subject?: string;
   bodyTemplate: string;
   variables?: string[];
@@ -828,19 +847,288 @@ export interface NotificationTemplate {
 export interface NotificationLog {
   id: string;
   templateId?: string;
+  template?: NotificationTemplate;
+  userId?: string;
   channel: string;
   recipient: string;
   subject?: string;
-  status: 'SENT' | 'FAILED' | 'PENDING';
+  body?: string;
+  status: string;
+  errorMessage?: string;
   entityType?: string;
   entityId?: string;
   sentAt?: string;
   createdAt: string;
 }
 
-export interface ListParams {
-  page?: number;
-  limit?: number;
-  search?: string;
-  [key: string]: string | number | boolean | undefined;
+export interface MaterialConsumption {
+  id: string;
+  workOrderId: string;
+  productId: string;
+  product?: Product;
+  variantId?: string;
+  quantity: number;
+  unit: string;
+  notes?: string;
+  recordedById?: string;
+  createdAt: string;
 }
+
+export interface OperatorAssignment {
+  id: string;
+  workOrderId: string;
+  stageId?: string;
+  operatorId: string;
+  role: string;
+  startDate: string;
+  endDate?: string;
+  unassignedAt?: string;
+  createdAt: string;
+}
+
+export interface ProofOfDelivery {
+  id: string;
+  deliveryId: string;
+  signatureName: string;
+  signatureUrl?: string;
+  photoUrl?: string;
+  notes?: string;
+  deliveredAt: string;
+  createdById?: string;
+  createdAt: string;
+}
+
+export interface SalaryAdvance {
+  id: string;
+  employeeId: string;
+  employee?: Employee;
+  amount: number;
+  currencyCode: string;
+  reason: string;
+  requestedDate: string;
+  repaymentDate?: string;
+  status: string;
+  approvedById?: string;
+  approvedAt?: string;
+  rejectionReason?: string;
+  repaidAt?: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+// =============================================================================
+// MODULE: FASHION MANUFACTURING
+// =============================================================================
+
+export interface BOM {
+  id: string;
+  productId: string;
+  product?: Product;
+  name: string;
+  version: string;
+  isActive: boolean;
+  notes?: string;
+  items?: BOMItem[];
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface BOMItem {
+  id: string;
+  bomId: string;
+  materialVariantId: string;
+  materialVariant?: Variant;
+  quantity: number;
+  unit: string;
+  wastagePercent?: number;
+  materialType: string;
+  notes?: string;
+}
+
+export interface TailoringTeam {
+  id: string;
+  name: string;
+  code: string;
+  workshopId: string;
+  workshop?: Workshop;
+  leaderId?: string;
+  capacity?: number;
+  specialties: string[];
+  isActive: boolean;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface CustomOrder {
+  id: string;
+  orderNumber: string;
+  customerId: string;
+  customer?: Customer;
+  branchId: string;
+  status: string;
+  title: string;
+  description?: string;
+  bust?: number;
+  waist?: number;
+  hips?: number;
+  length?: number;
+  shoulders?: number;
+  sleeves?: number;
+  inseam?: number;
+  neck?: number;
+  measurementNotes?: string;
+  stylePreferences?: string;
+  colorPreferences?: string;
+  fabricPreferences?: string;
+  embellishments?: string;
+  specialInstructions?: string;
+  estimatedPrice?: number;
+  finalPrice?: number;
+  depositAmount?: number;
+  currencyCode: string;
+  requiredByDate?: string;
+  fittingDate?: string;
+  deliveryDate?: string;
+  workOrderId?: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface Alteration {
+  id: string;
+  alterationNumber: string;
+  customerId: string;
+  customer?: Customer;
+  branchId: string;
+  workshopId?: string;
+  status: string;
+  description: string;
+  alterationType: string;
+  estimatedTime?: number;
+  actualTime?: number;
+  estimatedCost?: number;
+  finalCost?: number;
+  currencyCode: string;
+  receivedAt: string;
+  completedAt?: string;
+  deliveredAt?: string;
+  tailorId?: string;
+  notes?: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface ProductionSchedule {
+  id: string;
+  workOrderId: string;
+  workOrder?: WorkOrder;
+  workshopId: string;
+  workshop?: Workshop;
+  teamId?: string;
+  team?: TailoringTeam;
+  scheduledDate: string;
+  startTime?: string;
+  endTime?: string;
+  title: string;
+  notes?: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+// =============================================================================
+// MODULE: TREASURY
+// =============================================================================
+
+export interface BankAccount {
+  id: string;
+  name: string;
+  bankName: string;
+  accountNumber: string;
+  iban?: string;
+  swift?: string;
+  currencyCode: string;
+  branchId: string;
+  branch?: Branch;
+  currentBalance: number;
+  isActive: boolean;
+  notes?: string;
+  transactions?: BankTransaction[];
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface BankTransaction {
+  id: string;
+  bankAccountId: string;
+  type: 'INFLOW' | 'OUTFLOW';
+  amount: number;
+  currencyCode: string;
+  description: string;
+  referenceType?: string;
+  referenceId?: string;
+  transactionDate: string;
+  createdAt: string;
+}
+
+export interface CashPosition {
+  accounts: BankAccount[];
+  inflowLast30d: number;
+  outflowLast30d: number;
+  netLast30d: number;
+}
+
+// =============================================================================
+// MODULE: ANALYTICS
+// =============================================================================
+
+export interface AnalyticsSummary {
+  totalRevenue: number;
+  totalExpenses: number;
+  grossProfit: number;
+  margin: number;
+  totalPayroll: number;
+  totalAdvances: number;
+  period: { from: string; to: string };
+}
+
+export interface ProfitabilityByBranch {
+  branchId: string;
+  branchName: string;
+  revenue: number;
+  expenses: number;
+  profit: number;
+  margin: number;
+}
+
+export interface EmployeeCostSummary {
+  summary: {
+    totalBaseSalary: number;
+    totalAllowances: number;
+    totalDeductions: number;
+    totalNetPay: number;
+    totalGrossPay: number;
+    totalAdvancesDisbursed: number;
+    headcount: number;
+  };
+  payrollByEmployee: Array<{
+    id: string;
+    employeeId: string;
+    grossPay: number;
+    netPay: number;
+    deductions: number;
+    baseSalary: number;
+    allowances: number;
+    status: string;
+    periodStartDate: string;
+    periodEndDate: string;
+  }>;
+  advances: Array<{
+    id: string;
+    employeeId: string;
+    originalAmount: number;
+    originalCurrencyCode: string;
+    status: string;
+    requestedAt: string;
+  }>;
+}
+

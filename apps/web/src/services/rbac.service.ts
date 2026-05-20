@@ -12,25 +12,31 @@ export interface UpdateRoleDto {
   description?: string;
 }
 
+// Backend wraps all responses in { data: ... }
+type WrappedList<T> = { data: T[] };
+type WrappedItem<T> = { data: T };
+// Permissions endpoint returns grouped by module: { data: Record<string, Permission[]> }
+type WrappedGrouped = { data: Record<string, Permission[]> };
+
 export const rbacService = {
   async getRoles(params?: ListParams): Promise<Role[]> {
-    const response = await api.get<Role[]>('/rbac/roles', { params });
-    return response.data;
+    const response = await api.get<WrappedList<Role>>('/rbac/roles', { params });
+    return response.data.data;
   },
 
   async getRole(id: string): Promise<Role> {
-    const response = await api.get<Role>(`/rbac/roles/${id}`);
-    return response.data;
+    const response = await api.get<WrappedItem<Role>>(`/rbac/roles/${id}`);
+    return response.data.data;
   },
 
   async createRole(dto: CreateRoleDto): Promise<Role> {
-    const response = await api.post<Role>('/rbac/roles', dto);
-    return response.data;
+    const response = await api.post<WrappedItem<Role>>('/rbac/roles', dto);
+    return response.data.data;
   },
 
   async updateRole(id: string, dto: UpdateRoleDto): Promise<Role> {
-    const response = await api.patch<Role>(`/rbac/roles/${id}`, dto);
-    return response.data;
+    const response = await api.patch<WrappedItem<Role>>(`/rbac/roles/${id}`, dto);
+    return response.data.data;
   },
 
   async deleteRole(id: string): Promise<void> {
@@ -45,8 +51,8 @@ export const rbacService = {
     await api.delete(`/rbac/roles/${roleId}/permissions/${permissionId}`);
   },
 
-  async getPermissions(): Promise<Permission[]> {
-    const response = await api.get<Permission[]>('/rbac/permissions');
-    return response.data;
+  async getPermissions(): Promise<Record<string, Permission[]>> {
+    const response = await api.get<WrappedGrouped>('/rbac/permissions');
+    return response.data.data;
   },
 };

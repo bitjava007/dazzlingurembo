@@ -42,8 +42,8 @@ export default function GoodsReceiptsPage() {
 
   const columns = [
     { header: 'Purchase Order', render: (r: GoodsReceipt) => r.purchaseOrder?.number ?? r.purchaseOrderId },
-    { header: 'Branch', render: (r: GoodsReceipt) => r.branch?.name ?? r.branchId },
-    { header: 'Items', render: (r: GoodsReceipt) => r.items.length },
+    { header: 'Branch', render: (r: GoodsReceipt) => r.branchId },
+    { header: 'Items', render: (r: GoodsReceipt) => r.items?.length ?? 0 },
     { header: 'Notes', render: (r: GoodsReceipt) => r.notes ?? '—' },
     { header: 'Received', render: (r: GoodsReceipt) => r.receivedDate ? new Date(r.receivedDate).toLocaleDateString() : new Date(r.createdAt).toLocaleDateString() },
   ];

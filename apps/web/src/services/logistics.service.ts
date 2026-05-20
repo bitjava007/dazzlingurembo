@@ -53,4 +53,14 @@ export const logisticsService = {
     const response = await api.post<ProofOfDelivery>('/logistics/pod', data);
     return response.data;
   },
+
+  async getPODs(deliveryId: string): Promise<ProofOfDelivery[]> {
+    const response = await api.get<ProofOfDelivery[]>(`/logistics/deliveries/${deliveryId}/pod`);
+    return response.data;
+  },
+
+  async createPOD(data: object): Promise<ProofOfDelivery> {
+    const response = await api.post<ProofOfDelivery>('/logistics/proof-of-delivery', data);
+    return response.data;
+  },
 };

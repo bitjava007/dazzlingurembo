@@ -40,7 +40,7 @@ export default function ExpensesPage() {
   });
 
   const createM = useMutation({
-    mutationFn: (d: FormData) => financeService.createExpense({ ...d, amount: parseFloat(d.amount) }),
+    mutationFn: (d: FormData) => financeService.createExpense({ description: d.title, originalAmount: parseFloat(d.amount), title: d.title, amount: parseFloat(d.amount) } as Parameters<typeof financeService.createExpense>[0]),
     onSuccess: () => { qc.invalidateQueries({ queryKey: ['expenses'] }); setModalOpen(false); reset(); toast({ title: 'Expense created' }); },
   });
   const approveM = useMutation({
@@ -49,13 +49,13 @@ export default function ExpensesPage() {
   });
 
   const columns = [
-    { header: 'Title', accessor: 'title' as keyof Expense },
-    { header: 'Category', accessor: 'category' as keyof Expense },
-    { header: 'Amount', render: (r: Expense) => `$${r.amount.toFixed(2)}` },
+    { header: 'Title', render: (r: Expense) => r.title ?? r.description },
+    { header: 'Category', render: (r: Expense) => r.category?.name ?? r.categoryId ?? '—' },
+    { header: 'Amount', render: (r: Expense) => `${(r.amount ?? r.originalAmount ?? 0).toFixed(2)} ${r.originalCurrencyCode ?? ''}` },
     { header: 'Status', render: (r: Expense) => <StatusBadge status={r.status} /> },
-    { header: 'Date', render: (r: Expense) => new Date(r.createdAt).toLocaleDateString() },
+    { header: 'Date', render: (r: Expense) => new Date(r.expenseDate ?? r.createdAt).toLocaleDateString() },
     {
-      header: 'Actions', render: (r: Expense) => r.status === 'PENDING' ? (
+      header: 'Actions', render: (r: Expense) => r.status === 'SUBMITTED' ? (
         <Button variant="ghost" size="sm" className="h-7 text-green-400 hover:text-green-300" onClick={() => approveM.mutate(r.id)}>
           <CheckCircle className="h-3 w-3 mr-1" />Approve
         </Button>

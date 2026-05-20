@@ -13,6 +13,10 @@ import { ReconciliationsController } from './reconciliations/reconciliations.con
 import { ReconciliationsService } from './reconciliations/reconciliations.service';
 import { ExchangeRatesController } from './exchange-rates/exchange-rates.controller';
 import { ExchangeRatesService } from './exchange-rates/exchange-rates.service';
+import { TreasuryController } from './treasury/treasury.controller';
+import { TreasuryService } from './treasury/treasury.service';
+import { AnalyticsController } from './analytics/analytics.controller';
+import { AnalyticsService } from './analytics/analytics.service';
 
 @Module({
   imports: [PrismaModule],
@@ -23,6 +27,8 @@ import { ExchangeRatesService } from './exchange-rates/exchange-rates.service';
     CashClosuresController,
     ReconciliationsController,
     ExchangeRatesController,
+    TreasuryController,
+    AnalyticsController,
   ],
   providers: [
     JournalService,
@@ -31,6 +37,8 @@ import { ExchangeRatesService } from './exchange-rates/exchange-rates.service';
     CashClosuresService,
     ReconciliationsService,
     ExchangeRatesService,
+    TreasuryService,
+    AnalyticsService,
     AuditService,
   ],
 })
