@@ -1,5 +1,5 @@
 import api from '@/lib/api';
-import type { Delivery, PaginatedResponse, ListParams } from '@/types';
+import type { Delivery, ProofOfDelivery, PaginatedResponse, ListParams } from '@/types';
 
 export const logisticsService = {
   async getDeliveries(params?: ListParams): Promise<PaginatedResponse<Delivery>> {
@@ -24,6 +24,16 @@ export const logisticsService = {
 
   async markFailed(id: string, notes: string): Promise<Delivery> {
     const response = await api.patch<Delivery>(`/logistics/deliveries/${id}/fail`, { notes });
+    return response.data;
+  },
+
+  async getPODs(deliveryId: string): Promise<ProofOfDelivery[]> {
+    const response = await api.get<ProofOfDelivery[]>(`/logistics/deliveries/${deliveryId}/pod`);
+    return response.data;
+  },
+
+  async createPOD(data: object): Promise<ProofOfDelivery> {
+    const response = await api.post<ProofOfDelivery>('/logistics/proof-of-delivery', data);
     return response.data;
   },
 };

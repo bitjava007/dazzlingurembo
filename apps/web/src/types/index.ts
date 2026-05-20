@@ -3,10 +3,12 @@ export interface User {
   firstName: string;
   lastName: string;
   email: string;
+  phone?: string;
   status: 'ACTIVE' | 'INACTIVE' | 'SUSPENDED';
   roles: Role[];
   branchId?: string;
   branch?: Branch;
+  countryId?: string;
   createdAt: string;
   updatedAt: string;
 }
@@ -15,15 +17,15 @@ export interface Role {
   id: string;
   name: string;
   description?: string;
-  permissions: Permission[];
+  isSystem?: boolean;
+  permissions?: Permission[];
   createdAt: string;
   updatedAt: string;
 }
 
 export interface Permission {
   id: string;
-  name: string;
-  resource: string;
+  module: string;
   action: string;
   description?: string;
 }
@@ -155,10 +157,26 @@ export interface Warehouse {
   id: string;
   name: string;
   code: string;
-  branchId?: string;
+  branchId: string;
   branch?: Branch;
   address?: string;
-  status: 'ACTIVE' | 'INACTIVE';
+  totalCapacity?: number;
+  isActive: boolean;
+  isDefault: boolean;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface Workshop {
+  id: string;
+  name: string;
+  code: string;
+  branchId: string;
+  branch?: Branch;
+  address?: string;
+  capacity?: number;
+  isActive: boolean;
+  specialties?: string[];
   createdAt: string;
   updatedAt: string;
 }
@@ -467,10 +485,15 @@ export interface PayrollRun {
 export interface Country {
   id: string;
   name: string;
-  code: string;
-  currency: string;
+  isoCode2: string;
+  isoCode3: string;
+  currencyCode: string;
+  currencyName: string;
   currencySymbol: string;
-  timezone: string;
+  dialCode?: string;
+  locale?: string;
+  timezone?: string;
+  isActive: boolean;
   createdAt: string;
   updatedAt: string;
 }
@@ -479,12 +502,19 @@ export interface Branch {
   id: string;
   name: string;
   code: string;
+  type: string;
   countryId: string;
   country?: Country;
   address?: string;
+  city?: string;
+  stateRegion?: string;
+  postalCode?: string;
   phone?: string;
   email?: string;
-  status: 'ACTIVE' | 'INACTIVE';
+  isActive: boolean;
+  isHeadOffice: boolean;
+  openingDate?: string;
+  managerId?: string;
   createdAt: string;
   updatedAt: string;
 }
@@ -500,10 +530,141 @@ export interface CustomerNote {
 export interface CustomerCommunication {
   id: string;
   customerId: string;
-  type: 'EMAIL' | 'PHONE' | 'SMS' | 'IN_PERSON' | 'OTHER';
+  channel: string;
+  direction: string;
   subject?: string;
-  content: string;
-  direction: 'INBOUND' | 'OUTBOUND';
+  body?: string;
+  isRead?: boolean;
+  referenceType?: string;
+  referenceId?: string;
+  createdAt: string;
+}
+
+export interface LoyaltyAccount {
+  id: string;
+  customerId: string;
+  points: number;
+  totalEarned: number;
+  totalRedeemed: number;
+  transactions?: LoyaltyTransaction[];
+}
+
+export interface LoyaltyTransaction {
+  id: string;
+  loyaltyAccountId: string;
+  type: string;
+  points: number;
+  description?: string;
+  referenceType?: string;
+  referenceId?: string;
+  createdAt: string;
+}
+
+export interface Receipt {
+  id: string;
+  receiptNumber: string;
+  paymentId: string;
+  payment?: Payment;
+  branchId: string;
+  branch?: Branch;
+  issuedAt: string;
+  createdAt: string;
+}
+
+export interface Refund {
+  id: string;
+  refundNumber: string;
+  orderId?: string;
+  order?: Order;
+  paymentId?: string;
+  customerId?: string;
+  customer?: Customer;
+  branchId: string;
+  branch?: Branch;
+  status: 'PENDING' | 'APPROVED' | 'REJECTED' | 'PROCESSED';
+  reason: string;
+  description?: string;
+  originalCurrencyCode: string;
+  originalAmount: number;
+  method?: string;
+  notes?: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface Return {
+  id: string;
+  returnNumber: string;
+  orderId?: string;
+  order?: Order;
+  customerId?: string;
+  customer?: Customer;
+  branchId: string;
+  branch?: Branch;
+  status: 'PENDING' | 'APPROVED' | 'REJECTED' | 'COMPLETED';
+  reason: string;
+  description?: string;
+  resolutionType?: string;
+  notes?: string;
+  items: ReturnItem[];
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface ReturnItem {
+  id: string;
+  returnId: string;
+  variantId?: string;
+  variant?: Variant;
+  name: string;
+  sku?: string;
+  quantity: number;
+  condition?: string;
+  notes?: string;
+}
+
+export interface DeliveryNote {
+  id: string;
+  deliveryNumber: string;
+  orderId: string;
+  order?: Order;
+  branchId: string;
+  branch?: Branch;
+  status: 'DRAFT' | 'DISPATCHED' | 'DELIVERED';
+  notes?: string;
+  dispatchedAt?: string;
+  deliveredAt?: string;
+  createdAt: string;
+  updatedAt: string;
+  items?: DeliveryNoteItem[];
+}
+
+export interface DeliveryNoteItem {
+  id: string;
+  deliveryNoteId: string;
+  variantId?: string;
+  variant?: Variant;
+  quantity: number;
+}
+
+export interface ProductSku {
+  id: string;
+  variantId: string;
+  sku: string;
+  barcode?: string;
+  isActive: boolean;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface ProductMedia {
+  id: string;
+  productId: string;
+  url: string;
+  altText?: string;
+  mediaType: string;
+  isPrimary: boolean;
+  sortOrder: number;
   createdAt: string;
 }
 
@@ -533,4 +694,160 @@ export interface ListParams {
   limit?: number;
   search?: string;
   [key: string]: string | number | boolean | undefined;
+}
+
+export interface ExpenseCategory {
+  id: string;
+  name: string;
+  code: string;
+  description?: string;
+  parentId?: string;
+  parent?: ExpenseCategory;
+  children?: ExpenseCategory[];
+  isActive: boolean;
+  deletedAt?: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface Reconciliation {
+  id: string;
+  branchId: string;
+  branch?: { id: string; name: string };
+  dailyClosureId?: string;
+  discrepancyAmount?: number;
+  discrepancyNotes?: string;
+  notes?: string;
+  status: string;
+  approvedById?: string;
+  approvedAt?: string;
+  difference?: number;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface GoodsReceipt {
+  id: string;
+  purchaseOrderId: string;
+  purchaseOrder?: PurchaseOrder;
+  branchId: string;
+  receivedDate: string;
+  notes?: string;
+  items?: GoodsReceiptItem[];
+  createdById?: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface GoodsReceiptItem {
+  id: string;
+  goodsReceiptId: string;
+  purchaseOrderItemId: string;
+  quantityReceived: number;
+  notes?: string;
+}
+
+export interface SupplierPayment {
+  id: string;
+  supplierId: string;
+  supplier?: Supplier;
+  supplierInvoiceId?: string;
+  amount: number;
+  currencyCode: string;
+  paymentMethod: string;
+  paymentDate: string;
+  reference?: string;
+  notes?: string;
+  originalCurrencyCode?: string;
+  originalAmount?: number;
+  convertedCurrencyCode?: string;
+  convertedAmount?: number;
+  exchangeRateSnapshot?: number;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface NotificationTemplate {
+  id: string;
+  name: string;
+  code: string;
+  channel: string;
+  subject?: string;
+  bodyTemplate: string;
+  variables?: string[];
+  isActive: boolean;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface NotificationLog {
+  id: string;
+  templateId?: string;
+  template?: NotificationTemplate;
+  userId?: string;
+  channel: string;
+  recipient: string;
+  subject?: string;
+  body?: string;
+  status: string;
+  errorMessage?: string;
+  entityType?: string;
+  entityId?: string;
+  sentAt?: string;
+  createdAt: string;
+}
+
+export interface MaterialConsumption {
+  id: string;
+  workOrderId: string;
+  productId: string;
+  product?: Product;
+  variantId?: string;
+  quantity: number;
+  unit: string;
+  notes?: string;
+  recordedById?: string;
+  createdAt: string;
+}
+
+export interface OperatorAssignment {
+  id: string;
+  workOrderId: string;
+  stageId?: string;
+  operatorId: string;
+  role: string;
+  startDate: string;
+  endDate?: string;
+  unassignedAt?: string;
+  createdAt: string;
+}
+
+export interface ProofOfDelivery {
+  id: string;
+  deliveryId: string;
+  signatureName: string;
+  signatureUrl?: string;
+  photoUrl?: string;
+  notes?: string;
+  deliveredAt: string;
+  createdById?: string;
+  createdAt: string;
+}
+
+export interface SalaryAdvance {
+  id: string;
+  employeeId: string;
+  employee?: Employee;
+  amount: number;
+  currencyCode: string;
+  reason: string;
+  requestedDate: string;
+  repaymentDate?: string;
+  status: string;
+  approvedById?: string;
+  approvedAt?: string;
+  rejectionReason?: string;
+  repaidAt?: string;
+  createdAt: string;
+  updatedAt: string;
 }

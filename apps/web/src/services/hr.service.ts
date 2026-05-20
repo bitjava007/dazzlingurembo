@@ -1,5 +1,5 @@
 import api from '@/lib/api';
-import type { Employee, Department, AttendanceRecord, PayrollRun, PaginatedResponse, ListParams } from '@/types';
+import type { Employee, Department, AttendanceRecord, PayrollRun, SalaryAdvance, PaginatedResponse, ListParams } from '@/types';
 
 export const hrService = {
   async getEmployees(params?: ListParams): Promise<PaginatedResponse<Employee>> {
@@ -58,6 +58,31 @@ export const hrService = {
 
   async payPayroll(id: string): Promise<PayrollRun> {
     const response = await api.patch<PayrollRun>(`/hr/payroll/${id}/pay`);
+    return response.data;
+  },
+
+  async getSalaryAdvances(params?: object): Promise<PaginatedResponse<SalaryAdvance>> {
+    const response = await api.get<PaginatedResponse<SalaryAdvance>>('/hr/salary-advances', { params });
+    return response.data;
+  },
+
+  async createSalaryAdvance(data: object): Promise<SalaryAdvance> {
+    const response = await api.post<SalaryAdvance>('/hr/salary-advances', data);
+    return response.data;
+  },
+
+  async approveSalaryAdvance(id: string): Promise<SalaryAdvance> {
+    const response = await api.patch<SalaryAdvance>(`/hr/salary-advances/${id}/approve`);
+    return response.data;
+  },
+
+  async rejectSalaryAdvance(id: string, reason: string): Promise<SalaryAdvance> {
+    const response = await api.patch<SalaryAdvance>(`/hr/salary-advances/${id}/reject`, { reason });
+    return response.data;
+  },
+
+  async repaySalaryAdvance(id: string): Promise<SalaryAdvance> {
+    const response = await api.patch<SalaryAdvance>(`/hr/salary-advances/${id}/repay`);
     return response.data;
   },
 };
