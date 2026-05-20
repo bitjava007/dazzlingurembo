@@ -4,9 +4,10 @@ import type { User } from '@/types';
 
 interface AuthStore {
   user: User | null;
-  token: string | null;
+  accessToken: string | null;
+  refreshToken: string | null;
   isAuthenticated: boolean;
-  setAuth: (user: User, token: string) => void;
+  setAuth: (user: User, accessToken: string, refreshToken?: string) => void;
   clearAuth: () => void;
 }
 
@@ -14,24 +15,25 @@ export const useAuthStore = create<AuthStore>()(
   persist(
     (set) => ({
       user: null,
-      token: null,
+      accessToken: null,
+      refreshToken: null,
       isAuthenticated: false,
-      setAuth: (user: User, token: string) => {
+      setAuth: (user: User, accessToken: string, refreshToken?: string) => {
         if (typeof window !== 'undefined') {
-          localStorage.setItem('auth_token', token);
+          localStorage.setItem('auth_token', accessToken);
         }
-        set({ user, token, isAuthenticated: true });
+        set({ user, accessToken, refreshToken: refreshToken ?? null, isAuthenticated: true });
       },
       clearAuth: () => {
         if (typeof window !== 'undefined') {
           localStorage.removeItem('auth_token');
         }
-        set({ user: null, token: null, isAuthenticated: false });
+        set({ user: null, accessToken: null, refreshToken: null, isAuthenticated: false });
       },
     }),
     {
       name: 'auth-storage',
-      partialize: (state) => ({ user: state.user, token: state.token, isAuthenticated: state.isAuthenticated }),
+      partialize: (state) => ({ user: state.user, accessToken: state.accessToken, refreshToken: state.refreshToken, isAuthenticated: state.isAuthenticated }),
     },
   ),
 );
