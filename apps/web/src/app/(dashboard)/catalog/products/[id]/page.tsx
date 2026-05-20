@@ -20,8 +20,8 @@ type Tab = 'variants' | 'media';
 interface VariantFormData {
   name: string;
   sku: string;
-  price: number;
-  costPrice: number;
+  priceAdjustment: number;
+  costAdjustment: number;
 }
 
 interface MediaFormData {
@@ -55,12 +55,12 @@ export default function ProductDetailPage() {
     enabled: !!id && activeTab === 'media',
   });
 
-  const variantForm = useForm<VariantFormData>({ defaultValues: { name: '', sku: '', price: 0, costPrice: 0 } });
+  const variantForm = useForm<VariantFormData>({ defaultValues: { name: '', sku: '', priceAdjustment: 0, costAdjustment: 0 } });
   const mediaForm = useForm<MediaFormData>({ defaultValues: { url: '', altText: '', mediaType: 'IMAGE' } });
 
   const createVariantMutation = useMutation({
-    mutationFn: (d: VariantFormData) => catalogService.createVariant(id, { ...d, price: Number(d.price), costPrice: Number(d.costPrice) }),
-    onSuccess: () => { qc.invalidateQueries({ queryKey: ['variants', id] }); variantForm.reset({ name: '', sku: '', price: 0, costPrice: 0 }); toast({ title: 'Variant created' }); },
+    mutationFn: (d: VariantFormData) => catalogService.createVariant(id, { ...d, priceAdjustment: Number(d.priceAdjustment), costAdjustment: Number(d.costAdjustment) }),
+    onSuccess: () => { qc.invalidateQueries({ queryKey: ['variants', id] }); variantForm.reset({ name: '', sku: '', priceAdjustment: 0, costAdjustment: 0 }); toast({ title: 'Variant created' }); },
     onError: () => toast({ title: 'Error creating variant', variant: 'destructive' }),
   });
 
@@ -98,9 +98,9 @@ export default function ProductDetailPage() {
   const variantColumns = [
     { header: 'Name', accessor: 'name' as keyof Variant },
     { header: 'SKU', accessor: 'sku' as keyof Variant },
-    { header: 'Price', render: (r: Variant) => r.price?.toFixed(2) ?? '—' },
-    { header: 'Cost', render: (r: Variant) => r.costPrice?.toFixed(2) ?? '—' },
-    { header: 'Status', render: (r: Variant) => <StatusBadge status={r.status} /> },
+    { header: 'Price Adj.', render: (r: Variant) => r.priceAdjustment?.toFixed(2) ?? '—' },
+    { header: 'Cost Adj.', render: (r: Variant) => r.costAdjustment?.toFixed(2) ?? '—' },
+    { header: 'Active', render: (r: Variant) => <StatusBadge status={r.isActive ? 'ACTIVE' : 'INACTIVE'} /> },
     {
       header: 'Actions',
       render: (r: Variant) => (
@@ -114,7 +114,7 @@ export default function ProductDetailPage() {
   const mediaColumns = [
     { header: 'URL', render: (r: ProductMedia) => <a href={r.url} target="_blank" rel="noreferrer" className="text-[#C9A84C] hover:underline text-xs truncate max-w-[200px] block">{r.url}</a> },
     { header: 'Alt Text', render: (r: ProductMedia) => r.altText ?? '—' },
-    { header: 'Type', accessor: 'mediaType' as keyof ProductMedia },
+    { header: 'Type', render: (r: ProductMedia) => r.type },
     { header: 'Primary', render: (r: ProductMedia) => r.isPrimary ? <span className="text-green-400 text-xs font-semibold">Yes</span> : <span className="text-gray-500 text-xs">No</span> },
     {
       header: 'Actions',
@@ -179,12 +179,12 @@ export default function ProductDetailPage() {
               </div>
               <div className="grid grid-cols-2 gap-3">
                 <div className="space-y-1">
-                  <Label className="text-gray-300">Price</Label>
-                  <Input type="number" step="0.01" {...variantForm.register('price')} className="bg-[#111111] border-[#2A2A2A] text-white" />
+                  <Label className="text-gray-300">Price Adjustment</Label>
+                  <Input type="number" step="0.01" {...variantForm.register('priceAdjustment')} className="bg-[#111111] border-[#2A2A2A] text-white" />
                 </div>
                 <div className="space-y-1">
-                  <Label className="text-gray-300">Cost Price</Label>
-                  <Input type="number" step="0.01" {...variantForm.register('costPrice')} className="bg-[#111111] border-[#2A2A2A] text-white" />
+                  <Label className="text-gray-300">Cost Adjustment</Label>
+                  <Input type="number" step="0.01" {...variantForm.register('costAdjustment')} className="bg-[#111111] border-[#2A2A2A] text-white" />
                 </div>
               </div>
               <Button type="submit" disabled={createVariantMutation.isPending} className="bg-[#C9A84C] hover:bg-[#D4AF37] text-black font-semibold">

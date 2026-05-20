@@ -95,11 +95,15 @@ export interface Variant {
   product?: Product;
   sku: string;
   name: string;
-  price: number;
-  costPrice: number;
-  weight?: number;
-  status: 'ACTIVE' | 'INACTIVE';
-  stockQuantity?: number;
+  barcode?: string;
+  color?: string;
+  size?: string;
+  material?: string;
+  priceAdjustment: number;
+  costAdjustment: number;
+  isActive: boolean;
+  imageUrl?: string;
+  position?: number;
   createdAt: string;
   updatedAt: string;
 }
@@ -808,6 +812,9 @@ export interface ProductSku {
   variantId: string;
   sku: string;
   barcode?: string;
+  serialNumber?: string;
+  batchNumber?: string;
+  condition: string;
   isActive: boolean;
   createdAt: string;
   updatedAt: string;

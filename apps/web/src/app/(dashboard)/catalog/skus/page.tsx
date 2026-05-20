@@ -62,7 +62,7 @@ export default function SkusPage() {
   const columns = [
     { header: 'SKU', accessor: 'sku' as keyof ProductSku },
     { header: 'Barcode', render: (r: ProductSku) => r.barcode ?? '—' },
-    { header: 'Condition', render: (r: ProductSku) => (r as unknown as { condition?: string }).condition ?? 'NEW' },
+    { header: 'Condition', render: (r: ProductSku) => r.condition ?? 'NEW' },
     { header: 'Active', render: (r: ProductSku) => <span className={r.isActive ? 'text-green-400' : 'text-gray-500'}>{r.isActive ? 'Yes' : 'No'}</span> },
     { header: 'Created At', render: (r: ProductSku) => new Date(r.createdAt).toLocaleDateString() },
     {
