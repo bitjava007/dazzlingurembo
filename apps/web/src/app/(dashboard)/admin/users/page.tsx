@@ -24,6 +24,7 @@ const schema = z.object({
   firstName: z.string().min(1, 'Required'),
   lastName: z.string().min(1, 'Required'),
   email: z.string().email('Invalid email'),
+  password: z.string().min(8, 'Minimum 8 characters'),
   status: z.enum(['ACTIVE', 'INACTIVE', 'SUSPENDED']),
 });
 type FormData = z.infer<typeof schema>;
@@ -87,6 +88,7 @@ export default function UsersPage() {
             <div className="space-y-1"><Label className="text-gray-300">Last Name</Label><Input {...register('lastName')} className="bg-[#111111] border-[#2A2A2A] text-white" /></div>
           </div>
           <div className="space-y-1"><Label className="text-gray-300">Email</Label><Input type="email" {...register('email')} className="bg-[#111111] border-[#2A2A2A] text-white" />{errors.email && <p className="text-red-400 text-xs">{errors.email.message}</p>}</div>
+          
           <div className="space-y-1">
             <Label className="text-gray-300">Status</Label>
             <Select value={watch('status')} onValueChange={(v) => setValue('status', v as FormData['status'])}>
