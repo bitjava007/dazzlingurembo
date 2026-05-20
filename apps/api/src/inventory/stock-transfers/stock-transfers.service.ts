@@ -10,6 +10,7 @@ export interface QueryStockTransfersDto {
   fromBranchId?: string;
   toBranchId?: string;
   status?: string;
+  search?: string;
   page?: number;
   limit?: number;
 }
@@ -22,7 +23,7 @@ export class StockTransfersService {
   ) {}
 
   async findAll(query: QueryStockTransfersDto) {
-    const { page = 1, limit = 20, fromWarehouseId, toWarehouseId, fromBranchId, toBranchId, status } = query;
+    const { page = 1, limit = 20, fromWarehouseId, toWarehouseId, fromBranchId, toBranchId, status, search } = query;
     const skip = (page - 1) * limit;
     const where: Record<string, unknown> = { deletedAt: null };
     if (fromWarehouseId) where['fromWarehouseId'] = fromWarehouseId;
@@ -30,6 +31,11 @@ export class StockTransfersService {
     if (fromBranchId) where['fromBranchId'] = fromBranchId;
     if (toBranchId) where['toBranchId'] = toBranchId;
     if (status) where['status'] = status;
+    if (search) {
+      where['OR'] = [
+        { transferNumber: { contains: search, mode: 'insensitive' } },
+      ];
+    }
 
     const [data, total] = await Promise.all([
       this.prisma.stockTransfer.findMany({

@@ -12,6 +12,7 @@ export interface QueryStockMovementsDto {
   movementType?: StockMovementType;
   dateFrom?: string;
   dateTo?: string;
+  search?: string;
   page?: number;
   limit?: number;
 }
@@ -21,13 +22,20 @@ export class StockMovementsService {
   constructor(private readonly prisma: PrismaService) {}
 
   async findAll(query: QueryStockMovementsDto) {
-    const { page = 1, limit = 20, warehouseId, branchId, variantId, movementType, dateFrom, dateTo } = query;
+    const { page = 1, limit = 20, warehouseId, branchId, variantId, movementType, dateFrom, dateTo, search } = query;
     const skip = (page - 1) * limit;
     const where: Record<string, unknown> = {};
     if (warehouseId) where['warehouseId'] = warehouseId;
     if (branchId) where['branchId'] = branchId;
     if (variantId) where['variantId'] = variantId;
     if (movementType) where['movementType'] = movementType;
+    if (search) {
+      where['OR'] = [
+        { variant: { sku: { contains: search, mode: 'insensitive' } } },
+        { variant: { name: { contains: search, mode: 'insensitive' } } },
+        { notes: { contains: search, mode: 'insensitive' } },
+      ];
+    }
     if (dateFrom || dateTo) {
       where['createdAt'] = {};
       if (dateFrom) (where['createdAt'] as Record<string, unknown>)['gte'] = new Date(dateFrom);

@@ -32,6 +32,7 @@ export class StockMovementsController {
     @Query('movementType') movementType?: StockMovementType,
     @Query('dateFrom') dateFrom?: string,
     @Query('dateTo') dateTo?: string,
+    @Query('search') search?: string,
     @Query('page') page?: string,
     @Query('limit') limit?: string,
   ) {
@@ -42,6 +43,7 @@ export class StockMovementsController {
       movementType,
       dateFrom,
       dateTo,
+      search,
       page: page ? parseInt(page, 10) : 1,
       limit: limit ? parseInt(limit, 10) : 20,
     });

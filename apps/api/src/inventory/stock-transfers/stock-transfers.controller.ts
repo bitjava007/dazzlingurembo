@@ -29,11 +29,12 @@ export class StockTransfersController {
     @Query('fromBranchId') fromBranchId?: string,
     @Query('toBranchId') toBranchId?: string,
     @Query('status') status?: string,
+    @Query('search') search?: string,
     @Query('page') page?: string,
     @Query('limit') limit?: string,
   ) {
     return this.svc.findAll({
-      fromWarehouseId, toWarehouseId, fromBranchId, toBranchId, status,
+      fromWarehouseId, toWarehouseId, fromBranchId, toBranchId, status, search,
       page: page ? parseInt(page, 10) : 1,
       limit: limit ? parseInt(limit, 10) : 20,
     });
