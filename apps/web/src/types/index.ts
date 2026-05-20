@@ -408,10 +408,14 @@ export interface CashClosure {
 
 export interface ExchangeRate {
   id: string;
-  fromCurrency: string;
-  toCurrency: string;
+  fromCurrencyCode: string;
+  toCurrencyCode: string;
   rate: number;
-  effectiveDate: string;
+  source?: string;
+  countryId?: string;
+  effectiveFrom: string;
+  effectiveTo?: string;
+  isActive: boolean;
   createdAt: string;
   updatedAt: string;
 }

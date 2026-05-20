@@ -1,5 +1,5 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { IsString, IsNotEmpty, IsOptional, IsBoolean } from 'class-validator';
+import { IsString, IsNotEmpty, IsOptional, IsBoolean, IsNumber } from 'class-validator';
 
 export class CreateBankAccountDto {
   @ApiProperty() @IsString() @IsNotEmpty() name!: string;
@@ -20,6 +20,7 @@ export class UpdateBankAccountDto {
 
 export class CreateBankTransactionDto {
   @ApiProperty() @IsString() @IsNotEmpty() type!: string; // INFLOW | OUTFLOW
+  @ApiProperty() @IsNumber() amount!: number;
   @ApiProperty() @IsString() @IsNotEmpty() description!: string;
   @ApiPropertyOptional() @IsOptional() @IsString() referenceType?: string;
   @ApiPropertyOptional() @IsOptional() @IsString() referenceId?: string;

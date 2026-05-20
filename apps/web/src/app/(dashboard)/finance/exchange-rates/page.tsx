@@ -17,10 +17,10 @@ import { toast } from '@/hooks/use-toast';
 import type { ExchangeRate } from '@/types';
 
 const schema = z.object({
-  fromCurrency: z.string().min(1, 'Required'),
-  toCurrency: z.string().min(1, 'Required'),
+  fromCurrencyCode: z.string().min(1, 'Required'),
+  toCurrencyCode: z.string().min(1, 'Required'),
   rate: z.string().min(1, 'Required'),
-  effectiveDate: z.string().min(1, 'Required'),
+  effectiveFrom: z.string().optional(),
 });
 type FormData = z.infer<typeof schema>;
 
@@ -41,10 +41,11 @@ export default function ExchangeRatesPage() {
   });
 
   const columns = [
-    { header: 'From', accessor: 'fromCurrency' as keyof ExchangeRate },
-    { header: 'To', accessor: 'toCurrency' as keyof ExchangeRate },
+    { header: 'From', render: (r: ExchangeRate) => r.fromCurrencyCode },
+    { header: 'To', render: (r: ExchangeRate) => r.toCurrencyCode },
     { header: 'Rate', render: (r: ExchangeRate) => r.rate.toFixed(4) },
-    { header: 'Effective Date', render: (r: ExchangeRate) => new Date(r.effectiveDate).toLocaleDateString() },
+    { header: 'Effective From', render: (r: ExchangeRate) => r.effectiveFrom ? new Date(r.effectiveFrom).toLocaleDateString() : '—' },
+    { header: 'Active', render: (r: ExchangeRate) => <span className={r.isActive ? 'text-green-400' : 'text-gray-500'}>{r.isActive ? 'Yes' : 'No'}</span> },
   ];
 
   return (
@@ -56,11 +57,11 @@ export default function ExchangeRatesPage() {
       <FormModal open={modalOpen} onOpenChange={setModalOpen} title="New Exchange Rate">
         <form onSubmit={handleSubmit((d) => createM.mutate(d))} className="space-y-4 mt-2">
           <div className="grid grid-cols-2 gap-4">
-            <div className="space-y-1"><Label className="text-gray-300">From Currency</Label><Input {...register('fromCurrency')} placeholder="USD" className="bg-[#111111] border-[#2A2A2A] text-white" /></div>
-            <div className="space-y-1"><Label className="text-gray-300">To Currency</Label><Input {...register('toCurrency')} placeholder="EUR" className="bg-[#111111] border-[#2A2A2A] text-white" /></div>
+            <div className="space-y-1"><Label className="text-gray-300">From Currency</Label><Input {...register('fromCurrencyCode')} placeholder="USD" className="bg-[#111111] border-[#2A2A2A] text-white" />{errors.fromCurrencyCode && <p className="text-red-400 text-xs">{errors.fromCurrencyCode.message}</p>}</div>
+            <div className="space-y-1"><Label className="text-gray-300">To Currency</Label><Input {...register('toCurrencyCode')} placeholder="EUR" className="bg-[#111111] border-[#2A2A2A] text-white" />{errors.toCurrencyCode && <p className="text-red-400 text-xs">{errors.toCurrencyCode.message}</p>}</div>
           </div>
-          <div className="space-y-1"><Label className="text-gray-300">Rate</Label><Input type="number" step="0.0001" {...register('rate')} className="bg-[#111111] border-[#2A2A2A] text-white" /></div>
-          <div className="space-y-1"><Label className="text-gray-300">Effective Date</Label><Input type="date" {...register('effectiveDate')} className="bg-[#111111] border-[#2A2A2A] text-white" /></div>
+          <div className="space-y-1"><Label className="text-gray-300">Rate</Label><Input type="number" step="0.0001" {...register('rate')} className="bg-[#111111] border-[#2A2A2A] text-white" />{errors.rate && <p className="text-red-400 text-xs">{errors.rate.message}</p>}</div>
+          <div className="space-y-1"><Label className="text-gray-300">Effective From (optional)</Label><Input type="date" {...register('effectiveFrom')} className="bg-[#111111] border-[#2A2A2A] text-white" /></div>
           <div className="flex justify-end gap-2 pt-2">
             <Button type="button" variant="ghost" onClick={() => setModalOpen(false)} className="text-gray-400">Cancel</Button>
             <Button type="submit" disabled={createM.isPending} className="bg-[#C9A84C] hover:bg-[#D4AF37] text-black font-semibold">Create</Button>

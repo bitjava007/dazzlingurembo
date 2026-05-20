@@ -103,10 +103,9 @@ export class TreasuryController {
   @ApiOperation({ summary: 'Create a transaction for a bank account' })
   createTransaction(
     @Param('id') id: string,
-    @Body('amount') amount: number,
     @Body() dto: CreateBankTransactionDto,
     @GetUser() user: AuthUser,
   ) {
-    return this.svc.createTransaction(id, amount, dto, user?.id);
+    return this.svc.createTransaction(id, dto.amount, dto, user?.id);
   }
 }
