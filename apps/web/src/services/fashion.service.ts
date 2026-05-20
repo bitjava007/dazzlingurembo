@@ -36,8 +36,6 @@ export const fashionService = {
     api.patch(`/fashion/custom-orders/${id}`, data).then((r) => r.data),
   updateCustomOrderStatus: (id: string, status: string) =>
     api.patch(`/fashion/custom-orders/${id}/status`, { status }).then((r) => r.data),
-  linkWorkOrder: (id: string, workOrderId: string) =>
-    api.patch(`/fashion/custom-orders/${id}/link-work-order`, { workOrderId }).then((r) => r.data),
   deleteCustomOrder: (id: string) => api.delete(`/fashion/custom-orders/${id}`),
 
   // Alterations

@@ -63,13 +63,13 @@ export const catalogService = {
     return response.data;
   },
 
-  async updateVariant(variantId: string, data: Partial<Variant>): Promise<Variant> {
-    const response = await api.patch<Variant>(`/catalog/variants/${variantId}`, data);
+  async updateVariant(productId: string, variantId: string, data: Partial<Variant>): Promise<Variant> {
+    const response = await api.patch<Variant>(`/catalog/products/${productId}/variants/${variantId}`, data);
     return response.data;
   },
 
-  async deleteVariant(variantId: string): Promise<void> {
-    await api.delete(`/catalog/variants/${variantId}`);
+  async deleteVariant(productId: string, variantId: string): Promise<void> {
+    await api.delete(`/catalog/products/${productId}/variants/${variantId}`);
   },
 
   // SKUs
@@ -83,8 +83,8 @@ export const catalogService = {
     return response.data;
   },
 
-  async deleteSku(skuId: string): Promise<void> {
-    await api.delete(`/catalog/skus/${skuId}`);
+  async deleteSku(variantId: string, skuId: string): Promise<void> {
+    await api.delete(`/catalog/variants/${variantId}/skus/${skuId}`);
   },
 
   // Media
@@ -98,7 +98,7 @@ export const catalogService = {
     return response.data;
   },
 
-  async deleteMedia(mediaId: string): Promise<void> {
-    await api.delete(`/catalog/media/${mediaId}`);
+  async deleteMedia(productId: string, mediaId: string): Promise<void> {
+    await api.delete(`/catalog/products/${productId}/media/${mediaId}`);
   },
 };

@@ -39,7 +39,7 @@ export default function ApprovalsPage() {
 
   const rejectM = useMutation({
     mutationFn: ({ id, reason }: { id: string; reason: string }) =>
-      api.patch(`/finance/expenses/${id}/reject`, { rejectionReason: reason }),
+      api.patch(`/finance/expenses/${id}/reject`, { reason }),
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ['approvals'] });
       setRejectModalOpen(false);

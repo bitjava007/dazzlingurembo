@@ -52,7 +52,7 @@ export default function SkusPage() {
   });
 
   const deleteM = useMutation({
-    mutationFn: (id: string) => catalogService.deleteSku(id),
+    mutationFn: (id: string) => catalogService.deleteSku(variantId, id),
     onSuccess: () => { qc.invalidateQueries({ queryKey: ['skus', variantId] }); setDeleteOpen(false); setDeleteItem(null); toast({ title: 'SKU deleted' }); },
     onError: () => toast({ title: 'Error', description: 'Failed to delete SKU', variant: 'destructive' }),
   });

@@ -65,7 +65,7 @@ export default function ProductDetailPage() {
   });
 
   const deleteVariantMutation = useMutation({
-    mutationFn: (variantId: string) => catalogService.deleteVariant(variantId),
+    mutationFn: (variantId: string) => catalogService.deleteVariant(id, variantId),
     onSuccess: () => { qc.invalidateQueries({ queryKey: ['variants', id] }); setDeleteVariantId(null); toast({ title: 'Variant deleted' }); },
     onError: () => toast({ title: 'Error deleting variant', variant: 'destructive' }),
   });
@@ -77,7 +77,7 @@ export default function ProductDetailPage() {
   });
 
   const deleteMediaMutation = useMutation({
-    mutationFn: (mediaId: string) => catalogService.deleteMedia(mediaId),
+    mutationFn: (mediaId: string) => catalogService.deleteMedia(id, mediaId),
     onSuccess: () => { qc.invalidateQueries({ queryKey: ['media', id] }); setDeleteMediaId(null); toast({ title: 'Media deleted' }); },
     onError: () => toast({ title: 'Error deleting media', variant: 'destructive' }),
   });

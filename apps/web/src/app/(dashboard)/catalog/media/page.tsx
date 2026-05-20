@@ -54,7 +54,7 @@ export default function MediaPage() {
   });
 
   const deleteM = useMutation({
-    mutationFn: (id: string) => catalogService.deleteMedia(id),
+    mutationFn: (id: string) => catalogService.deleteMedia(productId, id),
     onSuccess: () => { qc.invalidateQueries({ queryKey: ['media', productId] }); setDeleteOpen(false); setDeleteItem(null); toast({ title: 'Media deleted' }); },
     onError: () => toast({ title: 'Error', description: 'Failed to delete media', variant: 'destructive' }),
   });

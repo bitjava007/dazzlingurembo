@@ -57,6 +57,12 @@ export class ExpensesController {
     return this.svc.create(dto, u?.id);
   }
 
+  @Patch(':id/submit')
+  @ApiOperation({ summary: 'Submit expense for approval' })
+  submit(@Param('id') id: string, @GetUser() u: AuthUser) {
+    return this.svc.submit(id, u?.id);
+  }
+
   @Patch(':id/approve')
   @ApiOperation({ summary: 'Approve expense' })
   approve(@Param('id') id: string, @GetUser() u: AuthUser) {

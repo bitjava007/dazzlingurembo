@@ -112,6 +112,20 @@ export class ExpensesService {
     return { data: updated };
   }
 
+  async submit(id: string, userId?: string) {
+    const expense = await this.prisma.expense.findUnique({ where: { id, deletedAt: null } });
+    if (!expense) throw new NotFoundException(`Expense ${id} not found`);
+    if (expense.status !== 'DRAFT') {
+      throw new BadRequestException('Only DRAFT expenses can be submitted');
+    }
+    const updated = await this.prisma.expense.update({
+      where: { id },
+      data: { status: 'SUBMITTED' },
+    });
+    await this.audit.log({ userId, action: 'UPDATE', entityType: 'expense', entityId: id });
+    return { data: updated };
+  }
+
   async remove(id: string, userId?: string) {
     const expense = await this.prisma.expense.findUnique({ where: { id, deletedAt: null } });
     if (!expense) throw new NotFoundException(`Expense ${id} not found`);

@@ -61,7 +61,7 @@ export const financeService = {
   },
 
   async rejectExpense(id: string, reason?: string): Promise<Expense> {
-    const response = await api.patch<Expense>(`/finance/expenses/${id}/reject`, { rejectionReason: reason });
+    const response = await api.patch<Expense>(`/finance/expenses/${id}/reject`, { reason });
     return response.data;
   },
 

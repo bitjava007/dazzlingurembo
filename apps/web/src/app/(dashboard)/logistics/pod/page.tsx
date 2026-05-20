@@ -37,7 +37,7 @@ export default function PODPage() {
   });
 
   const createM = useMutation({
-    mutationFn: (d: FormData) => logisticsService.createPOD({
+    mutationFn: (d: FormData) => logisticsService.createPod({
       deliveryId: d.deliveryId,
       signatureName: d.signatureName,
       notes: d.notes,
