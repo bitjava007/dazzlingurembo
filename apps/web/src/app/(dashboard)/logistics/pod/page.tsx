@@ -17,9 +17,10 @@ import type { ProofOfDelivery } from '@/types';
 
 const schema = z.object({
   deliveryId: z.string().min(1, 'Delivery ID is required'),
-  signatureName: z.string().min(1, 'Signature name is required'),
+  recipientName: z.string().optional(),
+  recipientPhone: z.string().optional(),
   notes: z.string().optional(),
-  deliveredAt: z.string().min(1, 'Delivered at is required'),
+  deliveredAt: z.string().optional(),
 });
 type FormData = z.infer<typeof schema>;
 
@@ -39,7 +40,8 @@ export default function PODPage() {
   const createM = useMutation({
     mutationFn: (d: FormData) => logisticsService.createPod({
       deliveryId: d.deliveryId,
-      signatureName: d.signatureName,
+      recipientName: d.recipientName,
+      recipientPhone: d.recipientPhone,
       notes: d.notes,
       deliveredAt: d.deliveredAt,
     }),
@@ -53,7 +55,8 @@ export default function PODPage() {
 
   const columns = [
     { header: 'Delivery ID', render: (r: ProofOfDelivery) => r.deliveryId ?? '—' },
-    { header: 'Signature Name', accessor: 'signatureName' as keyof ProofOfDelivery },
+    { header: 'Recipient', render: (r: ProofOfDelivery) => r.recipientName ?? '—' },
+    { header: 'Phone', render: (r: ProofOfDelivery) => r.recipientPhone ?? '—' },
     { header: 'Notes', render: (r: ProofOfDelivery) => r.notes ?? '—' },
     { header: 'Delivered At', render: (r: ProofOfDelivery) => new Date(r.deliveredAt).toLocaleDateString() },
   ];
@@ -94,14 +97,16 @@ export default function PODPage() {
             {errors.deliveryId && <p className="text-red-400 text-xs">{errors.deliveryId.message}</p>}
           </div>
           <div className="space-y-1">
-            <Label className="text-gray-300">Signature Name</Label>
-            <Input {...register('signatureName')} className="bg-[#111111] border-[#2A2A2A] text-white" placeholder="Name of recipient" />
-            {errors.signatureName && <p className="text-red-400 text-xs">{errors.signatureName.message}</p>}
+            <Label className="text-gray-300">Recipient Name (optional)</Label>
+            <Input {...register('recipientName')} className="bg-[#111111] border-[#2A2A2A] text-white" placeholder="Name of recipient" />
           </div>
           <div className="space-y-1">
-            <Label className="text-gray-300">Delivered At</Label>
+            <Label className="text-gray-300">Recipient Phone (optional)</Label>
+            <Input {...register('recipientPhone')} className="bg-[#111111] border-[#2A2A2A] text-white" placeholder="Phone number" />
+          </div>
+          <div className="space-y-1">
+            <Label className="text-gray-300">Delivered At (optional)</Label>
             <Input type="datetime-local" {...register('deliveredAt')} className="bg-[#111111] border-[#2A2A2A] text-white" />
-            {errors.deliveredAt && <p className="text-red-400 text-xs">{errors.deliveredAt.message}</p>}
           </div>
           <div className="space-y-1">
             <Label className="text-gray-300">Notes (optional)</Label>

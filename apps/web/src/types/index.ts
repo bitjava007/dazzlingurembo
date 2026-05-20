@@ -171,25 +171,27 @@ export interface StockAdjustment {
   warehouse?: Warehouse;
   branchId?: string;
   branch?: Branch;
-  status: 'DRAFT' | 'PENDING' | 'APPROVED' | 'REJECTED';
+  status: 'DRAFT' | 'PENDING_APPROVAL' | 'APPROVED' | 'APPLIED' | 'REJECTED';
   reason: string;
   notes?: string;
   items?: StockAdjustmentItem[];
+  requestedById?: string;
   approvedById?: string;
-  approvedAt?: string;
-  createdById?: string;
+  appliedAt?: string;
   createdAt: string;
   updatedAt: string;
 }
 
 export interface StockAdjustmentItem {
   id: string;
-  adjustmentId: string;
+  stockAdjustmentId: string;
   variantId: string;
   variant?: Variant;
-  currentQuantity: number;
-  newQuantity: number;
-  reason?: string;
+  quantityBefore: number;
+  quantityAdjusted: number;
+  quantityAfter: number;
+  unitCost?: number;
+  notes?: string;
 }
 
 export interface Warehouse {
@@ -792,15 +794,31 @@ export interface ProductMedia {
 
 export interface InventoryCount {
   id: string;
-  branchId: string;
+  countNumber: string;
   warehouseId: string;
-  status: string;
-  notes?: string;
+  branchId: string;
+  status: 'DRAFT' | 'IN_PROGRESS' | 'COMPLETED' | 'CANCELLED';
   scheduledAt?: string;
-  appliedAt?: string;
-  createdById?: string;
+  startedAt?: string;
+  completedAt?: string;
+  performedById?: string;
+  reviewedById?: string;
+  notes?: string;
+  items?: InventoryCountItem[];
   createdAt: string;
   updatedAt: string;
+}
+
+export interface InventoryCountItem {
+  id: string;
+  inventoryCountId: string;
+  variantId: string;
+  variant?: Variant;
+  expectedQuantity: number;
+  countedQuantity: number;
+  variance: number;
+  isRecounted: boolean;
+  notes?: string;
 }
 
 export interface DamagedStock {
@@ -998,12 +1016,15 @@ export interface OperatorAssignment {
 export interface ProofOfDelivery {
   id: string;
   deliveryId: string;
-  signatureName: string;
+  recipientName?: string;
+  recipientPhone?: string;
   signatureUrl?: string;
-  photoUrl?: string;
+  photoUrls?: string[];
   notes?: string;
   deliveredAt: string;
-  createdById?: string;
+  latitude?: number;
+  longitude?: number;
+  receivedById?: string;
   createdAt: string;
 }
 

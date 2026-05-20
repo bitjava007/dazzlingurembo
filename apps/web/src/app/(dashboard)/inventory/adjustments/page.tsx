@@ -35,7 +35,7 @@ export default function AdjustmentsPage() {
     { header: 'Notes', render: (r: StockAdjustment) => r.notes ?? '—' },
     { header: 'Date', render: (r: StockAdjustment) => new Date(r.createdAt).toLocaleDateString() },
     {
-      header: 'Actions', render: (r: StockAdjustment) => r.status === 'PENDING' ? (
+      header: 'Actions', render: (r: StockAdjustment) => (r.status === 'DRAFT' || r.status === 'PENDING_APPROVAL') ? (
         <Button variant="ghost" size="sm" className="h-7 text-green-400 hover:text-green-300" onClick={() => approveM.mutate(r.id)}>
           <CheckCircle className="h-3 w-3 mr-1" />Approve
         </Button>

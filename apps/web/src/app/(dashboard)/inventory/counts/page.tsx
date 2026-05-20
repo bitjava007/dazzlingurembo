@@ -53,7 +53,7 @@ export default function InventoryCountsPage() {
     { header: 'Notes', render: (r: InventoryCount) => r.notes ?? '—' },
     { header: 'Created At', render: (r: InventoryCount) => new Date(r.createdAt).toLocaleDateString() },
     {
-      header: 'Actions', render: (r: InventoryCount) => r.status === 'PENDING' ? (
+      header: 'Actions', render: (r: InventoryCount) => r.status === 'COMPLETED' ? (
         <Button variant="ghost" size="sm" className="h-7 text-green-400 hover:text-green-300" onClick={() => applyM.mutate(r.id)}>
           <CheckCircle className="h-3 w-3 mr-1" />Apply
         </Button>
