@@ -500,11 +500,122 @@ export interface CustomerNote {
 export interface CustomerCommunication {
   id: string;
   customerId: string;
-  type: 'EMAIL' | 'PHONE' | 'SMS' | 'IN_PERSON' | 'OTHER';
+  channel: string;
+  direction: string;
   subject?: string;
-  content: string;
-  direction: 'INBOUND' | 'OUTBOUND';
+  body?: string;
+  isRead?: boolean;
+  referenceType?: string;
+  referenceId?: string;
   createdAt: string;
+}
+
+export interface LoyaltyAccount {
+  id: string;
+  customerId: string;
+  points: number;
+  totalEarned: number;
+  totalRedeemed: number;
+  transactions?: LoyaltyTransaction[];
+}
+
+export interface LoyaltyTransaction {
+  id: string;
+  loyaltyAccountId: string;
+  type: string;
+  points: number;
+  description?: string;
+  referenceType?: string;
+  referenceId?: string;
+  createdAt: string;
+}
+
+export interface Receipt {
+  id: string;
+  receiptNumber: string;
+  paymentId: string;
+  payment?: Payment;
+  branchId: string;
+  branch?: Branch;
+  issuedAt: string;
+  createdAt: string;
+}
+
+export interface Refund {
+  id: string;
+  refundNumber: string;
+  orderId?: string;
+  order?: Order;
+  paymentId?: string;
+  customerId?: string;
+  customer?: Customer;
+  branchId: string;
+  branch?: Branch;
+  status: 'PENDING' | 'APPROVED' | 'REJECTED' | 'PROCESSED';
+  reason: string;
+  description?: string;
+  originalCurrencyCode: string;
+  originalAmount: number;
+  method?: string;
+  notes?: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface Return {
+  id: string;
+  returnNumber: string;
+  orderId?: string;
+  order?: Order;
+  customerId?: string;
+  customer?: Customer;
+  branchId: string;
+  branch?: Branch;
+  status: 'PENDING' | 'APPROVED' | 'REJECTED' | 'COMPLETED';
+  reason: string;
+  description?: string;
+  resolutionType?: string;
+  notes?: string;
+  items: ReturnItem[];
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface ReturnItem {
+  id: string;
+  returnId: string;
+  variantId?: string;
+  variant?: Variant;
+  name: string;
+  sku?: string;
+  quantity: number;
+  condition?: string;
+  notes?: string;
+}
+
+export interface DeliveryNote {
+  id: string;
+  deliveryNumber: string;
+  orderId: string;
+  order?: Order;
+  branchId: string;
+  branch?: Branch;
+  status: 'DRAFT' | 'DISPATCHED' | 'DELIVERED';
+  notes?: string;
+  dispatchedAt?: string;
+  deliveredAt?: string;
+  createdAt: string;
+  updatedAt: string;
+
+  items?: DeliveryNoteItem[];
+}
+
+export interface DeliveryNoteItem {
+  id: string;
+  deliveryNoteId: string;
+  variantId?: string;
+  variant?: Variant;
+  quantity: number;
 }
 
 export interface AuthResponse {
